@@ -1,0 +1,5 @@
+*.pdf
+*.docx
+*.zip
+temp_unzip/
+__pycache__/
