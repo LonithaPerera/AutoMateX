@@ -26,7 +26,8 @@
 
                 {{-- QR Code Image --}}
                 <div class="flex justify-center mb-6">
-                    <div class="p-4 border-2 border-gray-200 rounded-lg inline-block">
+                    <div class="p-4 border-2 border-gray-200 rounded-lg inline-block"
+                         style="width:250px; height:250px;">
                         {!! $qrCode !!}
                     </div>
                 </div>
