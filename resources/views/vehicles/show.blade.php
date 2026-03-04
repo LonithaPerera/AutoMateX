@@ -53,8 +53,11 @@
                 </div>
 
             {{-- Action Buttons --}}
-                {{-- Action Buttons --}}
                 <div class="mt-6 flex gap-3 flex-wrap">
+                    <a href="{{ route('suggestions.index', $vehicle) }}"
+                       class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                        🧠 Suggestions
+                    </a>
                     <a href="{{ route('service.index', $vehicle) }}"
                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                         🔧 Service History

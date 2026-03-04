@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\FuelLogController;
 use App\Http\Controllers\ServiceLogController;
+use App\Http\Controllers\SuggestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -41,6 +42,10 @@ Route::middleware('auth')->group(function () {
          ->name('service.store');
     Route::delete('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'destroy'])
          ->name('service.destroy');
+
+    // Suggestion Engine
+    Route::get('vehicles/{vehicle}/suggestions', [SuggestionController::class, 'index'])
+         ->name('suggestions.index');
 });
 
 require __DIR__.'/auth.php';
