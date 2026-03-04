@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Vehicle extends Model
 {
@@ -17,7 +18,18 @@ class Vehicle extends Model
         'color',
         'fuel_type',
         'image',
+        'qr_token',
     ];
+
+    // Auto-generate QR token when vehicle is created
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($vehicle) {
+            $vehicle->qr_token = Str::uuid();
+        });
+    }
 
     // A vehicle belongs to a user
     public function user()
@@ -26,15 +38,14 @@ class Vehicle extends Model
     }
 
     // A vehicle can have many fuel logs
-public function fuelLogs()
-{
-    return $this->hasMany(FuelLog::class);
-}
+    public function fuelLogs()
+    {
+        return $this->hasMany(FuelLog::class);
+    }
 
-// A vehicle can have many service logs
-public function serviceLogs()
-{
-    return $this->hasMany(ServiceLog::class);
-}
-
+    // A vehicle can have many service logs
+    public function serviceLogs()
+    {
+        return $this->hasMany(ServiceLog::class);
+    }
 }
