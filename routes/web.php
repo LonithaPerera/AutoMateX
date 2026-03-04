@@ -20,6 +20,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Offline fallback page
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
+
 // Public QR route — no login required
 Route::get('/vehicle/public/{token}', [QrCodeController::class, 'publicView'])
      ->name('public.vehicle');
