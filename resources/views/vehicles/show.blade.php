@@ -52,6 +52,18 @@
                     </div>
                 </div>
 
+            {{-- Action Buttons --}}
+                <div class="mt-6 flex gap-3">
+                    <a href="{{ route('fuel.index', $vehicle) }}"
+                       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        ⛽ Fuel Logs
+                    </a>
+                    <a href="{{ route('vehicles.index') }}"
+                       class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+                        ← My Vehicles
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>

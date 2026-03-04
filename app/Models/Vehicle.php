@@ -24,4 +24,10 @@ class Vehicle extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // A vehicle can have many fuel logs
+public function fuelLogs()
+{
+    return $this->hasMany(FuelLog::class);
+}
 }
