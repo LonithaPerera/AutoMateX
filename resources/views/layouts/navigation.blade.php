@@ -11,33 +11,28 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-nav-link>
+                <x-nav-link :href="route('vehicles.index')" :active="request()->routeIs('vehicles.*')">
+                    {{ __('Vehicles') }}
+                </x-nav-link>
+                <x-nav-link :href="route('parts.index')" :active="request()->routeIs('parts.index')">
+                    {{ __('Parts DB') }}
+                </x-nav-link>
+                <x-nav-link :href="route('garages.index')" :active="request()->routeIs('garages.*')">
+                    {{ __('Garages') }}
+                </x-nav-link>
+                <x-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.*')">
+                    {{ __('My Bookings') }}
+                </x-nav-link>
+                @if(auth()->user()->role === 'admin')
+                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                        {{ __('Admin') }}
                     </x-nav-link>
-
-                    <x-nav-link :href="route('parts.index')" :active="request()->routeIs('parts.index')">
-    {{ __('Parts DB') }}
-</x-nav-link>
-
-<x-nav-link :href="route('garages.index')" :active="request()->routeIs('garages.index')">
-    {{ __('Garages') }}
-</x-nav-link>
-<x-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.index')">
-    {{ __('My Bookings') }}
-</x-nav-link>
-<x-nav-link :href="route('garage.dashboard')" :active="request()->routeIs('garage.dashboard')">
-    {{ __('Garage Dashboard') }}
-</x-nav-link>
-
-@if(auth()->user()->role === 'admin')
-    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-        {{ __('Admin') }}
-    </x-nav-link>
-@endif
-
-
-                </div>
+                @endif
+            </div>
             </div>
 
             <!-- Settings Dropdown -->
