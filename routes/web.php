@@ -6,6 +6,7 @@ use App\Http\Controllers\FuelLogController;
 use App\Http\Controllers\ServiceLogController;
 use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\PartsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,6 +52,9 @@ Route::middleware('auth')->group(function () {
     // Suggestion Engine
     Route::get('vehicles/{vehicle}/suggestions', [SuggestionController::class, 'index'])
          ->name('suggestions.index');
+
+    // Parts Verification
+    Route::get('/parts', [PartsController::class, 'index'])->name('parts.index');
 
     // QR Code
     Route::get('vehicles/{vehicle}/qrcode', [QrCodeController::class, 'show'])
