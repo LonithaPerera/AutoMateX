@@ -20,6 +20,17 @@
     {{ __('Parts DB') }}
 </x-nav-link>
 
+<x-nav-link :href="route('garages.index')" :active="request()->routeIs('garages.index')">
+    {{ __('Garages') }}
+</x-nav-link>
+<x-nav-link :href="route('bookings.index')" :active="request()->routeIs('bookings.index')">
+    {{ __('My Bookings') }}
+</x-nav-link>
+<x-nav-link :href="route('garage.dashboard')" :active="request()->routeIs('garage.dashboard')">
+    {{ __('Garage Dashboard') }}
+</x-nav-link>
+
+
                 </div>
             </div>
 

@@ -52,4 +52,17 @@ public function vehicles()
 {
     return $this->hasMany(Vehicle::class);
 }
+
+// A user can own a garage
+public function garage()
+{
+    return $this->hasOne(Garage::class);
+}
+
+// A user's bookings (through their vehicles)
+public function bookings()
+{
+    return $this->hasManyThrough(Booking::class, Vehicle::class);
+}
+
 }
