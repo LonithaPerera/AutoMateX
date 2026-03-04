@@ -9,6 +9,7 @@ use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\PartsController;
 use App\Http\Controllers\GarageController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -52,19 +53,25 @@ Route::middleware('auth')->group(function () {
     // Parts Verification
     Route::get('/parts', [PartsController::class, 'index'])->name('parts.index');
 
-    // Garages — browse & create profile
+    // Garages
     Route::get('/garages', [GarageController::class, 'index'])->name('garages.index');
     Route::get('/garages/create', [GarageController::class, 'create'])->name('garages.create');
     Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
-
-    // Garage owner dashboard
     Route::get('/garage/dashboard', [GarageController::class, 'dashboard'])->name('garage.dashboard');
     Route::post('/garage/bookings/{booking}', [GarageController::class, 'updateBooking'])->name('garage.updateBooking');
 
-    // Bookings — vehicle owner
+    // Bookings
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
     Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
+
+    // Admin routes — protected by admin middleware
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+        Route::post('/admin/users/{user}/make-admin', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
+        Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
+    });
 });
 
 require __DIR__.'/auth.php';
