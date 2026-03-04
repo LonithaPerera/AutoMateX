@@ -53,7 +53,12 @@
                 </div>
 
             {{-- Action Buttons --}}
-                <div class="mt-6 flex gap-3">
+                {{-- Action Buttons --}}
+                <div class="mt-6 flex gap-3 flex-wrap">
+                    <a href="{{ route('service.index', $vehicle) }}"
+                       class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        🔧 Service History
+                    </a>
                     <a href="{{ route('fuel.index', $vehicle) }}"
                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                         ⛽ Fuel Logs

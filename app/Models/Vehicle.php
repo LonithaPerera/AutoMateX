@@ -30,4 +30,11 @@ public function fuelLogs()
 {
     return $this->hasMany(FuelLog::class);
 }
+
+// A vehicle can have many service logs
+public function serviceLogs()
+{
+    return $this->hasMany(ServiceLog::class);
+}
+
 }

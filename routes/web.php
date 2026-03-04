@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\FuelLogController;
+use App\Http\Controllers\ServiceLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,7 +22,7 @@ Route::middleware('auth')->group(function () {
     // Vehicle routes
     Route::resource('vehicles', VehicleController::class);
 
-    // Fuel Log routes (nested under vehicles)
+    // Fuel Log routes
     Route::get('vehicles/{vehicle}/fuel', [FuelLogController::class, 'index'])
          ->name('fuel.index');
     Route::get('vehicles/{vehicle}/fuel/create', [FuelLogController::class, 'create'])
@@ -30,6 +31,16 @@ Route::middleware('auth')->group(function () {
          ->name('fuel.store');
     Route::delete('vehicles/{vehicle}/fuel/{fuelLog}', [FuelLogController::class, 'destroy'])
          ->name('fuel.destroy');
+
+    // Service Log routes
+    Route::get('vehicles/{vehicle}/service', [ServiceLogController::class, 'index'])
+         ->name('service.index');
+    Route::get('vehicles/{vehicle}/service/create', [ServiceLogController::class, 'create'])
+         ->name('service.create');
+    Route::post('vehicles/{vehicle}/service', [ServiceLogController::class, 'store'])
+         ->name('service.store');
+    Route::delete('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'destroy'])
+         ->name('service.destroy');
 });
 
 require __DIR__.'/auth.php';
