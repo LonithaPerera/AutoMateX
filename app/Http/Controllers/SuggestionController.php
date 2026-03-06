@@ -58,32 +58,40 @@ class SuggestionController extends Controller
             }
 
             // Determine status
-            if ($kmLeft <= 0) {
-                $status = 'overdue';
-            } elseif ($kmLeft <= 500) {
-                $status = 'due_soon';
-            } else {
-                $status = 'ok';
-            }
+if ($kmLeft <= 0) {
+    $status = 'Overdue';
+} elseif ($kmLeft <= 500) {
+    $status = 'Due Soon';
+} else {
+    $status = 'Upcoming';
+}
 
-            $suggestions[] = [
-                'service_name' => $schedule->service_name,
-                'description'  => $schedule->description,
-                'interval_km'  => $schedule->interval_km,
-                'next_due_km'  => $nextDueKm,
-                'km_left'      => $kmLeft,
-                'days_left'    => $daysLeft,
-                'status'       => $status,
-                'last_done_km' => $lastService ? $lastService->mileage_at_service : null,
-                'last_done_date' => $lastService ? $lastService->service_date->format('d M Y') : null,
-            ];
+// Calculate percent progress toward next service (0–100)
+$lastKm = $lastService ? $lastService->mileage_at_service : 0;
+$pct = $schedule->interval_km > 0
+    ? min(100, max(0, round(($currentMileage - $lastKm) / $schedule->interval_km * 100)))
+    : 0;
+
+$suggestions[] = [
+    'service_name' => $schedule->service_name,
+    'description'  => $schedule->description,
+    'category'     => $schedule->category ?? null,
+    'interval_km'  => $schedule->interval_km,
+    'next_due_km'  => $nextDueKm,
+    'km_remaining' => $kmLeft,       // ← renamed from km_left
+    'percent'      => $pct,          // ← new
+    'days_left'    => $daysLeft,
+    'status'       => $status,       // ← now 'Overdue'/'Due Soon'/'Upcoming'
+    'last_done_km' => $lastService ? $lastService->mileage_at_service : null,
+    'last_done_date' => $lastService ? $lastService->service_date->format('d M Y') : null,
+];
         }
 
         // Sort: overdue first, then due_soon, then ok
         usort($suggestions, function ($a, $b) {
-            $order = ['overdue' => 0, 'due_soon' => 1, 'ok' => 2];
-            return $order[$a['status']] <=> $order[$b['status']];
-        });
+    $order = ['Overdue' => 0, 'Due Soon' => 1, 'Upcoming' => 2];
+    return $order[$a['status']] <=> $order[$b['status']];
+});
 
         return view('suggestions.index', compact(
             'vehicle', 'suggestions', 'avgDailyKm', 'currentMileage'

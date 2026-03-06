@@ -1,144 +1,112 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                🧠 Maintenance Suggestions — {{ $vehicle->year }} {{ $vehicle->make }} {{ $vehicle->model }}
-            </h2>
-            <a href="{{ route('vehicles.show', $vehicle) }}"
-               class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
-                ← Back to Vehicle
-            </a>
+<div class="max-w-lg mx-auto px-4 pt-5">
+
+    {{-- Header --}}
+    <div class="mb-5 fade-in fade-in-1">
+        <p class="section-label mb-1">// MAINTENANCE AI</p>
+        <h1 class="heading text-3xl font-bold text-white">
+            Smart <span class="text-cyan">Suggestions</span>
+        </h1>
+        <p class="text-sm mt-1" style="color:#64748b;">
+            {{ $vehicle->make }} {{ $vehicle->model }} ·
+            <span class="mono" style="color:var(--cyan);">{{ number_format($vehicle->mileage) }} km</span>
+        </p>
+    </div>
+
+    {{-- Summary cards --}}
+    @php
+        $overdue  = collect($suggestions)->where('status','Overdue')->count();
+        $dueSoon  = collect($suggestions)->where('status','Due Soon')->count();
+        $upcoming = collect($suggestions)->where('status','Upcoming')->count();
+    @endphp
+    <div class="grid grid-cols-3 gap-3 mb-5 fade-in fade-in-2">
+        <div class="rounded-2xl p-3 text-center border" style="background:rgba(255,60,60,0.08);border-color:rgba(255,60,60,0.2);">
+            <p class="heading text-2xl font-bold" style="color:#f87171;">{{ $overdue }}</p>
+            <p class="text-xs mt-0.5" style="color:#f87171;opacity:0.7;">Overdue</p>
         </div>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            {{-- Vehicle Stats --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-gray-500 text-sm">Current Mileage</p>
-                    <p class="text-3xl font-bold text-blue-600 mt-1">
-                        {{ number_format($currentMileage) }} km
-                    </p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-gray-500 text-sm">Avg Daily Driving</p>
-                    <p class="text-3xl font-bold text-green-600 mt-1">
-                        {{ $avgDailyKm ? $avgDailyKm . ' km/day' : 'N/A' }}
-                    </p>
-                    @if(!$avgDailyKm)
-                        <p class="text-xs text-gray-400 mt-1">
-                            Add 2+ fuel logs to calculate
-                        </p>
-                    @endif
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-gray-500 text-sm">Overdue Services</p>
-                    <p class="text-3xl font-bold text-red-500 mt-1">
-                        {{ collect($suggestions)->where('status', 'overdue')->count() }}
-                    </p>
-                </div>
-            </div>
-
-            {{-- Suggestions List --}}
-            <div class="space-y-4">
-                @foreach($suggestions as $s)
-                    <div class="bg-white rounded-lg shadow p-6
-                        @if($s['status'] === 'overdue') border-l-4 border-red-500
-                        @elseif($s['status'] === 'due_soon') border-l-4 border-yellow-400
-                        @else border-l-4 border-green-400
-                        @endif">
-
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3">
-                                    <h3 class="text-lg font-bold text-gray-800">
-                                        {{ $s['service_name'] }}
-                                    </h3>
-
-                                    {{-- Status Badge --}}
-                                    @if($s['status'] === 'overdue')
-                                        <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full">
-                                            ⚠️ OVERDUE
-                                        </span>
-                                    @elseif($s['status'] === 'due_soon')
-                                        <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">
-                                            🔔 DUE SOON
-                                        </span>
-                                    @else
-                                        <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
-                                            ✅ OK
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <p class="text-sm text-gray-500 mt-1">
-                                    {{ $s['description'] }}
-                                </p>
-
-                                <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                    <div>
-                                        <p class="text-gray-400 text-xs">Service Interval</p>
-                                        <p class="font-medium">Every {{ number_format($s['interval_km']) }} km</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400 text-xs">Next Due At</p>
-                                        <p class="font-medium">{{ number_format($s['next_due_km']) }} km</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400 text-xs">KM Remaining</p>
-                                        <p class="font-medium
-                                            @if($s['km_left'] <= 0) text-red-600
-                                            @elseif($s['km_left'] <= 500) text-yellow-600
-                                            @else text-green-600
-                                            @endif">
-                                            @if($s['km_left'] <= 0)
-                                                {{ number_format(abs($s['km_left'])) }} km overdue
-                                            @else
-                                                {{ number_format($s['km_left']) }} km
-                                            @endif
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400 text-xs">Est. Days Left</p>
-                                        <p class="font-medium">
-                                            @if($s['days_left'] !== null)
-                                                @if($s['days_left'] <= 0)
-                                                    <span class="text-red-600">Overdue</span>
-                                                @else
-                                                    ~{{ $s['days_left'] }} days
-                                                @endif
-                                            @else
-                                                <span class="text-gray-400">N/A</span>
-                                            @endif
-                                        </p>
-                                    </div>
-                                </div>
-
-                                @if($s['last_done_date'])
-                                    <p class="text-xs text-gray-400 mt-2">
-                                        Last done: {{ $s['last_done_date'] }}
-                                        at {{ number_format($s['last_done_km']) }} km
-                                    </p>
-                                @else
-                                    <p class="text-xs text-gray-400 mt-2">
-                                        No record of this service yet
-                                    </p>
-                                @endif
-                            </div>
-
-                            {{-- Log Service Button --}}
-                            <a href="{{ route('service.create', $vehicle) }}"
-                               class="ml-4 bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 whitespace-nowrap">
-                                + Log Service
-                            </a>
-                        </div>
-
-                    </div>
-                @endforeach
-            </div>
-
+        <div class="rounded-2xl p-3 text-center border" style="background:rgba(255,107,0,0.08);border-color:rgba(255,107,0,0.2);">
+            <p class="heading text-2xl font-bold" style="color:var(--orange);">{{ $dueSoon }}</p>
+            <p class="text-xs mt-0.5" style="color:var(--orange);opacity:0.7;">Due Soon</p>
+        </div>
+        <div class="rounded-2xl p-3 text-center border" style="background:rgba(0,245,255,0.05);border-color:rgba(0,245,255,0.15);">
+            <p class="heading text-2xl font-bold text-cyan">{{ $upcoming }}</p>
+            <p class="text-xs mt-0.5" style="color:rgba(0,245,255,0.6);">Upcoming</p>
         </div>
     </div>
+
+    {{-- Suggestion cards --}}
+    <p class="section-label mb-3 fade-in fade-in-2">// MAINTENANCE SCHEDULE</p>
+
+    @foreach($suggestions as $index => $item)
+    @php
+        $isOverdue  = $item['status'] === 'Overdue';
+        $isDueSoon  = $item['status'] === 'Due Soon';
+        $isUpcoming = $item['status'] === 'Upcoming';
+        $pct = isset($item['percent']) ? min(100, max(0, $item['percent'])) : 50;
+
+        if($isOverdue){
+            $borderColor = 'rgba(255,60,60,0.4)'; $bg = 'rgba(255,60,60,0.08)';
+            $accentColor = '#f87171'; $tagBg = 'rgba(255,60,60,0.15)';
+            $barColor = '#f87171'; $icon = '⚠️';
+        } elseif($isDueSoon){
+            $borderColor = 'rgba(255,107,0,0.4)'; $bg = 'rgba(255,107,0,0.06)';
+            $accentColor = 'var(--orange)'; $tagBg = 'rgba(255,107,0,0.15)';
+            $barColor = '#ff6b00'; $icon = '🔔';
+        } else {
+            $borderColor = 'rgba(0,245,255,0.12)'; $bg = 'rgba(13,20,33,0.7)';
+            $accentColor = 'var(--cyan)'; $tagBg = 'rgba(0,245,255,0.1)';
+            $barColor = '#00f5ff'; $icon = '✅';
+        }
+    @endphp
+
+    <div class="rounded-2xl p-4 mb-3 fade-in fade-in-{{ min($index+3,5) }} border"
+         style="background:{{ $bg }};border-color:{{ $borderColor }};">
+        <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center gap-2">
+                <span>{{ $icon }}</span>
+                <div>
+                    <h3 class="heading font-bold text-white text-base leading-tight">
+                        {{ $item['service_name'] }}
+                    </h3>
+                    <p class="text-xs mt-0.5" style="color:#64748b;">
+                        Every {{ number_format($item['interval_km']) }} km
+                        @if(isset($item['category'])) · {{ $item['category'] }} @endif
+                    </p>
+                </div>
+            </div>
+            <span class="tag" style="background:{{ $tagBg }};color:{{ $accentColor }};border:1px solid {{ $borderColor }};">
+                {{ strtoupper($item['status']) }}
+            </span>
+        </div>
+
+        {{-- Progress bar --}}
+        <div class="rounded-full overflow-hidden mb-2" style="height:5px;background:rgba(255,255,255,0.06);">
+            <div class="h-full rounded-full transition-all" style="width:{{ $pct }}%;background:{{ $barColor }};box-shadow:0 0 8px {{ $barColor }};"></div>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <p class="text-xs" style="color:#64748b;">
+                @if($isOverdue)
+                    <span style="color:#f87171;">{{ number_format(abs($item['km_remaining'])) }} km overdue</span>
+                @else
+                    <span style="color:{{ $accentColor }};">{{ number_format($item['km_remaining']) }} km remaining</span>
+                @endif
+            </p>
+            <p class="mono text-xs" style="color:#475569;">
+                Due @ {{ number_format($item['next_due_km']) }} km
+            </p>
+        </div>
+    </div>
+    @endforeach
+
+    {{-- Back button --}}
+    <div class="mt-4 mb-6 fade-in fade-in-5">
+        <a href="{{ route('vehicles.index') }}"
+           class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl transition-all"
+           style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
+            ← Back to Vehicles
+        </a>
+    </div>
+
+</div>
 </x-app-layout>
