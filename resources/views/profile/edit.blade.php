@@ -20,8 +20,18 @@
         @include('profile.partials.update-password-form')
     </div>
 
+    {{-- Logout --}}
+    <form method="POST" action="{{ route('logout') }}" class="mb-4 fade-in fade-in-4">
+        @csrf
+        <button type="submit"
+                class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm"
+                style="background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);color:#ff6b00;">
+            ⏻ LOGOUT
+        </button>
+    </form>
+
     {{-- Delete Account --}}
-    <div class="glass-bright rounded-2xl p-5 mb-4 border fade-in fade-in-4"
+    <div class="glass-bright rounded-2xl p-5 mb-4 border fade-in fade-in-5"
          style="border-color:rgba(248,113,113,0.15);">
         @include('profile.partials.delete-user-form')
     </div>
