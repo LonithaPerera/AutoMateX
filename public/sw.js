@@ -1,4 +1,4 @@
-const CACHE_NAME = 'automatex-v1';
+const CACHE_NAME = 'automatex-v2';
 
 // Pages to cache for offline use
 const STATIC_ASSETS = [
