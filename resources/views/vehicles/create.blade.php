@@ -3,6 +3,11 @@
 
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
+        <a href="{{ route('vehicles.index') }}"
+           class="inline-flex items-center gap-2 text-sm mb-3"
+           style="color:#64748b;">
+            ← Back to Vehicles
+        </a>
         <p class="section-label mb-1">// NEW VEHICLE</p>
         <h1 class="heading text-3xl font-bold text-white">Add <span class="text-cyan">Vehicle</span></h1>
     </div>

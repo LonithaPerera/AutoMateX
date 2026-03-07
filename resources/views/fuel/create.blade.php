@@ -3,6 +3,11 @@
 
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
+        <a href="{{ route('fuel.index', $vehicle) }}"
+           class="inline-flex items-center gap-2 text-sm mb-3"
+           style="color:#64748b;">
+            ← Back to Fuel Logs
+        </a>
         <p class="section-label mb-1">// LOG FUEL</p>
         <h1 class="heading text-3xl font-bold text-white">
             New <span class="text-cyan">Fill-Up</span>
