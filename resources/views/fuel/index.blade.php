@@ -1,112 +1,142 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                ⛽ Fuel Tracker — {{ $vehicle->year }} {{ $vehicle->make }} {{ $vehicle->model }}
-            </h2>
-            <div class="flex gap-2">
-                <a href="{{ route('vehicles.show', $vehicle) }}"
-                   class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
-                    ← Back to Vehicle
-                </a>
-                <a href="{{ route('fuel.create', $vehicle) }}"
-                   class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    + Add Fuel Log
-                </a>
-            </div>
+<div class="max-w-lg mx-auto px-4 pt-5 pb-24">
+
+    {{-- Header --}}
+    <div class="flex items-center justify-between mb-5 fade-in fade-in-1">
+        <div>
+            <p class="section-label mb-1">// FUEL TRACKER</p>
+            <h1 class="heading text-3xl font-bold text-white">
+                {{ $vehicle->make }} <span class="text-cyan">{{ $vehicle->model }}</span>
+            </h1>
+            <p class="text-xs mono mt-0.5" style="color:#64748b;">
+                {{ $vehicle->year }} · {{ number_format($vehicle->mileage) }} km
+            </p>
         </div>
-    </x-slot>
+        <a href="{{ route('fuel.create', $vehicle) }}"
+           class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
+           style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
+            + LOG
+        </a>
+    </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            {{-- Success Message --}}
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            {{-- Stats Cards --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-gray-500 text-sm">Avg Fuel Efficiency</p>
-                    <p class="text-3xl font-bold text-blue-600 mt-1">
-                        {{ $avgKmPerLiter ? number_format($avgKmPerLiter, 1) . ' km/L' : 'N/A' }}
-                    </p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-gray-500 text-sm">Total Fuel Cost</p>
-                    <p class="text-3xl font-bold text-green-600 mt-1">
-                        LKR {{ number_format($totalCost, 2) }}
-                    </p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-gray-500 text-sm">Total Liters Logged</p>
-                    <p class="text-3xl font-bold text-orange-500 mt-1">
-                        {{ number_format($totalLiters, 1) }} L
-                    </p>
-                </div>
-            </div>
-
-            {{-- Fuel Logs Table --}}
-            @if($fuelLogs->isEmpty())
-                <div class="bg-white p-8 rounded shadow text-center">
-                    <p class="text-gray-500 text-lg">No fuel logs yet.</p>
-                    <a href="{{ route('fuel.create', $vehicle) }}"
-                       class="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                        Add Your First Fuel Log
-                    </a>
-                </div>
-            @else
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
-                            <tr>
-                                <th class="px-6 py-3 text-left">Date</th>
-                                <th class="px-6 py-3 text-left">Odometer</th>
-                                <th class="px-6 py-3 text-left">Liters</th>
-                                <th class="px-6 py-3 text-left">Cost (LKR)</th>
-                                <th class="px-6 py-3 text-left">Efficiency</th>
-                                <th class="px-6 py-3 text-left">Station</th>
-                                <th class="px-6 py-3 text-left">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach($fuelLogs as $log)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4">{{ $log->date->format('d M Y') }}</td>
-                                    <td class="px-6 py-4">{{ number_format($log->km_reading) }} km</td>
-                                    <td class="px-6 py-4">{{ $log->liters }} L</td>
-                                    <td class="px-6 py-4">{{ number_format($log->cost, 2) }}</td>
-                                    <td class="px-6 py-4">
-                                        @if($log->km_per_liter)
-                                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">
-                                                {{ $log->km_per_liter }} km/L
-                                            </span>
-                                        @else
-                                            <span class="text-gray-400 text-xs">First entry</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4">{{ $log->fuel_station ?? '-' }}</td>
-                                    <td class="px-6 py-4">
-                                        <form action="{{ route('fuel.destroy', [$vehicle, $log]) }}"
-                                              method="POST"
-                                              onsubmit="return confirm('Delete this log?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="text-red-500 hover:text-red-700 text-xs">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
-
+    {{-- Summary cards --}}
+    @php
+        $avgEff = $fuelLogs->whereNotNull('km_per_liter')->avg('km_per_liter');
+        $totalCost = $fuelLogs->sum('cost');
+        $totalLiters = $fuelLogs->sum('liters');
+    @endphp
+    <div class="grid grid-cols-3 gap-3 mb-5 fade-in fade-in-2">
+        <div class="rounded-2xl p-3 text-center border" style="background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.15);">
+            <p class="heading text-2xl font-bold" style="color:#4ade80;">
+                {{ $avgEff ? number_format($avgEff,1) : '—' }}
+            </p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">avg km/L</p>
+        </div>
+        <div class="rounded-2xl p-3 text-center border" style="background:rgba(0,245,255,0.05);border-color:rgba(0,245,255,0.15);">
+            <p class="heading text-2xl font-bold text-cyan">
+                {{ number_format($totalLiters,1) }}
+            </p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">total liters</p>
+        </div>
+        <div class="rounded-2xl p-3 text-center border" style="background:rgba(0,102,255,0.05);border-color:rgba(0,102,255,0.15);">
+            <p class="heading text-xl font-bold" style="color:#6699ff;">
+                {{ number_format($totalCost) }}
+            </p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">total LKR</p>
         </div>
     </div>
+
+    {{-- Success --}}
+    @if(session('success'))
+        <div class="rounded-2xl p-3 mb-4 border fade-in fade-in-1"
+             style="background:rgba(0,245,255,0.06);border-color:rgba(0,245,255,0.2);">
+            <span class="text-sm" style="color:rgba(0,245,255,0.8);">✓ {{ session('success') }}</span>
+        </div>
+    @endif
+
+    {{-- Fuel log list --}}
+    <p class="section-label mb-3 fade-in fade-in-2">// FILL-UP HISTORY</p>
+
+    @forelse($fuelLogs as $index => $log)
+    <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }}"
+         style="border-color:rgba(0,245,255,0.1);">
+
+        {{-- Top row --}}
+        <div class="flex items-start justify-between mb-3">
+            <div class="flex items-start gap-3">
+                <div class="rounded-xl p-2 mt-0.5" style="background:rgba(74,222,128,0.1);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2">
+                        <path d="M3 22V8a2 2 0 012-2h6a2 2 0 012 2v14M3 22h10M13 22V11l4-4 4 4v11M13 22h8"/>
+                        <path d="M7 22V15h2v7"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="heading font-bold text-white text-base leading-tight">
+                        {{ $log->liters }} L filled
+                    </h3>
+                    <p class="text-xs mt-0.5" style="color:#64748b;">
+                        {{ \Carbon\Carbon::parse($log->date)->format('d M Y') }}
+                        @if($log->fuel_station) · {{ $log->fuel_station }} @endif
+                    </p>
+                </div>
+            </div>
+            @if($log->km_per_liter)
+            <div class="text-right">
+                <p class="heading font-bold text-lg" style="color:#4ade80;">{{ number_format($log->km_per_liter,1) }}</p>
+                <p class="text-xs" style="color:#64748b;">km/L</p>
+            </div>
+            @endif
+        </div>
+
+        {{-- Stats row --}}
+        <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-xs mb-0.5" style="color:#64748b;">Odometer</p>
+                <p class="mono text-sm font-bold text-white">{{ number_format($log->km_reading) }} km</p>
+            </div>
+            <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-xs mb-0.5" style="color:#64748b;">Liters</p>
+                <p class="mono text-sm font-bold text-cyan">{{ $log->liters }} L</p>
+            </div>
+            <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-xs mb-0.5" style="color:#64748b;">Cost</p>
+                <p class="mono text-sm font-bold" style="color:#4ade80;">LKR {{ number_format($log->cost) }}</p>
+            </div>
+        </div>
+
+        {{-- Delete --}}
+        <form method="POST" action="{{ route('fuel.destroy', [$vehicle, $log]) }}"
+              onsubmit="return confirm('Delete this fuel log?')">
+            @csrf @method('DELETE')
+            <button type="submit"
+                    class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+                    style="background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.15);color:#f87171;">
+                🗑 DELETE
+            </button>
+        </form>
+    </div>
+    @empty
+        <div class="glass rounded-2xl p-10 text-center border fade-in fade-in-3"
+             style="border-color:rgba(255,255,255,0.06);">
+            <div class="text-5xl mb-4">⛽</div>
+            <p class="heading text-xl font-bold text-white mb-1">No Fuel Logs Yet</p>
+            <p class="text-sm mb-5" style="color:#64748b;">Track your fuel to monitor efficiency</p>
+            <a href="{{ route('fuel.create', $vehicle) }}"
+               class="inline-block px-6 py-3 rounded-xl text-sm font-semibold heading tracking-wider"
+               style="background:rgba(0,245,255,0.12);border:1px solid rgba(0,245,255,0.25);color:var(--cyan);">
+                + LOG FUEL
+            </a>
+        </div>
+    @endforelse
+
+    {{-- Back --}}
+    <div class="mt-2">
+        <a href="{{ route('vehicles.index') }}"
+           class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl"
+           style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
+            ← Back to Vehicles
+        </a>
+    </div>
+
+</div>
 </x-app-layout>

@@ -1,115 +1,123 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            👨‍💼 Admin Dashboard
-        </h2>
-    </x-slot>
+<div class="max-w-lg mx-auto px-4 pt-5 pb-24">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- Header --}}
+    <div class="mb-5 fade-in fade-in-1">
+        <p class="section-label mb-1">// SYSTEM CONTROL</p>
+        <h1 class="heading text-3xl font-bold text-white">
+            Admin <span class="text-cyan">Dashboard</span>
+        </h1>
+        <p class="text-xs mt-1" style="color:#64748b;">System-wide statistics and management</p>
+    </div>
 
-            {{-- Stats Grid --}}
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-blue-500">
-                    <p class="text-gray-500 text-sm">Total Users</p>
-                    <p class="text-4xl font-bold text-blue-600 mt-1">{{ $stats['total_users'] }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-green-500">
-                    <p class="text-gray-500 text-sm">Total Vehicles</p>
-                    <p class="text-4xl font-bold text-green-600 mt-1">{{ $stats['total_vehicles'] }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-purple-500">
-                    <p class="text-gray-500 text-sm">Service Records</p>
-                    <p class="text-4xl font-bold text-purple-600 mt-1">{{ $stats['total_service_logs'] }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-orange-500">
-                    <p class="text-gray-500 text-sm">Fuel Logs</p>
-                    <p class="text-4xl font-bold text-orange-500 mt-1">{{ $stats['total_fuel_logs'] }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-yellow-500">
-                    <p class="text-gray-500 text-sm">Total Bookings</p>
-                    <p class="text-4xl font-bold text-yellow-600 mt-1">{{ $stats['total_bookings'] }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-red-500">
-                    <p class="text-gray-500 text-sm">Pending Bookings</p>
-                    <p class="text-4xl font-bold text-red-500 mt-1">{{ $stats['pending_bookings'] }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-teal-500">
-                    <p class="text-gray-500 text-sm">Completed Bookings</p>
-                    <p class="text-4xl font-bold text-teal-600 mt-1">{{ $stats['completed_bookings'] }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center border-t-4 border-gray-500">
-                    <p class="text-gray-500 text-sm">Registered Garages</p>
-                    <p class="text-4xl font-bold text-gray-600 mt-1">{{ $stats['total_garages'] }}</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                {{-- Recent Users --}}
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <div class="px-6 py-4 bg-gray-50 border-b flex justify-between items-center">
-                        <h3 class="font-bold text-gray-700">👥 Recent Users</h3>
-                        <a href="{{ route('admin.users') }}"
-                           class="text-blue-600 text-sm hover:underline">View All</a>
-                    </div>
-                    <div class="divide-y divide-gray-100">
-                        @foreach($recentUsers as $user)
-                            <div class="px-6 py-3 flex justify-between items-center">
-                                <div>
-                                    <p class="font-medium text-sm text-gray-800">{{ $user->name }}</p>
-                                    <p class="text-xs text-gray-400">{{ $user->email }}</p>
-                                </div>
-                                <span class="text-xs px-2 py-1 rounded-full
-                                    @if($user->role === 'admin') bg-purple-100 text-purple-700
-                                    @elseif($user->role === 'garage') bg-blue-100 text-blue-700
-                                    @else bg-green-100 text-green-700
-                                    @endif">
-                                    {{ ucfirst(str_replace('_', ' ', $user->role)) }}
-                                </span>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Recent Bookings --}}
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <div class="px-6 py-4 bg-gray-50 border-b">
-                        <h3 class="font-bold text-gray-700">📅 Recent Bookings</h3>
-                    </div>
-                    <div class="divide-y divide-gray-100">
-                        @forelse($recentBookings as $booking)
-                            <div class="px-6 py-3">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="font-medium text-sm text-gray-800">
-                                            {{ $booking->service_type }}
-                                        </p>
-                                        <p class="text-xs text-gray-400">
-                                            {{ $booking->vehicle->user->name }} →
-                                            {{ $booking->garage->name }}
-                                        </p>
-                                        <p class="text-xs text-gray-400">
-                                            {{ $booking->booking_date->format('d M Y') }}
-                                        </p>
-                                    </div>
-                                    <span class="text-xs px-2 py-1 rounded-full
-                                        @if($booking->status === 'pending') bg-yellow-100 text-yellow-700
-                                        @elseif($booking->status === 'confirmed') bg-green-100 text-green-700
-                                        @elseif($booking->status === 'completed') bg-gray-100 text-gray-700
-                                        @else bg-red-100 text-red-700
-                                        @endif">
-                                        {{ ucfirst($booking->status) }}
-                                    </span>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="px-6 py-4 text-gray-400 text-sm">No bookings yet.</div>
-                        @endforelse
-                    </div>
-                </div>
-
-            </div>
+    {{-- Stats grid --}}
+    <p class="section-label mb-3 fade-in fade-in-2">// SYSTEM STATISTICS</p>
+    <div class="grid grid-cols-2 gap-3 mb-5 fade-in fade-in-2">
+        <div class="rounded-2xl p-4 border" style="background:rgba(0,245,255,0.05);border-color:rgba(0,245,255,0.15);">
+            <p class="heading text-3xl font-bold text-cyan">{{ $stats['total_users'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Total Users</p>
+        </div>
+        <div class="rounded-2xl p-4 border" style="background:rgba(0,102,255,0.05);border-color:rgba(0,102,255,0.15);">
+            <p class="heading text-3xl font-bold" style="color:#6699ff;">{{ $stats['total_vehicles'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Total Vehicles</p>
+        </div>
+        <div class="rounded-2xl p-4 border" style="background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.15);">
+            <p class="heading text-3xl font-bold" style="color:#4ade80;">{{ $stats['total_service_logs'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Service Logs</p>
+        </div>
+        <div class="rounded-2xl p-4 border" style="background:rgba(255,107,0,0.05);border-color:rgba(255,107,0,0.15);">
+            <p class="heading text-3xl font-bold" style="color:#ff6b00;">{{ $stats['total_fuel_logs'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Fuel Logs</p>
+        </div>
+        <div class="rounded-2xl p-4 border" style="background:rgba(168,85,247,0.05);border-color:rgba(168,85,247,0.15);">
+            <p class="heading text-3xl font-bold" style="color:#a855f7;">{{ $stats['total_bookings'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Total Bookings</p>
+        </div>
+        <div class="rounded-2xl p-4 border" style="background:rgba(251,191,36,0.05);border-color:rgba(251,191,36,0.15);">
+            <p class="heading text-3xl font-bold" style="color:#fbbf24;">{{ $stats['total_garages'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Garages</p>
+        </div>
+        <div class="rounded-2xl p-4 border" style="background:rgba(248,113,113,0.05);border-color:rgba(248,113,113,0.15);">
+            <p class="heading text-3xl font-bold" style="color:#f87171;">{{ $stats['pending_bookings'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Pending Bookings</p>
+        </div>
+        <div class="rounded-2xl p-4 border" style="background:rgba(20,184,166,0.05);border-color:rgba(20,184,166,0.15);">
+            <p class="heading text-3xl font-bold" style="color:#2dd4bf;">{{ $stats['completed_bookings'] }}</p>
+            <p class="text-xs mt-1" style="color:#64748b;">Completed</p>
         </div>
     </div>
+
+    {{-- Recent Users --}}
+    <p class="section-label mb-3 fade-in fade-in-3">// RECENT USERS</p>
+    <div class="glass-bright rounded-2xl p-4 mb-5 border fade-in fade-in-3"
+         style="border-color:rgba(0,245,255,0.1);">
+        @foreach($recentUsers as $user)
+        @php
+            $roleColor = match($user->role) {
+                'admin'         => ['bg'=>'rgba(255,107,0,0.1)','color'=>'#ff6b00','border'=>'rgba(255,107,0,0.2)'],
+                'garage'        => ['bg'=>'rgba(168,85,247,0.1)','color'=>'#a855f7','border'=>'rgba(168,85,247,0.2)'],
+                'vehicle_owner' => ['bg'=>'rgba(0,245,255,0.1)','color'=>'#00f5ff','border'=>'rgba(0,245,255,0.2)'],
+                default         => ['bg'=>'rgba(255,255,255,0.05)','color'=>'#94a3b8','border'=>'rgba(255,255,255,0.1)'],
+            };
+        @endphp
+        <div class="flex items-center justify-between py-2.5 border-b last:border-0"
+             style="border-color:rgba(255,255,255,0.05);">
+            <div class="flex items-center gap-3">
+                <div class="rounded-xl w-8 h-8 flex items-center justify-center font-bold heading text-sm"
+                     style="background:rgba(0,245,255,0.1);color:var(--cyan);">
+                    {{ strtoupper(substr($user->name,0,1)) }}
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-white">{{ $user->name }}</p>
+                    <p class="text-xs" style="color:#64748b;">{{ $user->email }}</p>
+                </div>
+            </div>
+            <span class="tag" style="background:{{ $roleColor['bg'] }};color:{{ $roleColor['color'] }};border:1px solid {{ $roleColor['border'] }};">
+                {{ strtoupper(str_replace('_',' ',$user->role)) }}
+            </span>
+        </div>
+        @endforeach
+
+        <a href="{{ route('admin.users') }}"
+           class="flex items-center justify-center gap-2 w-full mt-3 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider"
+           style="background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.15);color:var(--cyan);">
+            VIEW ALL USERS →
+        </a>
+    </div>
+
+    {{-- Recent Bookings --}}
+    <p class="section-label mb-3 fade-in fade-in-4">// RECENT BOOKINGS</p>
+    <div class="glass-bright rounded-2xl p-4 border fade-in fade-in-4"
+         style="border-color:rgba(0,245,255,0.1);">
+        @forelse($recentBookings as $booking)
+        @php
+            $sc = match($booking->status) {
+                'pending'   => ['bg'=>'rgba(251,191,36,0.1)','color'=>'#fbbf24','border'=>'rgba(251,191,36,0.2)'],
+                'confirmed' => ['bg'=>'rgba(0,245,255,0.1)','color'=>'#00f5ff','border'=>'rgba(0,245,255,0.2)'],
+                'completed' => ['bg'=>'rgba(74,222,128,0.1)','color'=>'#4ade80','border'=>'rgba(74,222,128,0.2)'],
+                'cancelled' => ['bg'=>'rgba(248,113,113,0.1)','color'=>'#f87171','border'=>'rgba(248,113,113,0.2)'],
+                default     => ['bg'=>'rgba(255,255,255,0.05)','color'=>'#94a3b8','border'=>'rgba(255,255,255,0.1)'],
+            };
+        @endphp
+        <div class="flex items-start justify-between py-2.5 border-b last:border-0"
+             style="border-color:rgba(255,255,255,0.05);">
+            <div>
+                <p class="text-sm font-semibold text-white">{{ $booking->service_type }}</p>
+                <p class="text-xs mt-0.5" style="color:#64748b;">
+                    {{ $booking->vehicle->user->name }} → {{ $booking->garage->name }}
+                </p>
+                <p class="text-xs" style="color:#475569;">
+                    {{ $booking->booking_date->format('d M Y') }}
+                </p>
+            </div>
+            <span class="tag" style="background:{{ $sc['bg'] }};color:{{ $sc['color'] }};border:1px solid {{ $sc['border'] }};">
+                {{ strtoupper($booking->status) }}
+            </span>
+        </div>
+        @empty
+        <p class="text-sm text-center py-4" style="color:#64748b;">No bookings yet</p>
+        @endforelse
+    </div>
+
+</div>
 </x-app-layout>

@@ -1,201 +1,150 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            🔩 Parts Verification Database
-        </h2>
-    </x-slot>
+<div class="max-w-lg mx-auto px-4 pt-5 pb-24">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            {{-- Info Banner --}}
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <p class="text-blue-800 text-sm">
-                    🛡️ <strong>Verify your spare parts before buying.</strong>
-                    Search by vehicle make/model or part name to find the correct
-                    OEM part number and avoid counterfeit parts.
-                </p>
-            </div>
-
-            {{-- Search Form --}}
-            <div class="bg-white rounded-lg shadow p-6 mb-8">
-                <form method="GET" action="{{ route('parts.index') }}">
-
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-
-                        {{-- Make --}}
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Vehicle Make
-                            </label>
-                            <select name="make"
-                                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">All Makes</option>
-                                @foreach($makes as $make)
-                                    <option value="{{ $make }}"
-                                        {{ request('make') == $make ? 'selected' : '' }}>
-                                        {{ $make }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Model --}}
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Vehicle Model
-                            </label>
-                            <select name="model"
-                                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">All Models</option>
-                                @foreach($models as $model)
-                                    <option value="{{ $model }}"
-                                        {{ request('model') == $model ? 'selected' : '' }}>
-                                        {{ $model }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Category --}}
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Part Category
-                            </label>
-                            <select name="category"
-                                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">All Categories</option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat }}"
-                                        {{ request('category') == $cat ? 'selected' : '' }}>
-                                        {{ $cat }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Search --}}
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Search by Part / OEM Number
-                            </label>
-                            <input type="text" name="search"
-                                   value="{{ request('search') }}"
-                                   placeholder="e.g. Oil Filter, 90915-YZZD2"
-                                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
-
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button type="submit"
-                                class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                            🔍 Search Parts
-                        </button>
-                        <a href="{{ route('parts.index') }}"
-                           class="bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300">
-                            Clear
-                        </a>
-                    </div>
-
-                </form>
-            </div>
-
-            {{-- Results --}}
-            @if(request()->filled('make') || request()->filled('search'))
-                <div class="mb-4 flex justify-between items-center">
-                    <p class="text-gray-600 text-sm">
-                        Found <strong>{{ $results->count() }}</strong> part(s)
-                    </p>
-                </div>
-
-                @if($results->isEmpty())
-                    <div class="bg-white rounded-lg shadow p-8 text-center">
-                        <p class="text-gray-500">No parts found for your search.</p>
-                        <p class="text-gray-400 text-sm mt-1">
-                            Try a different make, model, or part name.
-                        </p>
-                    </div>
-                @else
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        @foreach($results as $part)
-                            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
-
-                                <div class="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 class="font-bold text-gray-800 text-lg">
-                                            {{ $part->part_name }}
-                                        </h3>
-                                        <p class="text-sm text-gray-500">
-                                            {{ $part->vehicle_make }} {{ $part->vehicle_model }}
-                                            ({{ $part->vehicle_year_from }}–{{ $part->vehicle_year_to }})
-                                        </p>
-                                    </div>
-                                    <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
-                                        {{ $part->part_category }}
-                                    </span>
-                                </div>
-
-                                <div class="space-y-2 text-sm">
-                                    {{-- OEM Part Number --}}
-                                    <div class="bg-green-50 border border-green-200 rounded p-3">
-                                        <p class="text-xs text-green-600 font-medium uppercase">
-                                            ✅ OEM Part Number
-                                        </p>
-                                        <p class="font-bold text-green-800 text-base mt-1 font-mono">
-                                            {{ $part->oem_part_number }}
-                                        </p>
-                                        <p class="text-xs text-green-600 mt-1">
-                                            Brand: {{ $part->brand }}
-                                        </p>
-                                    </div>
-
-                                    {{-- Alternative --}}
-                                    @if($part->alternative_part_number)
-                                        <div class="bg-yellow-50 border border-yellow-200 rounded p-3">
-                                            <p class="text-xs text-yellow-600 font-medium uppercase">
-                                                🔄 Verified Alternative
-                                            </p>
-                                            <p class="font-bold text-yellow-800 text-base mt-1 font-mono">
-                                                {{ $part->alternative_part_number }}
-                                            </p>
-                                        </div>
-                                    @endif
-
-                                    {{-- Description --}}
-                                    @if($part->description)
-                                        <p class="text-gray-500 text-xs mt-2">
-                                            ℹ️ {{ $part->description }}
-                                        </p>
-                                    @endif
-                                </div>
-
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            @else
-                {{-- Default state - show all makes --}}
-                <div class="bg-white rounded-lg shadow p-8 text-center">
-                    <p class="text-4xl mb-4">🔩</p>
-                    <p class="text-gray-700 font-medium text-lg">
-                        Select a vehicle make or search for a part to get started
-                    </p>
-                    <p class="text-gray-400 text-sm mt-2">
-                        Currently covers: Toyota Vitz, Toyota Premio, Toyota Aqua,
-                        Suzuki Alto, Honda Fit
-                    </p>
-                    <div class="flex flex-wrap justify-center gap-2 mt-4">
-                        @foreach($makes as $make)
-                            <a href="{{ route('parts.index') }}?make={{ $make }}"
-                               class="bg-blue-100 text-blue-700 px-4 py-2 rounded hover:bg-blue-200">
-                                {{ $make }}
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-        </div>
+    {{-- Header --}}
+    <div class="mb-5 fade-in fade-in-1">
+        <p class="section-label mb-1">// OEM DATABASE</p>
+        <h1 class="heading text-3xl font-bold text-white">
+            Parts <span class="text-cyan">Verification</span>
+        </h1>
+        <p class="text-xs mt-1" style="color:#64748b;">Verify OEM part numbers before purchase</p>
     </div>
+
+    {{-- Search form --}}
+    <div class="glass-bright rounded-2xl p-4 mb-5 border fade-in fade-in-2"
+         style="border-color:rgba(0,245,255,0.12);">
+        <form method="GET" action="{{ route('parts.index') }}">
+            <p class="section-label mb-3">// SEARCH FILTERS</p>
+
+            {{-- Keyword --}}
+            <div class="mb-3">
+                <label class="section-label mb-2 block">// keyword</label>
+                <input type="text" name="search" value="{{ request('search') }}"
+                       placeholder="e.g. Oil Filter, Brake Pad..."
+                       class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+            </div>
+
+            {{-- Make & Model --}}
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="section-label mb-2 block">// vehicle make</label>
+                    <input type="text" name="make" value="{{ request('make') }}"
+                           placeholder="Toyota"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+                <div>
+                    <label class="section-label mb-2 block">// vehicle model</label>
+                    <input type="text" name="model" value="{{ request('model') }}"
+                           placeholder="Premio"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+            </div>
+
+            {{-- Category --}}
+            <div class="mb-4">
+                <label class="section-label mb-2 block">// category</label>
+                <input type="text" name="category" value="{{ request('category') }}"
+                       placeholder="e.g. Filters, Brakes, Electrical..."
+                       class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm transition-all active:scale-95"
+                    style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.25);">
+                🔍 SEARCH PARTS
+            </button>
+
+            @if(request()->hasAny(['search','make','model','category']))
+            <a href="{{ route('parts.index') }}"
+               class="block text-center mt-2 text-sm py-2" style="color:#64748b;">
+                Clear filters
+            </a>
+            @endif
+        </form>
+    </div>
+
+    {{-- Results --}}
+    <p class="section-label mb-3 fade-in fade-in-3">
+        // RESULTS
+        @if(isset($parts))
+            <span style="color:var(--cyan);">({{ $parts->count() }} found)</span>
+        @endif
+    </p>
+
+    @if(isset($parts) && $parts->count() > 0)
+        @foreach($parts as $index => $part)
+        <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }}"
+             style="border-color:rgba(0,245,255,0.1);">
+
+            {{-- Header --}}
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <h3 class="heading font-bold text-white text-base leading-tight">
+                        {{ $part->part_name }}
+                    </h3>
+                    <p class="text-xs mt-0.5" style="color:#64748b;">
+                        {{ $part->vehicle_make }} {{ $part->vehicle_model }}
+                        @if($part->vehicle_year_from)
+                            · {{ $part->vehicle_year_from }}–{{ $part->vehicle_year_to ?? 'present' }}
+                        @endif
+                    </p>
+                </div>
+                <span class="tag" style="background:rgba(0,245,255,0.08);color:rgba(0,245,255,0.7);border:1px solid rgba(0,245,255,0.15);">
+                    {{ strtoupper($part->part_category ?? 'PART') }}
+                </span>
+            </div>
+
+            {{-- OEM numbers --}}
+            <div class="grid grid-cols-1 gap-2 mb-3">
+                <div class="rounded-xl p-3" style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.12);">
+                    <p class="text-xs mb-1" style="color:rgba(0,245,255,0.5);">// OEM PART NUMBER</p>
+                    <p class="mono font-bold text-sm" style="color:var(--cyan);">{{ $part->oem_part_number }}</p>
+                </div>
+                @if($part->alternative_part_number)
+                <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);">
+                    <p class="text-xs mb-1" style="color:#64748b;">// ALTERNATIVE NUMBER</p>
+                    <p class="mono font-bold text-sm text-white">{{ $part->alternative_part_number }}</p>
+                </div>
+                @endif
+            </div>
+
+            {{-- Brand & description --}}
+            @if($part->brand || $part->description)
+            <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);">
+                @if($part->brand)
+                <p class="text-xs mb-1">
+                    <span style="color:#64748b;">Brand: </span>
+                    <span class="text-white font-semibold">{{ $part->brand }}</span>
+                </p>
+                @endif
+                @if($part->description)
+                <p class="text-xs" style="color:#64748b;">{{ $part->description }}</p>
+                @endif
+            </div>
+            @endif
+        </div>
+        @endforeach
+
+    @elseif(request()->hasAny(['search','make','model','category']))
+        <div class="glass rounded-2xl p-10 text-center border" style="border-color:rgba(255,255,255,0.06);">
+            <div class="text-5xl mb-4">🔍</div>
+            <p class="heading text-xl font-bold text-white mb-1">No Parts Found</p>
+            <p class="text-sm" style="color:#64748b;">Try different search terms</p>
+        </div>
+
+    @else
+        <div class="glass rounded-2xl p-8 text-center border" style="border-color:rgba(255,255,255,0.06);">
+            <div class="text-4xl mb-3">🔧</div>
+            <p class="heading text-lg font-bold text-white mb-1">Search the Database</p>
+            <p class="text-sm" style="color:#64748b;">
+                Contains {{ \App\Models\Part::count() }} verified OEM part numbers
+            </p>
+        </div>
+    @endif
+
+</div>
 </x-app-layout>

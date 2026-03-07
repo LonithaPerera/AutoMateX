@@ -1,84 +1,100 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            ⛽ Add Fuel Log — {{ $vehicle->year }} {{ $vehicle->make }} {{ $vehicle->model }}
-        </h2>
-    </x-slot>
+<div class="max-w-lg mx-auto px-4 pt-5 pb-8">
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white p-8 rounded-lg shadow">
-
-                <form action="{{ route('fuel.store', $vehicle) }}" method="POST">
-                    @csrf
-
-                    {{-- Date --}}
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Date *</label>
-                        <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}"
-                               class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @error('date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Odometer Reading --}}
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Odometer Reading (km) *</label>
-                        <input type="number" name="km_reading"
-                               value="{{ old('km_reading', $vehicle->mileage) }}"
-                               min="0"
-                               class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @error('km_reading') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Liters --}}
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Liters Filled *</label>
-                        <input type="number" name="liters" value="{{ old('liters') }}"
-                               step="0.01" min="0.1" placeholder="e.g. 35.50"
-                               class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @error('liters') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Cost --}}
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Total Cost (LKR) *</label>
-                        <input type="number" name="cost" value="{{ old('cost') }}"
-                               step="0.01" min="0" placeholder="e.g. 9500.00"
-                               class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @error('cost') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Fuel Station --}}
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Fuel Station</label>
-                        <input type="text" name="fuel_station" value="{{ old('fuel_station') }}"
-                               placeholder="e.g. Lanka IOC, Nugegoda"
-                               class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @error('fuel_station') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Notes --}}
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700">Notes</label>
-                        <textarea name="notes" rows="2" placeholder="Any additional notes..."
-                                  class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('notes') }}</textarea>
-                        @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Buttons --}}
-                    <div class="flex gap-3">
-                        <button type="submit"
-                                class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                            Save Fuel Log
-                        </button>
-                        <a href="{{ route('fuel.index', $vehicle) }}"
-                           class="bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300">
-                            Cancel
-                        </a>
-                    </div>
-                </form>
-
-            </div>
-        </div>
+    {{-- Header --}}
+    <div class="mb-5 fade-in fade-in-1">
+        <p class="section-label mb-1">// LOG FUEL</p>
+        <h1 class="heading text-3xl font-bold text-white">
+            New <span class="text-cyan">Fill-Up</span>
+        </h1>
+        <p class="text-xs mono mt-1" style="color:#64748b;">
+            {{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->year }}
+        </p>
     </div>
+
+    <div class="glass-bright rounded-2xl p-5 fade-in fade-in-2 border animate-glow">
+        <form method="POST" action="{{ route('fuel.store', $vehicle) }}">
+            @csrf
+
+            {{-- Date & Odometer --}}
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="section-label mb-2 block">// date</label>
+                    <input type="date" name="date"
+                           value="{{ old('date', date('Y-m-d')) }}" required
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
+                </div>
+                <div>
+                    <label class="section-label mb-2 block">// odometer (km)</label>
+                    <input type="number" name="km_reading"
+                           value="{{ old('km_reading', $vehicle->mileage) }}"
+                           required placeholder="{{ $vehicle->mileage }}" min="0"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+            </div>
+
+            {{-- Liters & Cost --}}
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="section-label mb-2 block">// liters filled</label>
+                    <input type="number" name="liters"
+                           value="{{ old('liters') }}"
+                           required placeholder="35.5" min="0" step="0.01"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+                <div>
+                    <label class="section-label mb-2 block">// total cost (LKR)</label>
+                    <input type="number" name="cost"
+                           value="{{ old('cost') }}"
+                           required placeholder="8500" min="0" step="0.01"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+            </div>
+
+            {{-- Fuel Station --}}
+            <div class="mb-4">
+                <label class="section-label mb-2 block">// fuel station (optional)</label>
+                <input type="text" name="fuel_station"
+                       value="{{ old('fuel_station') }}"
+                       placeholder="e.g. Ceylon Petroleum, Nugegoda"
+                       class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+            </div>
+
+            {{-- Notes --}}
+            <div class="mb-6">
+                <label class="section-label mb-2 block">// notes (optional)</label>
+                <textarea name="notes" rows="2" placeholder="Any notes..."
+                          class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
+                          style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('notes') }}</textarea>
+            </div>
+
+            {{-- Auto calc notice --}}
+            <div class="rounded-xl p-3 mb-4 flex items-center gap-2"
+                 style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.12);">
+                <span style="color:var(--cyan);">⚡</span>
+                <p class="text-xs" style="color:rgba(0,245,255,0.7);">
+                    Fuel efficiency (km/L) will be calculated automatically
+                </p>
+            </div>
+
+            {{-- Submit --}}
+            <button type="submit"
+                    class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm transition-all active:scale-95"
+                    style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 24px rgba(0,245,255,0.3);">
+                SAVE FILL-UP →
+            </button>
+
+            <a href="{{ route('fuel.index', $vehicle) }}"
+               class="block text-center mt-3 text-sm py-2" style="color:#64748b;">
+                Cancel
+            </a>
+        </form>
+    </div>
+
+</div>
 </x-app-layout>

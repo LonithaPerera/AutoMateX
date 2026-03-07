@@ -1,97 +1,90 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            📅 Book Appointment — {{ $garage->name }}
-        </h2>
-    </x-slot>
+<div class="max-w-lg mx-auto px-4 pt-5 pb-8">
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white p-8 rounded-lg shadow">
-
-                {{-- Garage Info --}}
-                <div class="bg-blue-50 rounded p-4 mb-6">
-                    <p class="font-bold text-blue-800">{{ $garage->name }}</p>
-                    <p class="text-sm text-blue-600">
-                        📍 {{ $garage->address }}, {{ $garage->city }}
-                        &nbsp;|&nbsp; 📞 {{ $garage->phone }}
-                    </p>
-                </div>
-
-                <form action="{{ route('bookings.store', $garage) }}" method="POST">
-                    @csrf
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Select Vehicle *</label>
-                        <select name="vehicle_id"
-                                class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">-- Choose your vehicle --</option>
-                            @foreach($vehicles as $vehicle)
-                                <option value="{{ $vehicle->id }}"
-                                    {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}>
-                                    {{ $vehicle->year }} {{ $vehicle->make }} {{ $vehicle->model }}
-                                    ({{ $vehicle->license_plate ?? 'No plate' }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('vehicle_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Service Required *</label>
-                        <input type="text" name="service_type" value="{{ old('service_type') }}"
-                               placeholder="e.g. Engine Oil Change, Brake Service"
-                               class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @error('service_type') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Preferred Date *</label>
-                        <input type="date" name="booking_date"
-                               value="{{ old('booking_date') }}"
-                               min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                               class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @error('booking_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Preferred Time *</label>
-                        <select name="booking_time"
-                                class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">-- Select time --</option>
-                            <option value="08:00">8:00 AM</option>
-                            <option value="09:00">9:00 AM</option>
-                            <option value="10:00">10:00 AM</option>
-                            <option value="11:00">11:00 AM</option>
-                            <option value="13:00">1:00 PM</option>
-                            <option value="14:00">2:00 PM</option>
-                            <option value="15:00">3:00 PM</option>
-                            <option value="16:00">4:00 PM</option>
-                        </select>
-                        @error('booking_time') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700">Additional Notes</label>
-                        <textarea name="notes" rows="3"
-                                  placeholder="Describe the issue or any special requests..."
-                                  class="mt-1 w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('notes') }}</textarea>
-                        @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button type="submit"
-                                class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-                            Confirm Booking
-                        </button>
-                        <a href="{{ route('garages.index') }}"
-                           class="bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300">
-                            Cancel
-                        </a>
-                    </div>
-                </form>
-
-            </div>
-        </div>
+    <div class="mb-5 fade-in fade-in-1">
+        <p class="section-label mb-1">// BOOK APPOINTMENT</p>
+        <h1 class="heading text-3xl font-bold text-white">
+            New <span class="text-cyan">Booking</span>
+        </h1>
+        <p class="text-xs mono mt-1" style="color:#64748b;">{{ $garage->name }} · {{ $garage->city }}</p>
     </div>
+
+    <div class="glass-bright rounded-2xl p-5 fade-in fade-in-2 border animate-glow">
+        <form method="POST" action="{{ route('bookings.store', $garage) }}">
+            @csrf
+
+            {{-- Vehicle --}}
+            <div class="mb-4">
+                <label class="section-label mb-2 block">// select vehicle</label>
+                <select name="vehicle_id" required
+                        class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
+                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                    <option value="">Choose a vehicle...</option>
+                    @foreach($vehicles as $vehicle)
+                    <option value="{{ $vehicle->id }}" {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}>
+                        {{ $vehicle->year }} {{ $vehicle->make }} {{ $vehicle->model }} — {{ $vehicle->license_plate }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Service type --}}
+            <div class="mb-4">
+                <label class="section-label mb-2 block">// service type</label>
+                <input type="text" name="service_type" value="{{ old('service_type') }}" required
+                       placeholder="e.g. Full Service, Oil Change..."
+                       class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+            </div>
+
+            {{-- Date & Time --}}
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="section-label mb-2 block">// preferred date</label>
+                    <input type="date" name="booking_date"
+                           value="{{ old('booking_date', date('Y-m-d', strtotime('+1 day'))) }}"
+                           min="{{ date('Y-m-d', strtotime('+1 day')) }}" required
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
+                </div>
+                <div>
+                    <label class="section-label mb-2 block">// preferred time</label>
+                    <input type="time" name="booking_time"
+                           value="{{ old('booking_time', '09:00') }}" required
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
+                </div>
+            </div>
+
+            {{-- Notes --}}
+            <div class="mb-6">
+                <label class="section-label mb-2 block">// notes (optional)</label>
+                <textarea name="notes" rows="3"
+                          placeholder="Describe the issue or any special requests..."
+                          class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
+                          style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('notes') }}</textarea>
+            </div>
+
+            {{-- Garage info reminder --}}
+            <div class="rounded-xl p-3 mb-4" style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.12);">
+                <p class="text-xs mb-1 section-label">// booking at</p>
+                <p class="text-sm font-semibold text-white">{{ $garage->name }}</p>
+                <p class="text-xs" style="color:#64748b;">
+                    {{ $garage->address }} · {{ $garage->city }}
+                    @if($garage->phone) · {{ $garage->phone }} @endif
+                </p>
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm transition-all active:scale-95"
+                    style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 24px rgba(0,245,255,0.3);">
+                CONFIRM BOOKING →
+            </button>
+
+            <a href="{{ route('garages.index') }}"
+               class="block text-center mt-3 text-sm py-2" style="color:#64748b;">Cancel</a>
+        </form>
+    </div>
+
+</div>
 </x-app-layout>
