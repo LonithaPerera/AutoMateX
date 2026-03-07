@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Part;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class PartsTest extends TestCase
@@ -24,7 +24,7 @@ class PartsTest extends TestCase
     {
         $user = User::factory()->create();
 
-        Part::create([
+        DB::table('parts')->insert([
             'vehicle_make'      => 'Toyota',
             'vehicle_model'     => 'Premio',
             'vehicle_year_from' => 2007,
@@ -33,6 +33,8 @@ class PartsTest extends TestCase
             'part_category'     => 'Filters',
             'oem_part_number'   => '90915-03003',
             'brand'             => 'Toyota Genuine',
+            'created_at'        => now(),
+            'updated_at'        => now(),
         ]);
 
         $response = $this->actingAs($user)->get('/parts?make=Toyota');
