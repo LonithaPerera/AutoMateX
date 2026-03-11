@@ -1,4 +1,4 @@
-const CACHE_NAME = 'automatex-v2';
+const CACHE_NAME = 'automatex-v3';
 
 // Pages to cache for offline use
 const STATIC_ASSETS = [
@@ -41,37 +41,24 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch event — serve from cache, fallback to network
+// Fetch event — network first for HTML, cache first for assets
 self.addEventListener('fetch', (event) => {
-    // Only handle GET requests
     if (event.request.method !== 'GET') return;
-
-    // Skip admin and API requests
     if (event.request.url.includes('/admin')) return;
 
-    event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
+    const isHTML = event.request.headers.get('accept')?.includes('text/html');
 
-            return fetch(event.request).then((networkResponse) => {
-                // Cache successful HTML responses
-                if (
-                    networkResponse &&
-                    networkResponse.status === 200 &&
-                    networkResponse.headers.get('content-type')?.includes('text/html')
-                ) {
-                    const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseClone);
-                    });
-                }
-                return networkResponse;
-            }).catch(() => {
-                // Offline fallback
-                return caches.match('/offline');
-            });
-        })
-    );
+    if (isHTML) {
+        // Network first for HTML pages — always get fresh content
+        event.respondWith(
+            fetch(event.request).catch(() => caches.match('/offline'))
+        );
+    } else {
+        // Cache first for static assets (CSS, JS, images)
+        event.respondWith(
+            caches.match(event.request).then((cached) => {
+                return cached || fetch(event.request);
+            })
+        );
+    }
 });
