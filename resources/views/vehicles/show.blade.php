@@ -1,6 +1,5 @@
 <x-app-layout>
 <div class="max-w-lg mx-auto px-4 pt-5 pb-24">
-
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
         <p class="section-label mb-1">// VEHICLE DETAILS</p>
@@ -12,11 +11,17 @@
         </p>
     </div>
 
+    {{-- Success Message --}}
+    @if(session('success'))
+        <div class="mb-4 p-3 rounded-xl" style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);">
+            <p class="text-xs" style="color:#4ade80;">✓ {{ session('success') }}</p>
+        </div>
+    @endif
+
     {{-- Details card --}}
     <div class="glass-bright rounded-2xl p-5 mb-4 border fade-in fade-in-2"
          style="border-color:rgba(0,245,255,0.12);">
         <p class="section-label mb-3">// SPECIFICATIONS</p>
-
         <div class="grid grid-cols-2 gap-3">
             @foreach([
                 ['Make', $vehicle->make],
@@ -36,38 +41,57 @@
         </div>
     </div>
 
+    {{-- Update Mileage --}}
+    <div class="glass-bright rounded-2xl p-4 mb-4 border fade-in fade-in-3"
+         style="border-color:rgba(255,107,0,0.2);">
+        <p class="section-label mb-2">// UPDATE MILEAGE</p>
+        <form method="POST" action="{{ route('vehicles.updateMileage', $vehicle) }}">
+            @csrf @method('PATCH')
+            @if($errors->has('mileage'))
+                <p class="text-xs mb-2" style="color:#f87171;">⚠ {{ $errors->first('mileage') }}</p>
+            @endif
+            <div class="flex gap-2">
+                <input type="number" name="mileage"
+                       placeholder="Enter new mileage (min: {{ number_format($vehicle->mileage) }} km)"
+                       min="{{ $vehicle->mileage }}"
+                       class="flex-1 px-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,107,0,0.2);">
+                <button type="submit"
+                        class="px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
+                        style="background:rgba(255,107,0,0.15);border:1px solid rgba(255,107,0,0.3);color:#ff6b00;">
+                    UPDATE
+                </button>
+            </div>
+        </form>
+    </div>
+
     {{-- Action buttons --}}
     <p class="section-label mb-3 fade-in fade-in-3">// QUICK ACTIONS</p>
     <div class="grid grid-cols-2 gap-3 mb-4 fade-in fade-in-3">
-
         <a href="{{ route('qrcode.show', $vehicle) }}"
            class="glass-bright rounded-2xl p-4 border flex flex-col items-center gap-2 transition-all active:scale-95"
            style="border-color:rgba(0,245,255,0.12);">
             <span class="text-2xl">📱</span>
             <p class="heading text-xs font-bold text-white tracking-wider">QR CODE</p>
         </a>
-
         <a href="{{ route('suggestions.index', $vehicle) }}"
            class="glass-bright rounded-2xl p-4 border flex flex-col items-center gap-2 transition-all active:scale-95"
            style="border-color:rgba(168,85,247,0.2);">
             <span class="text-2xl">🧠</span>
             <p class="heading text-xs font-bold tracking-wider" style="color:#a855f7;">SUGGESTIONS</p>
         </a>
-
         <a href="{{ route('service.index', $vehicle) }}"
            class="glass-bright rounded-2xl p-4 border flex flex-col items-center gap-2 transition-all active:scale-95"
            style="border-color:rgba(74,222,128,0.2);">
             <span class="text-2xl">🔧</span>
             <p class="heading text-xs font-bold tracking-wider" style="color:#4ade80;">SERVICE</p>
         </a>
-
         <a href="{{ route('fuel.index', $vehicle) }}"
            class="glass-bright rounded-2xl p-4 border flex flex-col items-center gap-2 transition-all active:scale-95"
            style="border-color:rgba(0,102,255,0.2);">
             <span class="text-2xl">⛽</span>
             <p class="heading text-xs font-bold tracking-wider" style="color:#6699ff;">FUEL LOGS</p>
         </a>
-
     </div>
 
     {{-- Back --}}
@@ -76,6 +100,5 @@
        style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
         ← Back to My Vehicles
     </a>
-
 </div>
 </x-app-layout>

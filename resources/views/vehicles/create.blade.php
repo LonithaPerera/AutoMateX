@@ -16,6 +16,15 @@
         <form method="POST" action="{{ route('vehicles.store') }}">
             @csrf
 
+            {{-- Error Messages --}}
+            @if($errors->any())
+                <div class="mb-4 p-3 rounded-xl" style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);">
+                    @foreach($errors->all() as $error)
+                        <p class="text-xs" style="color:#f87171;">⚠ {{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
             {{-- Make & Model --}}
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
@@ -36,7 +45,7 @@
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
                     <label class="section-label mb-2 block">// year</label>
-                    <input type="number" name="year" value="{{ old('year') }}" required placeholder="2018" min="1990" max="2025"
+                    <input type="number" name="year" value="{{ old('year') }}" required placeholder="2018" min="1990" max="2026"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
@@ -75,16 +84,15 @@
             {{-- Fuel Type --}}
             <div class="mb-6">
                 <label class="section-label mb-2 block">// fuel type</label>
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-3 gap-2" id="fuel-group">
                     @foreach(['petrol','diesel','hybrid'] as $fuel)
-                    <label class="relative cursor-pointer">
+                    <label class="relative cursor-pointer" onclick="selectFuel('{{ $fuel }}')">
                         <input type="radio" name="fuel_type" value="{{ $fuel }}"
-                               {{ old('fuel_type','petrol') === $fuel ? 'checked' : '' }}
+                               {{ old('fuel_type') === $fuel ? 'checked' : '' }}
                                class="peer absolute opacity-0 w-0 h-0">
-                        <div class="py-2.5 rounded-xl text-center text-xs font-semibold heading tracking-wider transition-all
-                                    peer-checked:text-cyan border"
-                             style="background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);"
-                             id="fuel-{{ $fuel }}">
+                        <div id="fuel-{{ $fuel }}"
+                             class="py-2.5 rounded-xl text-center text-xs font-semibold heading tracking-wider transition-all border"
+                             style="background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);color:#64748b;">
                             {{ strtoupper($fuel) }}
                         </div>
                     </label>
@@ -106,4 +114,25 @@
     </div>
 
 </div>
+
+<script>
+function selectFuel(fuel) {
+    ['petrol','diesel','hybrid'].forEach(f => {
+        const el = document.getElementById('fuel-' + f);
+        if (f === fuel) {
+            el.style.borderColor = 'rgba(0,245,255,0.5)';
+            el.style.color = '#00f5ff';
+            el.style.background = 'rgba(0,245,255,0.1)';
+        } else {
+            el.style.borderColor = 'rgba(255,255,255,0.08)';
+            el.style.color = '#64748b';
+            el.style.background = 'rgba(255,255,255,0.03)';
+        }
+    });
+}
+@if(old('fuel_type'))
+selectFuel('{{ old('fuel_type') }}');
+@endif
+</script>
+
 </x-app-layout>

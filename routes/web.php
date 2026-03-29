@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
 
     // Vehicle routes
     Route::resource('vehicles', VehicleController::class);
+    Route::patch('vehicles/{vehicle}/mileage', [VehicleController::class, 'updateMileage'])->name('vehicles.updateMileage');
 
     // Fuel Log routes
     Route::get('vehicles/{vehicle}/fuel', [FuelLogController::class, 'index'])->name('fuel.index');
@@ -69,6 +70,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
     Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
+
+    // Booking invoice
+    Route::patch('/bookings/{booking}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
+    Route::patch('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
 
     // Admin routes — protected by admin middleware
     Route::middleware('admin')->group(function () {

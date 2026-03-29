@@ -73,10 +73,10 @@
 
         {{-- Action buttons --}}
         <div class="grid grid-cols-2 gap-2 mb-2">
-            <a href="{{ route('suggestions.index', $vehicle) }}"
+            <a href="{{ route('vehicles.show', $vehicle) }}"
                class="py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95"
                style="background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
-                🧠 SUGGESTIONS
+                🚗 VIEW DETAILS
             </a>
             <a href="{{ route('qrcode.show', $vehicle) }}"
                class="py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95"
