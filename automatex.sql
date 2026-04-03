@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 29, 2026 at 03:35 AM
+-- Generation Time: Mar 29, 2026 at 07:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -47,7 +47,8 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`id`, `vehicle_id`, `garage_id`, `booking_date`, `booking_time`, `service_type`, `notes`, `status`, `invoice_amount`, `invoice_notes`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2026-03-14', '11:00:00', 'Engine Oil Change', NULL, 'confirmed', 50000.00, 'Oil', '2026-03-04 14:53:17', '2026-03-04 14:54:07');
+(1, 1, 1, '2026-03-14', '11:00:00', 'Engine Oil Change', NULL, 'confirmed', 50000.00, 'Oil', '2026-03-04 14:53:17', '2026-03-04 14:54:07'),
+(2, 4, 2, '2026-03-30', '09:00:00', 'Engine Oil Change', NULL, 'pending', NULL, NULL, '2026-03-28 22:26:44', '2026-03-28 22:26:44');
 
 -- --------------------------------------------------------
 
@@ -66,8 +67,10 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('laravel-cache-123@gmail.com|::1', 'i:1;', 1774745513),
-('laravel-cache-123@gmail.com|::1:timer', 'i:1774745513;', 1774745513);
+('laravel-cache-admin@gmail.com|::1', 'i:1;', 1774754043),
+('laravel-cache-admin@gmail.com|::1:timer', 'i:1774754043;', 1774754043),
+('laravel-cache-m@gmail.com|::1', 'i:2;', 1774754356),
+('laravel-cache-m@gmail.com|::1:timer', 'i:1774754356;', 1774754356);
 
 -- --------------------------------------------------------
 
@@ -128,7 +131,8 @@ INSERT INTO `fuel_logs` (`id`, `vehicle_id`, `date`, `liters`, `cost`, `km_readi
 (4, 1, '2026-03-05', 60.00, 18500.00, 37750, 12.50, 'Lanka IOC, Maharagama', NULL, '2026-03-04 13:30:25', '2026-03-04 13:30:25'),
 (6, 1, '2026-03-06', 65.00, 20000.00, 39000, 10.77, 'Lanka IOC, Maharagama', NULL, '2026-03-04 13:34:27', '2026-03-04 13:34:27'),
 (7, 1, '2026-03-04', 70.00, 30000.00, 44100, 72.86, 'Lanka IOC, Maharagama', NULL, '2026-03-04 13:35:39', '2026-03-04 13:35:39'),
-(8, 3, '2026-03-02', 50.00, 20000.00, 154000, NULL, 'Lanka IOC, Maharagama', NULL, '2026-03-07 03:18:40', '2026-03-07 03:18:40');
+(8, 3, '2026-03-02', 50.00, 20000.00, 154000, NULL, 'Lanka IOC, Maharagama', NULL, '2026-03-07 03:18:40', '2026-03-07 03:18:40'),
+(9, 5, '2026-03-29', 1.09, 2435.00, 25010, NULL, 'Lanka IOC, Maharagama', NULL, '2026-03-28 23:23:02', '2026-03-28 23:23:02');
 
 -- --------------------------------------------------------
 
@@ -155,7 +159,8 @@ CREATE TABLE `garages` (
 --
 
 INSERT INTO `garages` (`id`, `user_id`, `name`, `address`, `city`, `phone`, `description`, `specialization`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 1, 'CatEye Detailers', '120/1,', 'Pannipitiya', '0754799994', 'We are here for u', 'Toyota Specialists', 1, '2026-03-04 14:52:15', '2026-03-04 14:52:15');
+(1, 1, 'CatEye Detailers', '120/1,', 'Pannipitiya', '0754799994', 'We are here for u', 'Toyota Specialists', 1, '2026-03-04 14:52:15', '2026-03-04 14:52:15'),
+(2, 4, 'Supun Service Center', '16,6 dgfgdg', 'Maharagama', '0713653487', NULL, NULL, 1, '2026-03-28 21:45:20', '2026-03-28 21:45:20');
 
 -- --------------------------------------------------------
 
@@ -371,10 +376,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('47gLlMZPuO3oTrQtR6yUWS3o2U79Vzi8DHKYMJ4V', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiOU10aEN4NlA2b0VOekpFTXBlYWJlMlpRNVd3bUl3eHZiOHhYOUNBQyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDM6Imh0dHA6Ly9sb2NhbGhvc3QvQXV0b01hdGVYL3B1YmxpYy9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6OToiZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1774745609),
-('DOTpmtTVCsTvQsKMHHcPUYoEre0yLzQBcKwDJdv0', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiWngwc2FNbG90aHVnVENpVnc2cllYUzNSVnZYcGNvN2RUVG9iaVlhZyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6OToiZGFzaGJvYXJkIjt9czozOiJ1cmwiO2E6MDp7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1773556739),
-('FEwDHcxtoEqXa8rdzZnNVVppyEfhu3bcz8N78TaI', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQURPWEVZRnlxZlVNNzdWRzJPa3F2YXJFWWEyTVRsVVpSR1JWQWRQMyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6OToiZGFzaGJvYXJkIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1774745785),
-('Lwun0NHcgYYLU1Ib5VXbSfH3LwPYM4j1P2UXY6Qu', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieDczc05QWHlJOVU1endUNlllbzVBaTZUdlphMFpxSTBkUUJxY1NJZiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1773523161);
+('0uKuIFM2FNMX2xB5eaMnoGrF1fVIOgvk7NNMp7Ew', 2, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiUXo0cHk3QTZqVnhjNEFNdno3NEFOZWk0bjBFb1dSTXg3NWVYMWtKVyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0MjoiaHR0cDovL2xvY2FsaG9zdC9BdXRvTWF0ZVgvcHVibGljL3ZlaGljbGVzIjt9czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDI6Imh0dHA6Ly9sb2NhbGhvc3QvQXV0b01hdGVYL3B1YmxpYy92ZWhpY2xlcyI7czo1OiJyb3V0ZSI7czoxNDoidmVoaWNsZXMuaW5kZXgiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1774759288),
+('RdEvRxBtZfQwzwJGAuXQcLxJGRoPy6dikfXb5acy', 4, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiYlBTbzE4enV4NVpXRTdEVFF6NHVGWjdZZW5FWlIyYzdZV0d6eXVjSiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6ODE6Imh0dHA6Ly9sb2NhbGhvc3QvQXV0b01hdGVYL3B1YmxpYy9wYXJ0cz9jYXRlZ29yeT0mbWFrZT1Ub3lvdGEmbW9kZWw9JnNlYXJjaD1icmFrZSI7czo1OiJyb3V0ZSI7czoxMToicGFydHMuaW5kZXgiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo0O30=', 1774760253);
 
 -- --------------------------------------------------------
 
@@ -399,9 +402,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `role`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Lonitha', 'loniperera2005@gmail.com', 'admin', NULL, '$2y$12$wOD5S2wyNdy5c2IW37ZW4OftSWP1X8GxYH9Zkj6CvcjINwaUKnJ2O', 's4Q8iAmmGxZvAVEPlOsTm6n6B5hTWb36474hqeB1nRxP0DMuMNoCM8QZxcvF', '2026-03-04 09:25:48', '2026-03-28 19:22:22'),
-(2, 'Kapila Perera', '123@gmail.com', 'vehicle_owner', NULL, '$2y$12$0bwrcwsO00uRoIUK3tUQjOHB7Wb4GIKuWhiIIwmyTBCmb5qEsuC8e', NULL, '2026-03-07 02:18:06', '2026-03-07 02:18:06'),
-(3, 'Shihan', 'shihan@gmail.com', 'vehicle_owner', NULL, '$2y$12$LRuzp6EJFwyD.8DzmgMLRuP.Eod1oX0fqE5ZoH4TWwYsTH6W.gAua', NULL, '2026-03-14 15:44:24', '2026-03-14 15:44:24');
+(1, 'Lonitha', 'loniperera2005@gmail.com', 'admin', NULL, '$2y$12$wOD5S2wyNdy5c2IW37ZW4OftSWP1X8GxYH9Zkj6CvcjINwaUKnJ2O', 'wToXonHu86fknbHYkVxfKmtcsAjEAlkTW3j0E8lRYoQP1pcmMJdx2qX7HdVp', '2026-03-04 09:25:48', '2026-03-28 19:22:22'),
+(2, 'Kapila Perera', '123@gmail.com', 'vehicle_owner', NULL, '$2y$12$6JR./5xnf6u055XmDwxHSuw6eTQfLBI7V15B8aW7wrAKVzGFW0zca', NULL, '2026-03-07 02:18:06', '2026-03-28 22:09:07'),
+(3, 'Shihan', 'shihan@gmail.com', 'vehicle_owner', NULL, '$2y$12$jBVDlmTp/iNOOSSpKBEzb.pjB.Fl/eUFX7ORQs7rGYllROhNUKfqK', NULL, '2026-03-14 15:44:24', '2026-03-28 22:12:33'),
+(4, 'Test Garage', 'garage@automatex.com', 'garage', NULL, '$2y$12$rc0x7QyPOC0JtKN89Xkooux1coLnAy2c5nNNBE2DLULMjSllHGq8S', NULL, '2026-03-28 20:31:54', '2026-03-28 20:31:54'),
+(5, 'Pasan', 'abc@gmail.com', 'vehicle_owner', NULL, '$2y$12$5Q809wLpdlZa6RhIoNR0luTqwD0g1DOz0F09PREqhJoP8u3k0R5HO', NULL, '2026-03-28 21:53:50', '2026-03-28 21:53:50'),
+(6, 'Sanuga', '098@gmail.com', 'vehicle_owner', NULL, '$2y$12$xkQb0.keqBi3utSC.oikX.il7.fH9g0z/zfUCWttknlVDeiOBWtYu', NULL, '2026-03-28 21:57:34', '2026-03-28 21:57:34');
 
 -- --------------------------------------------------------
 
@@ -433,7 +439,10 @@ CREATE TABLE `vehicles` (
 INSERT INTO `vehicles` (`id`, `user_id`, `make`, `model`, `year`, `mileage`, `vin`, `qr_token`, `license_plate`, `color`, `fuel_type`, `image`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Toyota', 'Premio', 2018, 44100, 'JT2AE09W6H3456789', 'e016c3ef-54d7-4266-8b0a-2b2de5b9f89a', 'CAY-8485', 'Pearl White', 'petrol', NULL, '2026-03-04 09:46:23', '2026-03-04 13:50:12'),
 (2, 1, 'Honda', 'Civic', 2015, 78000, 'JT1AE99W6H3456345', '6458a9a2-b497-436a-aeab-323a0509fb8c', 'KK-6677', 'Blue', 'petrol', NULL, '2026-03-04 16:01:08', '2026-03-04 16:01:08'),
-(3, 1, 'Toyota', 'Prius', 2015, 154000, NULL, '76e282f6-dde4-40bd-9410-9630589f7fb3', 'KW-2244', 'Res', 'hybrid', NULL, '2026-03-07 03:16:54', '2026-03-07 03:16:54');
+(3, 1, 'Toyota', 'Prius', 2015, 154000, NULL, '76e282f6-dde4-40bd-9410-9630589f7fb3', 'KW-2244', 'Res', 'hybrid', NULL, '2026-03-07 03:16:54', '2026-03-07 03:16:54'),
+(4, 2, 'Toyota', 'Axio', 2013, 68000, '234567dfgh', 'a2ff488c-2dd0-40c5-953e-d676a31116d6', 'KK-9860', 'Blue', 'diesel', NULL, '2026-03-28 22:26:04', '2026-03-28 23:19:39'),
+(5, 2, 'Toyota', 'Axio', 2003, 25010, '567yfjyif87', 'f281e062-366d-4a5a-b3bd-63eaef2c2b34', 'Kh-9861', 'Pearl White', 'hybrid', NULL, '2026-03-28 22:28:53', '2026-03-28 23:23:02'),
+(6, 2, 'Toyota', 'Axio', 2006, 123457, NULL, '2ed58711-4781-49fd-865d-c68346f022d1', 'KK-6670', 'Blue', 'hybrid', NULL, '2026-03-28 22:32:56', '2026-03-28 22:32:56');
 
 --
 -- Indexes for dumped tables
@@ -558,7 +567,7 @@ ALTER TABLE `vehicles`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -570,13 +579,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `fuel_logs`
 --
 ALTER TABLE `fuel_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `garages`
 --
 ALTER TABLE `garages`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -612,13 +621,13 @@ ALTER TABLE `service_logs`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `vehicles`
 --
 ALTER TABLE `vehicles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
