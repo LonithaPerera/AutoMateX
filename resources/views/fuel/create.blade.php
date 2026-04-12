@@ -6,11 +6,11 @@
         <a href="{{ route('fuel.index', $vehicle) }}"
            class="inline-flex items-center gap-2 text-sm mb-3"
            style="color:#64748b;">
-            ← Back to Fuel Logs
+            {{ __('app.back_to_fuel_logs') }}
         </a>
-        <p class="section-label mb-1">// LOG FUEL</p>
+        <p class="section-label mb-1">{{ __('app.log_fuel_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
-            New <span class="text-cyan">Fill-Up</span>
+            {{ __('app.new_fillup_title') }}
         </h1>
         <p class="text-xs mono mt-1" style="color:#64748b;">
             {{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->year }}
@@ -24,14 +24,14 @@
             {{-- Date & Odometer --}}
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                    <label class="section-label mb-2 block">// date</label>
+                    <label class="section-label mb-2 block">{{ __('app.field_date') }}</label>
                     <input type="date" name="date"
                            value="{{ old('date', date('Y-m-d')) }}" required
                            class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
                 </div>
                 <div>
-                    <label class="section-label mb-2 block">// odometer (km)</label>
+                    <label class="section-label mb-2 block">{{ __('app.field_odometer') }}</label>
                     <input type="number" name="km_reading"
                            value="{{ old('km_reading', $vehicle->mileage) }}"
                            required placeholder="{{ $vehicle->mileage }}" min="0"
@@ -43,7 +43,7 @@
             {{-- Liters & Cost --}}
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                    <label class="section-label mb-2 block">// liters filled</label>
+                    <label class="section-label mb-2 block">{{ __('app.field_liters') }}</label>
                     <input type="number" name="liters"
                            value="{{ old('liters') }}"
                            required placeholder="35.5" min="0" step="0.01"
@@ -51,7 +51,7 @@
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
-                    <label class="section-label mb-2 block">// total cost (LKR)</label>
+                    <label class="section-label mb-2 block">{{ __('app.field_cost_lkr') }}</label>
                     <input type="number" name="cost"
                            value="{{ old('cost') }}"
                            required placeholder="8500" min="0" step="0.01"
@@ -62,7 +62,7 @@
 
             {{-- Fuel Station --}}
             <div class="mb-4">
-                <label class="section-label mb-2 block">// fuel station (optional)</label>
+                <label class="section-label mb-2 block">{{ __('app.field_fuel_station') }}</label>
                 <input type="text" name="fuel_station"
                        value="{{ old('fuel_station') }}"
                        placeholder="e.g. Ceylon Petroleum, Nugegoda"
@@ -72,7 +72,7 @@
 
             {{-- Notes --}}
             <div class="mb-6">
-                <label class="section-label mb-2 block">// notes (optional)</label>
+                <label class="section-label mb-2 block">{{ __('app.field_notes') }}</label>
                 <textarea name="notes" rows="2" placeholder="Any notes..."
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('notes') }}</textarea>
@@ -81,9 +81,9 @@
             {{-- Auto calc notice --}}
             <div class="rounded-xl p-3 mb-4 flex items-center gap-2"
                  style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.12);">
-                <span style="color:var(--cyan);">⚡</span>
+                <x-heroicon-o-bolt class="w-4 h-4 flex-shrink-0" style="color:var(--cyan);" />
                 <p class="text-xs" style="color:rgba(0,245,255,0.7);">
-                    Fuel efficiency (km/L) will be calculated automatically
+                    {{ __('app.kml_auto_calc') }}
                 </p>
             </div>
 
@@ -91,12 +91,12 @@
             <button type="submit"
                     class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm transition-all active:scale-95"
                     style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 24px rgba(0,245,255,0.3);">
-                SAVE FILL-UP →
+                {{ __('app.save_fillup_btn') }}
             </button>
 
             <a href="{{ route('fuel.index', $vehicle) }}"
                class="block text-center mt-3 text-sm py-2" style="color:#64748b;">
-                Cancel
+                {{ __('app.cancel') }}
             </a>
         </form>
     </div>

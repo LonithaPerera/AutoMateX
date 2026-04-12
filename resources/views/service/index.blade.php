@@ -4,7 +4,7 @@
     {{-- Header --}}
     <div class="flex items-center justify-between mb-5 fade-in fade-in-1">
         <div>
-            <p class="section-label mb-1">// SERVICE HISTORY</p>
+            <p class="section-label mb-1">{{ __('app.service_history_label') }}</p>
             <h1 class="heading text-3xl font-bold text-white">
                 {{ $vehicle->make }} <span class="text-cyan">{{ $vehicle->model }}</span>
             </h1>
@@ -15,7 +15,7 @@
         <a href="{{ route('service.create', $vehicle) }}"
            class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
            style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
-            + LOG
+            {{ __('app.log_btn') }}
         </a>
     </div>
 
@@ -23,19 +23,19 @@
     <div class="grid grid-cols-3 gap-3 mb-5 fade-in fade-in-2">
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(0,245,255,0.05);border-color:rgba(0,245,255,0.15);">
             <p class="heading text-2xl font-bold text-cyan">{{ $serviceLogs->count() }}</p>
-            <p class="text-xs mt-0.5" style="color:#64748b;">Total</p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.total') }}</p>
         </div>
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(0,102,255,0.05);border-color:rgba(0,102,255,0.15);">
             <p class="heading text-2xl font-bold" style="color:#6699ff;">
                 LKR {{ number_format($serviceLogs->sum('cost')) }}
             </p>
-            <p class="text-xs mt-0.5" style="color:#64748b;">Total Spent</p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.total_spent') }}</p>
         </div>
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.15);">
             <p class="heading text-xl font-bold" style="color:#4ade80;">
                 {{ $serviceLogs->first() ? $serviceLogs->first()->service_date->format('M Y') : '—' }}
             </p>
-            <p class="text-xs mt-0.5" style="color:#64748b;">Last Service</p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.last_service') }}</p>
         </div>
     </div>
 
@@ -43,12 +43,12 @@
     @if(session('success'))
         <div class="rounded-2xl p-3 mb-4 border fade-in fade-in-1"
              style="background:rgba(0,245,255,0.06);border-color:rgba(0,245,255,0.2);">
-            <span class="text-sm" style="color:rgba(0,245,255,0.8);">✓ {{ session('success') }}</span>
+            <x-heroicon-o-check-circle class="w-4 h-4 inline-block mr-1" style="color:var(--cyan);" /><span class="text-sm" style="color:rgba(0,245,255,0.8);">{{ session('success') }}</span>
         </div>
     @endif
 
     {{-- Service log list --}}
-    <p class="section-label mb-3 fade-in fade-in-2">// LOG ENTRIES</p>
+    <p class="section-label mb-3 fade-in fade-in-2">{{ __('app.log_entries_label') }}</p>
 
     @forelse($serviceLogs as $index => $log)
     <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }}"
@@ -58,9 +58,7 @@
         <div class="flex items-start justify-between mb-3">
             <div class="flex items-start gap-3">
                 <div class="rounded-xl p-2 mt-0.5" style="background:rgba(0,245,255,0.1);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f5ff" stroke-width="2">
-                        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
-                    </svg>
+                    <x-heroicon-o-wrench-screwdriver class="w-4 h-4" style="color:#00f5ff;" />
                 </div>
                 <div>
                     <h3 class="heading font-bold text-white text-base leading-tight">
@@ -82,11 +80,11 @@
         {{-- Details row --}}
         <div class="grid grid-cols-2 gap-2 mb-3">
             <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
-                <p class="text-xs mb-0.5" style="color:#64748b;">Mileage</p>
+                <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.mileage') }}</p>
                 <p class="mono text-sm font-bold text-white">{{ number_format($log->mileage_at_service) }} km</p>
             </div>
             <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
-                <p class="text-xs mb-0.5" style="color:#64748b;">Cost</p>
+                <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.cost') }}</p>
                 <p class="mono text-sm font-bold" style="color:#4ade80;">LKR {{ number_format($log->cost) }}</p>
             </div>
         </div>
@@ -99,25 +97,25 @@
 
         {{-- Delete --}}
         <form method="POST" action="{{ route('service.destroy', [$vehicle, $log]) }}"
-              onsubmit="return confirm('Delete this service record?')">
+              onsubmit="return confirm('{{ __('app.delete_service_confirm') }}')">
             @csrf @method('DELETE')
             <button type="submit"
                     class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
                     style="background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.15);color:#f87171;">
-                🗑 DELETE RECORD
+                {{ __('app.delete_record_btn') }}
             </button>
         </form>
     </div>
     @empty
         <div class="glass rounded-2xl p-10 text-center border fade-in fade-in-3"
              style="border-color:rgba(255,255,255,0.06);">
-            <div class="text-5xl mb-4">🔧</div>
-            <p class="heading text-xl font-bold text-white mb-1">No Service Records</p>
-            <p class="text-sm mb-5" style="color:#64748b;">Log your first service to get started</p>
+            <x-heroicon-o-wrench-screwdriver class="w-12 h-12 mx-auto mb-4" style="color:#64748b;" />
+            <p class="heading text-xl font-bold text-white mb-1">{{ __('app.no_service_records') }}</p>
+            <p class="text-sm mb-5" style="color:#64748b;">{{ __('app.log_first_service') }}</p>
             <a href="{{ route('service.create', $vehicle) }}"
                class="inline-block px-6 py-3 rounded-xl text-sm font-semibold heading tracking-wider"
                style="background:rgba(0,245,255,0.12);border:1px solid rgba(0,245,255,0.25);color:var(--cyan);">
-                + LOG SERVICE
+                {{ __('app.log_service_btn') }}
             </a>
         </div>
     @endforelse
@@ -127,7 +125,7 @@
         <a href="{{ route('vehicles.index') }}"
            class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl"
            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
-            ← Back to Vehicles
+            {{ __('app.back_to_vehicles') }}
         </a>
     </div>
 

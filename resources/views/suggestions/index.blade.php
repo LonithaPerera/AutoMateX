@@ -3,9 +3,9 @@
 
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
-        <p class="section-label mb-1">// MAINTENANCE AI</p>
+        <p class="section-label mb-1">{{ __('app.maintenance_ai_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
-            Smart <span class="text-cyan">Suggestions</span>
+            {{ __('app.smart_suggestions_title') }}
         </h1>
         <p class="text-sm mt-1" style="color:#64748b;">
             {{ $vehicle->make }} {{ $vehicle->model }} ·
@@ -22,20 +22,20 @@
     <div class="grid grid-cols-3 gap-3 mb-5 fade-in fade-in-2">
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(255,60,60,0.08);border-color:rgba(255,60,60,0.2);">
             <p class="heading text-2xl font-bold" style="color:#f87171;">{{ $overdue }}</p>
-            <p class="text-xs mt-0.5" style="color:#f87171;opacity:0.7;">Overdue</p>
+            <p class="text-xs mt-0.5" style="color:#f87171;opacity:0.7;">{{ __('app.overdue_status') }}</p>
         </div>
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(255,107,0,0.08);border-color:rgba(255,107,0,0.2);">
             <p class="heading text-2xl font-bold" style="color:var(--orange);">{{ $dueSoon }}</p>
-            <p class="text-xs mt-0.5" style="color:var(--orange);opacity:0.7;">Due Soon</p>
+            <p class="text-xs mt-0.5" style="color:var(--orange);opacity:0.7;">{{ __('app.due_soon_status') }}</p>
         </div>
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(0,245,255,0.05);border-color:rgba(0,245,255,0.15);">
             <p class="heading text-2xl font-bold text-cyan">{{ $upcoming }}</p>
-            <p class="text-xs mt-0.5" style="color:rgba(0,245,255,0.6);">Upcoming</p>
+            <p class="text-xs mt-0.5" style="color:rgba(0,245,255,0.6);">{{ __('app.upcoming_status') }}</p>
         </div>
     </div>
 
     {{-- Suggestion cards --}}
-    <p class="section-label mb-3 fade-in fade-in-2">// MAINTENANCE SCHEDULE</p>
+    <p class="section-label mb-3 fade-in fade-in-2">{{ __('app.maintenance_sched_label') }}</p>
 
     @foreach($suggestions as $index => $item)
     @php
@@ -47,15 +47,15 @@
         if($isOverdue){
             $borderColor = 'rgba(255,60,60,0.4)'; $bg = 'rgba(255,60,60,0.08)';
             $accentColor = '#f87171'; $tagBg = 'rgba(255,60,60,0.15)';
-            $barColor = '#f87171'; $icon = '⚠️';
+            $barColor = '#f87171';
         } elseif($isDueSoon){
             $borderColor = 'rgba(255,107,0,0.4)'; $bg = 'rgba(255,107,0,0.06)';
             $accentColor = 'var(--orange)'; $tagBg = 'rgba(255,107,0,0.15)';
-            $barColor = '#ff6b00'; $icon = '🔔';
+            $barColor = '#ff6b00';
         } else {
             $borderColor = 'rgba(0,245,255,0.12)'; $bg = 'rgba(13,20,33,0.7)';
             $accentColor = 'var(--cyan)'; $tagBg = 'rgba(0,245,255,0.1)';
-            $barColor = '#00f5ff'; $icon = '✅';
+            $barColor = '#00f5ff';
         }
     @endphp
 
@@ -63,19 +63,25 @@
          style="background:{{ $bg }};border-color:{{ $borderColor }};">
         <div class="flex items-start justify-between mb-2">
             <div class="flex items-center gap-2">
-                <span>{{ $icon }}</span>
+                @if($isOverdue)
+                    <x-heroicon-o-exclamation-triangle class="w-5 h-5 flex-shrink-0" style="color:#f87171;" />
+                @elseif($isDueSoon)
+                    <x-heroicon-o-bell class="w-5 h-5 flex-shrink-0" style="color:var(--orange);" />
+                @else
+                    <x-heroicon-o-check-circle class="w-5 h-5 flex-shrink-0" style="color:var(--cyan);" />
+                @endif
                 <div>
                     <h3 class="heading font-bold text-white text-base leading-tight">
                         {{ $item['service_name'] }}
                     </h3>
                     <p class="text-xs mt-0.5" style="color:#64748b;">
-                        Every {{ number_format($item['interval_km']) }} km
+                        {{ __('app.every_km', ['km' => number_format($item['interval_km'])]) }}
                         @if(isset($item['category'])) · {{ $item['category'] }} @endif
                     </p>
                 </div>
             </div>
             <span class="tag" style="background:{{ $tagBg }};color:{{ $accentColor }};border:1px solid {{ $borderColor }};">
-                {{ strtoupper($item['status']) }}
+                @if($isOverdue){{ strtoupper(__('app.overdue_status')) }}@elseif($isDueSoon){{ strtoupper(__('app.due_soon_status')) }}@else{{ strtoupper(__('app.upcoming_status')) }}@endif
             </span>
         </div>
 
@@ -87,13 +93,13 @@
         <div class="flex justify-between items-center">
             <p class="text-xs" style="color:#64748b;">
                 @if($isOverdue)
-                    <span style="color:#f87171;">{{ number_format(abs($item['km_remaining'])) }} km overdue</span>
+                    <span style="color:#f87171;">{{ __('app.km_overdue_text', ['km' => number_format(abs($item['km_remaining']))]) }}</span>
                 @else
-                    <span style="color:{{ $accentColor }};">{{ number_format($item['km_remaining']) }} km remaining</span>
+                    <span style="color:{{ $accentColor }};">{{ __('app.km_remaining_text', ['km' => number_format($item['km_remaining'])]) }}</span>
                 @endif
             </p>
             <p class="mono text-xs" style="color:#475569;">
-                Due @ {{ number_format($item['next_due_km']) }} km
+                {{ __('app.due_at_text', ['km' => number_format($item['next_due_km'])]) }}
             </p>
         </div>
     </div>
@@ -104,7 +110,7 @@
         <a href="{{ route('vehicles.index') }}"
            class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl transition-all"
            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
-            ← Back to Vehicles
+            {{ __('app.back_to_vehicles') }}
         </a>
     </div>
 

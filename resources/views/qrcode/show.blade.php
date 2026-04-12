@@ -3,9 +3,9 @@
 
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
-        <p class="section-label mb-1">// VEHICLE HISTORY PASS</p>
+        <p class="section-label mb-1">{{ __('app.qr_history_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
-            QR <span class="text-cyan">Code</span>
+            {{ __('app.qr_code_title') }}
         </h1>
         <p class="text-xs mono mt-1" style="color:#64748b;">
             {{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->year }}
@@ -16,7 +16,7 @@
     <div class="glass-bright rounded-2xl p-6 mb-4 border text-center fade-in fade-in-2 animate-glow"
          style="border-color:rgba(0,245,255,0.15);">
 
-        <p class="section-label mb-4">// SCAN TO VIEW SERVICE HISTORY</p>
+        <p class="section-label mb-4">{{ __('app.scan_label') }}</p>
 
         {{-- QR Code --}}
         <div class="inline-flex items-center justify-center rounded-2xl p-4 mb-4"
@@ -29,22 +29,22 @@
         {{-- Info badges --}}
         <div class="flex justify-center gap-2 mb-4">
             <span class="tag" style="background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">
-                ✓ NO LOGIN REQUIRED
+                <x-heroicon-o-check class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.no_login_tag') }}
             </span>
             <span class="tag" style="background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);">
-                ✓ PUBLIC ACCESS
+                <x-heroicon-o-check class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.public_access_tag') }}
             </span>
         </div>
 
         <p class="text-xs" style="color:#64748b;">
-            Anyone who scans this QR can view the complete verified service history — perfect for resale transparency
+            {{ __('app.qr_scan_desc') }}
         </p>
     </div>
 
     {{-- Public link --}}
     <div class="glass-bright rounded-2xl p-4 mb-4 border fade-in fade-in-3"
          style="border-color:rgba(0,245,255,0.1);">
-        <p class="section-label mb-2">// PUBLIC LINK</p>
+        <p class="section-label mb-2">{{ __('app.public_link_label') }}</p>
         <div class="rounded-xl p-3 mb-3 break-all"
              style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);">
             <p class="mono text-xs" style="color:var(--cyan);">
@@ -54,7 +54,7 @@
         <a href="{{ url('/vehicle/public/' . $vehicle->qr_token) }}" target="_blank"
            class="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold heading tracking-wider text-sm transition-all active:scale-95"
            style="background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
-            👁 PREVIEW PUBLIC PAGE
+            <x-heroicon-o-eye class="w-4 h-4 inline-block mr-1 align-middle" />{{ __('app.preview_public_btn') }}
         </a>
     </div>
 
@@ -62,7 +62,7 @@
     <div class="rounded-2xl p-3 mb-4 border fade-in fade-in-4"
          style="background:rgba(255,107,0,0.05);border-color:rgba(255,107,0,0.15);">
         <p class="text-xs" style="color:rgba(255,107,0,0.7);">
-            🔒 Only service history is visible publicly. Personal details and contact information remain private.
+            <x-heroicon-o-lock-closed class="w-3 h-3 inline-block mr-1 align-middle" />{{ __('app.qr_privacy_note') }}
         </p>
     </div>
 
@@ -70,7 +70,7 @@
     <a href="{{ route('vehicles.index') }}"
        class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl fade-in fade-in-5"
        style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
-        ← Back to Vehicles
+        {{ __('app.back_to_vehicles') }}
     </a>
 
 </div>

@@ -5,11 +5,11 @@
         <a href="{{ route('garages.index') }}"
            class="inline-flex items-center gap-2 text-sm mb-3"
            style="color:#64748b;">
-            ← Back to Garages
+            {{ __('app.back_to_garages') }}
         </a>
-        <p class="section-label mb-1">// REGISTER GARAGE</p>
+        <p class="section-label mb-1">{{ __('app.register_garage_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
-            New <span class="text-cyan">Garage Profile</span>
+            {{ __('app.new_garage_title') }}
         </h1>
     </div>
 
@@ -18,7 +18,7 @@
             @csrf
 
             <div class="mb-4">
-                <label class="section-label mb-2 block">// garage name</label>
+                <label class="section-label mb-2 block">{{ __('app.field_garage_name') }}</label>
                 <input type="text" name="name" value="{{ old('name') }}" required
                        placeholder="AutoHub Lanka"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
@@ -27,14 +27,14 @@
 
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                    <label class="section-label mb-2 block">// city</label>
+                    <label class="section-label mb-2 block">{{ __('app.field_city') }}</label>
                     <input type="text" name="city" value="{{ old('city') }}" required
                            placeholder="Colombo"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
-                    <label class="section-label mb-2 block">// phone</label>
+                    <label class="section-label mb-2 block">{{ __('app.field_phone') }}</label>
                     <input type="text" name="phone" value="{{ old('phone') }}"
                            placeholder="0112345678"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
@@ -43,7 +43,7 @@
             </div>
 
             <div class="mb-4">
-                <label class="section-label mb-2 block">// address</label>
+                <label class="section-label mb-2 block">{{ __('app.field_address') }}</label>
                 <input type="text" name="address" value="{{ old('address') }}"
                        placeholder="123 Main Street, Colombo 05"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
@@ -51,15 +51,15 @@
             </div>
 
             <div class="mb-4">
-                <label class="section-label mb-2 block">// specialisation</label>
-                <input type="text" name="specialisation" value="{{ old('specialisation') }}"
+                <label class="section-label mb-2 block">{{ __('app.field_specialisation') }}</label>
+                <input type="text" name="specialization" value="{{ old('specialization') }}"
                        placeholder="Toyota, Honda, Engine Repairs..."
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
 
             <div class="mb-6">
-                <label class="section-label mb-2 block">// description</label>
+                <label class="section-label mb-2 block">{{ __('app.field_description') }}</label>
                 <textarea name="description" rows="3"
                           placeholder="Brief description of your garage and services..."
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
@@ -69,11 +69,11 @@
             <button type="submit"
                     class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm transition-all active:scale-95"
                     style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 24px rgba(0,245,255,0.3);">
-                REGISTER GARAGE →
+                {{ __('app.register_garage_btn') }}
             </button>
 
             <a href="{{ route('garages.index') }}"
-               class="block text-center mt-3 text-sm py-2" style="color:#64748b;">Cancel</a>
+               class="block text-center mt-3 text-sm py-2" style="color:#64748b;">{{ __('app.cancel') }}</a>
         </form>
     </div>
 

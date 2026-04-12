@@ -6,17 +6,25 @@
         <a href="{{ route('garages.index') }}"
            class="inline-flex items-center gap-2 text-sm mb-3"
            style="color:#64748b;">
-            ← Back to Garages
+            {{ __('app.back_to_garages') }}
         </a>
-        <p class="section-label mb-1">// GARAGE DASHBOARD</p>
+        <p class="section-label mb-1">{{ __('app.garage_dash_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
             {{ $garage->name }}
         </h1>
         <p class="text-xs mt-1" style="color:#64748b;">
-            📍 {{ $garage->city }}
+            <x-heroicon-o-map-pin class="w-3 h-3 inline-block mr-0.5 align-middle" /> {{ $garage->city }}
             @if($garage->phone) · {{ $garage->phone }} @endif
         </p>
     </div>
+
+    {{-- Flash --}}
+    @if(session('success'))
+        <div class="rounded-2xl p-3 mb-4 border fade-in"
+             style="background:rgba(0,245,255,0.06);border-color:rgba(0,245,255,0.2);">
+            <x-heroicon-o-check-circle class="w-4 h-4 inline-block mr-1" style="color:var(--cyan);" /><span class="text-sm" style="color:rgba(0,245,255,0.8);">{{ session('success') }}</span>
+        </div>
+    @endif
 
     {{-- Stats --}}
     @php
@@ -28,24 +36,24 @@
     <div class="grid grid-cols-2 gap-3 mb-5 fade-in fade-in-2">
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(251,191,36,0.05);border-color:rgba(251,191,36,0.15);">
             <p class="heading text-2xl font-bold" style="color:#fbbf24;">{{ $pending }}</p>
-            <p class="text-xs mt-0.5" style="color:#64748b;">Pending</p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.pending') }}</p>
         </div>
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(0,245,255,0.05);border-color:rgba(0,245,255,0.15);">
             <p class="heading text-2xl font-bold text-cyan">{{ $confirmed }}</p>
-            <p class="text-xs mt-0.5" style="color:#64748b;">Confirmed</p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.confirmed') }}</p>
         </div>
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.15);">
             <p class="heading text-2xl font-bold" style="color:#4ade80;">{{ $completed }}</p>
-            <p class="text-xs mt-0.5" style="color:#64748b;">Completed</p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.completed') }}</p>
         </div>
         <div class="rounded-2xl p-3 text-center border" style="background:rgba(248,113,113,0.05);border-color:rgba(248,113,113,0.15);">
             <p class="heading text-2xl font-bold" style="color:#f87171;">{{ $cancelled }}</p>
-            <p class="text-xs mt-0.5" style="color:#64748b;">Cancelled</p>
+            <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.cancelled') }}</p>
         </div>
     </div>
 
     {{-- Bookings list --}}
-    <p class="section-label mb-3 fade-in fade-in-2">// INCOMING BOOKINGS</p>
+    <p class="section-label mb-3 fade-in fade-in-2">{{ __('app.incoming_bookings') }}</p>
 
     @forelse($bookings as $index => $booking)
     @php
@@ -77,13 +85,13 @@
         {{-- Date & Time --}}
         <div class="grid grid-cols-2 gap-2 mb-3">
             <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
-                <p class="text-xs mb-0.5" style="color:#64748b;">Date</p>
+                <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.date_label') }}</p>
                 <p class="mono text-sm font-bold text-white">
                     {{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}
                 </p>
             </div>
             <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
-                <p class="text-xs mb-0.5" style="color:#64748b;">Time</p>
+                <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.time_label') }}</p>
                 <p class="mono text-sm font-bold text-white">
                     {{ \Carbon\Carbon::parse($booking->booking_time)->format('h:i A') }}
                 </p>
@@ -98,7 +106,7 @@
 
         {{-- Status update form --}}
         <div class="mb-3">
-            <p class="section-label mb-2">// update status</p>
+            <p class="section-label mb-2">{{ __('app.update_status_label') }}</p>
             <form method="POST" action="{{ route('bookings.update', $booking) }}">
                 @csrf @method('PATCH')
                 <div class="grid grid-cols-2 gap-2 mb-2">
@@ -118,26 +126,26 @@
         {{-- Invoice form (only for completed) --}}
         @if($booking->status === 'completed')
         <div style="border-top:1px solid rgba(74,222,128,0.15);padding-top:12px;">
-            <p class="section-label mb-2">// generate invoice</p>
+            <p class="section-label mb-2">{{ __('app.gen_invoice_label') }}</p>
             <form method="POST" action="{{ route('bookings.invoice', $booking) }}">
                 @csrf @method('PATCH')
                 <div class="mb-2">
                     <input type="number" name="invoice_amount"
                            value="{{ $booking->invoice_amount }}"
-                           placeholder="Invoice amount (LKR)" min="0" step="0.01"
+                           placeholder="{{ __('app.invoice_amount_ph') }}" min="0" step="0.01"
                            class="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(74,222,128,0.2);">
                 </div>
                 <div class="mb-2">
                     <textarea name="invoice_notes" rows="2"
-                              placeholder="Invoice notes..."
+                              placeholder="{{ __('app.invoice_notes_ph') }}"
                               class="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                               style="background:rgba(255,255,255,0.04);border:1px solid rgba(74,222,128,0.2);">{{ $booking->invoice_notes }}</textarea>
                 </div>
                 <button type="submit"
                         class="w-full py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
                         style="background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.25);color:#4ade80;">
-                    💾 SAVE INVOICE
+                    <x-heroicon-o-archive-box-arrow-down class="w-4 h-4 inline-block mr-1 align-middle" />{{ __('app.save_invoice_btn') }}
                 </button>
             </form>
         </div>
@@ -146,9 +154,9 @@
     </div>
     @empty
         <div class="glass rounded-2xl p-10 text-center border" style="border-color:rgba(255,255,255,0.06);">
-            <div class="text-5xl mb-4">📭</div>
-            <p class="heading text-xl font-bold text-white mb-1">No Bookings Yet</p>
-            <p class="text-sm" style="color:#64748b;">Bookings will appear here when customers book your garage</p>
+            <x-heroicon-o-inbox class="w-12 h-12 mx-auto mb-4" style="color:#64748b;" />
+            <p class="heading text-xl font-bold text-white mb-1">{{ __('app.no_bookings_garage') }}</p>
+            <p class="text-sm" style="color:#64748b;">{{ __('app.bookings_appear_hint') }}</p>
         </div>
     @endforelse
 

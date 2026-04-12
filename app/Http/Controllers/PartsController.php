@@ -34,4 +34,68 @@ class PartsController extends Controller
             'parts', 'makes', 'models', 'categories'
         ));
     }
+
+    public function create()
+    {
+        return view('parts.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'part_name'               => 'required|string|max:200',
+            'part_category'           => 'required|string|max:100',
+            'oem_part_number'         => 'required|string|max:100',
+            'alternative_part_number' => 'nullable|string|max:100',
+            'brand'                   => 'nullable|string|max:100',
+            'vehicle_make'            => 'required|string|max:100',
+            'vehicle_model'           => 'required|string|max:100',
+            'vehicle_year_from'       => 'required|integer|min:1900|max:2099',
+            'vehicle_year_to'         => 'required|integer|min:1900|max:2099',
+            'description'             => 'nullable|string|max:500',
+        ]);
+
+        Part::create($request->only([
+            'part_name', 'part_category', 'oem_part_number', 'alternative_part_number',
+            'brand', 'vehicle_make', 'vehicle_model', 'vehicle_year_from',
+            'vehicle_year_to', 'description',
+        ]));
+
+        return redirect()->route('parts.index')->with('success', __('app.part_created'));
+    }
+
+    public function edit(Part $part)
+    {
+        return view('parts.edit', compact('part'));
+    }
+
+    public function update(Request $request, Part $part)
+    {
+        $request->validate([
+            'part_name'               => 'required|string|max:200',
+            'part_category'           => 'required|string|max:100',
+            'oem_part_number'         => 'required|string|max:100',
+            'alternative_part_number' => 'nullable|string|max:100',
+            'brand'                   => 'nullable|string|max:100',
+            'vehicle_make'            => 'required|string|max:100',
+            'vehicle_model'           => 'required|string|max:100',
+            'vehicle_year_from'       => 'required|integer|min:1900|max:2099',
+            'vehicle_year_to'         => 'required|integer|min:1900|max:2099',
+            'description'             => 'nullable|string|max:500',
+        ]);
+
+        $part->update($request->only([
+            'part_name', 'part_category', 'oem_part_number', 'alternative_part_number',
+            'brand', 'vehicle_make', 'vehicle_model', 'vehicle_year_from',
+            'vehicle_year_to', 'description',
+        ]));
+
+        return redirect()->route('parts.index')->with('success', __('app.part_updated'));
+    }
+
+    public function destroy(Part $part)
+    {
+        $part->delete();
+        return redirect()->route('parts.index')->with('success', __('app.part_deleted'));
+    }
 }

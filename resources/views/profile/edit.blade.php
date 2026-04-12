@@ -2,9 +2,9 @@
 <div class="max-w-lg mx-auto px-4 pt-5 pb-24">
 
     <div class="mb-5 fade-in fade-in-1">
-        <p class="section-label mb-1">// ACCOUNT</p>
+        <p class="section-label mb-1">{{ __('app.account_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
-            My <span class="text-cyan">Profile</span>
+            {{ __('app.my_profile_title') }}
         </h1>
     </div>
 
@@ -26,7 +26,7 @@
         <button type="submit"
                 class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm"
                 style="background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);color:#ff6b00;">
-            ⏻ LOGOUT
+            <x-heroicon-o-arrow-right-on-rectangle class="w-4 h-4 inline-block mr-1 align-middle" />{{ __('app.logout_btn') }}
         </button>
     </form>
 
