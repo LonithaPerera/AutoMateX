@@ -30,7 +30,7 @@
             display:flex; align-items:center; justify-content:center;
             box-shadow:0 0 14px rgba(0,245,255,0.4);
         }
-        .logo-text { font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; color:white; letter-spacing:1px; }
+        .logo-text { font-family:'Rajdhani',sans-serif; font-size:26px; font-weight:700; color:white; letter-spacing:1px; display:inline-flex; align-items:center; }
         .logo-text span { color:var(--cyan); }
         .tagline {
             text-align:center; font-family:'Share Tech Mono',monospace;
@@ -89,25 +89,19 @@
 
     {{-- Logo --}}
     <div class="logo-wrap">
-        <div class="logo-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v5"/>
-                <circle cx="16" cy="19" r="2"/><circle cx="7" cy="19" r="2"/>
-                <path d="M13 19H9M16 17V9l-4-4H5v12"/>
-            </svg>
-        </div>
-        <div class="logo-text">AUTO<span>MATEX</span></div>
+        <img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;">
+        <div class="logo-text">Auto<span>Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></div>
     </div>
-    <p class="tagline">// vehicle history pass</p>
+    <p class="tagline">{{ __('app.pub_vehicle_history') }}</p>
 
     {{-- Public badge --}}
     <div class="badge-public">
-        🔓 PUBLIC RECORD · NO LOGIN REQUIRED · VERIFIED SERVICE HISTORY
+        <x-heroicon-o-lock-open class="w-4 h-4" style="color:rgba(0,245,255,0.7);" /> {{ __('app.pub_badge_text') }}
     </div>
 
     {{-- Vehicle info --}}
     <div class="card">
-        <p class="section-label">// vehicle details</p>
+        <p class="section-label">{{ __('app.pub_vehicle_details') }}</p>
         <h1 class="heading" style="font-size:28px;font-weight:700;color:white;margin-bottom:4px;">
             {{ $vehicle->make }} {{ $vehicle->model }}
         </h1>
@@ -120,22 +114,22 @@
         <div class="grid-3">
             <div class="stat-box">
                 <div class="stat-val" style="color:var(--cyan);">{{ number_format($vehicle->mileage) }}</div>
-                <div class="stat-lbl">Current km</div>
+                <div class="stat-lbl">{{ __('app.pub_current_km') }}</div>
             </div>
             <div class="stat-box">
                 <div class="stat-val" style="color:#4ade80;">{{ $serviceLogs->count() }}</div>
-                <div class="stat-lbl">Services</div>
+                <div class="stat-lbl">{{ __('app.services') }}</div>
             </div>
             <div class="stat-box">
                 <div class="stat-val" style="color:#6699ff;">{{ strtoupper($vehicle->fuel_type ?? '—') }}</div>
-                <div class="stat-lbl">Fuel Type</div>
+                <div class="stat-lbl">{{ __('app.pub_fuel_type') }}</div>
             </div>
         </div>
     </div>
 
     {{-- Service history --}}
     <div class="card">
-        <p class="section-label">// service history ({{ $serviceLogs->count() }} records)</p>
+        <p class="section-label">{{ __('app.pub_svc_history_label', ['count' => $serviceLogs->count()]) }}</p>
 
         @forelse($serviceLogs as $log)
         <div class="log-entry">
@@ -155,11 +149,11 @@
             </div>
             <div class="log-stats">
                 <div class="log-stat">
-                    <div class="log-stat-lbl">Mileage</div>
+                    <div class="log-stat-lbl">{{ __('app.mileage') }}</div>
                     <div class="log-stat-val">{{ number_format($log->mileage_at_service) }} km</div>
                 </div>
                 <div class="log-stat">
-                    <div class="log-stat-lbl">Cost</div>
+                    <div class="log-stat-lbl">{{ __('app.cost') }}</div>
                     <div class="log-stat-val" style="color:#4ade80;">LKR {{ number_format($log->cost) }}</div>
                 </div>
             </div>
@@ -171,15 +165,15 @@
         </div>
         @empty
         <div class="empty">
-            <div class="empty-icon">🔧</div>
-            <p>No service records yet</p>
+            <x-heroicon-o-wrench-screwdriver class="w-10 h-10 mx-auto mb-3" style="color:#64748b;" />
+            <p>{{ __('app.pub_no_records') }}</p>
         </div>
         @endforelse
     </div>
 
     {{-- Footer --}}
     <p style="text-align:center;font-size:11px;color:#334155;font-family:'Share Tech Mono',monospace;letter-spacing:0.1em;">
-        VERIFIED BY AUTOMATEX · {{ now()->format('d M Y') }}
+        {{ __('app.pub_verified_footer', ['date' => now()->format('d M Y')]) }}
     </p>
 
 </div>

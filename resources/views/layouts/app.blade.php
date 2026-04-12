@@ -169,6 +169,26 @@
 
         /* Page content padding for sticky header */
         .page-wrapper { position: relative; z-index: 10; }
+
+        /* Lang switcher in header */
+        .lang-switcher-header {
+            display: flex;
+            gap: 3px;
+        }
+        .lang-btn-header {
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            text-decoration: none;
+            border: 1px solid rgba(0,245,255,0.12);
+            color: #475569;
+            background: transparent;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .lang-btn-header:hover { border-color: rgba(0,245,255,0.3); color: #00f5ff; }
+        .lang-btn-header.active { border-color: rgba(0,245,255,0.35); color: #00f5ff; background: rgba(0,245,255,0.07); }
     </style>
 </head>
 <body>
@@ -180,25 +200,23 @@
         <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
             <!-- Logo -->
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-                     style="background:linear-gradient(135deg,#0066ff,#00f5ff);box-shadow:0 0 12px rgba(0,245,255,0.4);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                        <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v5"/>
-                        <circle cx="16" cy="19" r="2"/><circle cx="7" cy="19" r="2"/>
-                        <path d="M13 19H9M16 17V9l-4-4H5v12"/>
-                    </svg>
-                </div>
-                <span class="heading font-bold text-xl tracking-wide text-white">AUTO<span class="text-cyan">MATEX</span></span>
+                <img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;">
+                <span class="heading font-bold text-white" style="display:inline-flex;align-items:center;font-size:26px;letter-spacing:1px;">Auto<span class="text-cyan">Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></span>
             </a>
 
             <!-- Right -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+                <!-- Language Switcher -->
+                <div class="lang-switcher-header">
+                    <a href="{{ route('locale.switch', 'en') }}" class="lang-btn-header {{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
+                    <a href="{{ route('locale.switch', 'si') }}" class="lang-btn-header {{ app()->getLocale() === 'si' ? 'active' : '' }}">SI</a>
+                    <a href="{{ route('locale.switch', 'ta') }}" class="lang-btn-header {{ app()->getLocale() === 'ta' ? 'active' : '' }}">TA</a>
+                </div>
+
                 @if(Auth::user()->role === 'admin')
                     <a href="{{ route('admin.dashboard') }}"
                        class="relative w-9 h-9 rounded-xl glass flex items-center justify-center border border-purple-500/30 hover:border-purple-400/50 transition-colors">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
+                        <x-heroicon-o-shield-check class="w-4 h-4" style="color:#a855f7;" />
                     </a>
                 @endif
                 <div class="w-9 h-9 rounded-xl overflow-hidden border-2" style="border-color:rgba(0,245,255,0.3);">
@@ -224,12 +242,9 @@
             <a href="{{ route('dashboard') }}"
                class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('dashboard') ? '' : 'hover:bg-white/5' }}"
                style="{{ request()->routeIs('dashboard') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
-                     style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }}">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
+                <x-heroicon-o-home class="w-5 h-5" style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }};" />
                 <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }}">HOME</span>
+                      style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
                 @if(request()->routeIs('dashboard'))
                     <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
                 @endif
@@ -239,14 +254,9 @@
             <a href="{{ route('vehicles.index') }}"
                class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('vehicles.*') ? '' : 'hover:bg-white/5' }}"
                style="{{ request()->routeIs('vehicles.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }}">
-                    <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v5"/>
-                    <circle cx="16" cy="19" r="2"/><circle cx="7" cy="19" r="2"/>
-                    <path d="M13 19H9M16 17V9l-4-4H5v12"/>
-                </svg>
+                <x-heroicon-o-truck class="w-5 h-5" style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }};" />
                 <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }}">VEHICLES</span>
+                      style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.vehicles') }}</span>
                 @if(request()->routeIs('vehicles.*'))
                     <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
                 @endif
@@ -256,25 +266,18 @@
             <a href="{{ route('parts.index') }}" class="flex flex-col items-center -mt-5">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-95"
                      style="background:linear-gradient(135deg,#0066ff,#00f5ff);box-shadow:0 0 20px rgba(0,245,255,0.4),0 4px 16px rgba(0,102,255,0.5);">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
-                    </svg>
+                    <x-heroicon-o-wrench-screwdriver class="w-6 h-6" style="color:white;" />
                 </div>
-                <span class="text-xs font-semibold heading tracking-wide mt-1.5 text-cyan">PARTS</span>
+                <span class="text-xs font-semibold heading tracking-wide mt-1.5 text-cyan">{{ __('app.parts') }}</span>
             </a>
 
             <!-- Bookings -->
             <a href="{{ route('bookings.index') }}"
                class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('bookings.*') ? '' : 'hover:bg-white/5' }}"
                style="{{ request()->routeIs('bookings.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }}">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
+                <x-heroicon-o-calendar-days class="w-5 h-5" style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }};" />
                 <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }}">BOOKINGS</span>
+                      style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.bookings') }}</span>
                 @if(request()->routeIs('bookings.*'))
                     <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
                 @endif
@@ -284,13 +287,9 @@
             <a href="{{ route('profile.edit') }}"
                class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('profile.*') ? '' : 'hover:bg-white/5' }}"
                style="{{ request()->routeIs('profile.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }}">
-                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
+                <x-heroicon-o-user-circle class="w-5 h-5" style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }};" />
                 <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }}">PROFILE</span>
+                      style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.profile') }}</span>
                 @if(request()->routeIs('profile.*'))
                     <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
                 @endif

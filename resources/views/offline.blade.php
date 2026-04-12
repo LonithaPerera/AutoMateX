@@ -121,37 +121,42 @@
         .retry-btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .logo {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 14px;
+            font-size: 26px;
             font-weight: 700;
-            color: #475569;
-            letter-spacing: 2px;
-            margin-top: 20px;
+            color: white;
+            letter-spacing: 1px;
+            margin-top: 0;
+            display: inline-flex;
+            align-items: center;
         }
-        .logo span { color: rgba(0,245,255,0.4); }
+        .logo span { color: #00f5ff; }
     </style>
 </head>
 <body>
     <div class="card">
-        <span class="icon">📡</span>
-        <p class="label">// CONNECTION LOST</p>
-        <h1>You're <span>Offline</span></h1>
-        <p>No internet connection detected. Some features may be unavailable, but your cached data is still accessible.</p>
+        <x-heroicon-o-signal-slash class="icon w-16 h-16 mx-auto" style="color:var(--cyan);margin-bottom:20px;" />
+        <p class="label">{{ __('app.connection_lost') }}</p>
+        <h1>{{ __('app.youre_offline') }}</h1>
+        <p>{{ __('app.offline_desc') }}</p>
 
         <div class="divider"></div>
 
-        <p class="cached-label">// AVAILABLE OFFLINE</p>
+        <p class="cached-label">{{ __('app.available_offline') }}</p>
         <div class="cached-list">
-            <div class="cached-item"><span>🚗</span> Your vehicle data</div>
-            <div class="cached-item"><span>🔧</span> Service history</div>
-            <div class="cached-item"><span>⛽</span> Fuel logs</div>
-            <div class="cached-item"><span>🧠</span> Maintenance suggestions</div>
+            <div class="cached-item"><x-heroicon-o-truck class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_vehicle_data') }}</div>
+            <div class="cached-item"><x-heroicon-o-wrench-screwdriver class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_svc_history') }}</div>
+            <div class="cached-item"><x-heroicon-o-beaker class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_fuel_logs') }}</div>
+            <div class="cached-item"><x-heroicon-o-light-bulb class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_suggestions') }}</div>
         </div>
 
         <button class="retry-btn" onclick="window.location.reload()">
-            ↺ RETRY CONNECTION
+            <x-heroicon-o-arrow-path class="w-4 h-4 inline-block mr-1 align-middle" />{{ __('app.retry_connection') }}
         </button>
 
-        <p class="logo">AUTO<span>MATE</span>X</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:20px;">
+            <img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;">
+            <p class="logo">Auto<span>Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></p>
+        </div>
     </div>
 </body>
 </html>

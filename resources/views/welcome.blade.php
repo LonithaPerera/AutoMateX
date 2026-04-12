@@ -69,13 +69,13 @@
         }
         .logo {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 700;
             color: #fff;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
         .logo span { color: #00f5ff; }
-        .nav-links { display: flex; gap: 10px; }
+        .nav-links { display: flex; gap: 10px; align-items: center; }
         .btn-outline {
             padding: 8px 18px;
             border-radius: 10px;
@@ -103,6 +103,27 @@
             transition: all 0.2s;
         }
         .btn-primary:hover { opacity: 0.9; transform: scale(0.98); }
+
+        /* Language Switcher */
+        .lang-switcher {
+            display: flex;
+            gap: 4px;
+        }
+        .lang-btn {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(0,245,255,0.15);
+            color: #64748b;
+            background: transparent;
+            transition: all 0.2s;
+        }
+        .lang-btn:hover { border-color: rgba(0,245,255,0.3); color: #00f5ff; }
+        .lang-btn.active { border-color: rgba(0,245,255,0.4); color: #00f5ff; background: rgba(0,245,255,0.08); }
 
         /* Hero */
         .hero {
@@ -279,32 +300,31 @@
 
         {{-- Nav --}}
         <nav>
-            <div class="logo">AUTO<span>MATE</span>X</div>
-            @if(Route::has('login'))
+            <div class="logo" style="display:flex;align-items:center;"><img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;margin-right:8px;"><span style="display:inline-flex;align-items:center;color:white;">Auto<span style="color:#00f5ff;">Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></span></div>
             <div class="nav-links">
+                {{-- Language Switcher --}}
+                <div class="lang-switcher">
+                    <a href="{{ route('locale.switch', 'en') }}" class="lang-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
+                    <a href="{{ route('locale.switch', 'si') }}" class="lang-btn {{ app()->getLocale() === 'si' ? 'active' : '' }}">SI</a>
+                    <a href="{{ route('locale.switch', 'ta') }}" class="lang-btn {{ app()->getLocale() === 'ta' ? 'active' : '' }}">TA</a>
+                </div>
                 @auth
-                    <a href="{{ url('/dashboard') }}" class="btn-primary">DASHBOARD</a>
-                @else
-                    <a href="{{ route('login') }}" class="btn-outline">LOGIN</a>
-                    @if(Route::has('register'))
-                        <a href="{{ route('register') }}" class="btn-primary">GET STARTED</a>
-                    @endif
+                    <a href="{{ url('/dashboard') }}" class="btn-primary">{{ __('app.dashboard') }}</a>
                 @endauth
             </div>
-            @endif
         </nav>
 
         {{-- Hero --}}
         <div class="hero">
-            <p class="hero-label">// SMART VEHICLE MANAGEMENT SYSTEM</p>
-            <h1>Your Vehicle.<br><span>Fully Managed.</span></h1>
-            <p>Track service history, monitor fuel consumption, verify parts, and book garage appointments — all in one futuristic platform.</p>
+            <p class="hero-label">{{ __('app.hero_label') }}</p>
+            <h1>{{ __('app.hero_h1_1') }}<br><span>{{ __('app.hero_h1_2') }}</span></h1>
+            <p>{{ __('app.hero_p') }}</p>
             <div class="hero-btns">
                 @auth
-                    <a href="{{ url('/dashboard') }}" class="hero-btn-main">OPEN DASHBOARD →</a>
+                    <a href="{{ url('/dashboard') }}" class="hero-btn-main">{{ __('app.open_dashboard') }}</a>
                 @else
-                    <a href="{{ route('register') }}" class="hero-btn-main">GET STARTED FREE →</a>
-                    <a href="{{ route('login') }}" class="hero-btn-sec">SIGN IN</a>
+                    <a href="{{ route('register') }}" class="hero-btn-main">{{ __('app.get_started_free') }}</a>
+                    <a href="{{ route('login') }}" class="hero-btn-sec">{{ __('app.sign_in') }}</a>
                 @endauth
             </div>
         </div>
@@ -313,85 +333,85 @@
         <div class="stats-bar">
             <div class="stat">
                 <div class="stat-num">5+</div>
-                <div class="stat-label">Core Modules</div>
+                <div class="stat-label">{{ __('app.core_modules') }}</div>
             </div>
             <div class="stat">
                 <div class="stat-num">PWA</div>
-                <div class="stat-label">Works Offline</div>
+                <div class="stat-label">{{ __('app.works_offline') }}</div>
             </div>
             <div class="stat">
                 <div class="stat-num">QR</div>
-                <div class="stat-label">Smart Access</div>
+                <div class="stat-label">{{ __('app.smart_access') }}</div>
             </div>
         </div>
 
         {{-- Features --}}
         <div class="features">
-            <p class="section-label">// KEY FEATURES</p>
+            <p class="section-label">{{ __('app.key_features') }}</p>
 
             <div class="feature-card">
-                <div class="feature-icon">🚗</div>
+                <div class="feature-icon"><x-heroicon-o-truck class="w-8 h-8" /></div>
                 <div>
-                    <div class="feature-title">Vehicle Management</div>
-                    <div class="feature-desc">Add and manage all your vehicles with full specification tracking and health monitoring.</div>
+                    <div class="feature-title">{{ __('app.vehicle_management') }}</div>
+                    <div class="feature-desc">{{ __('app.vehicle_management_desc') }}</div>
                 </div>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon">🔧</div>
+                <div class="feature-icon"><x-heroicon-o-wrench-screwdriver class="w-8 h-8" /></div>
                 <div>
-                    <div class="feature-title">Service History</div>
-                    <div class="feature-desc">Log every service event and get AI-powered maintenance suggestions based on mileage.</div>
+                    <div class="feature-title">{{ __('app.service_history') }}</div>
+                    <div class="feature-desc">{{ __('app.service_history_desc') }}</div>
                 </div>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon">⛽</div>
+                <div class="feature-icon"><x-heroicon-o-beaker class="w-8 h-8" /></div>
                 <div>
-                    <div class="feature-title">Fuel Tracking</div>
-                    <div class="feature-desc">Automatically calculate fuel efficiency and track consumption trends over time.</div>
+                    <div class="feature-title">{{ __('app.fuel_tracking') }}</div>
+                    <div class="feature-desc">{{ __('app.fuel_tracking_desc') }}</div>
                 </div>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon">🔍</div>
+                <div class="feature-icon"><x-heroicon-o-magnifying-glass class="w-8 h-8" /></div>
                 <div>
-                    <div class="feature-title">Parts Verification</div>
-                    <div class="feature-desc">Verify OEM parts compatibility across 22 components for 5 vehicle models.</div>
+                    <div class="feature-title">{{ __('app.parts_verification') }}</div>
+                    <div class="feature-desc">{{ __('app.parts_verification_desc') }}</div>
                 </div>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon">📅</div>
+                <div class="feature-icon"><x-heroicon-o-calendar-days class="w-8 h-8" /></div>
                 <div>
-                    <div class="feature-title">Garage Booking</div>
-                    <div class="feature-desc">Browse registered garages, book appointments, and receive digital invoices.</div>
+                    <div class="feature-title">{{ __('app.garage_booking') }}</div>
+                    <div class="feature-desc">{{ __('app.garage_booking_desc') }}</div>
                 </div>
             </div>
 
             <div class="feature-card">
-                <div class="feature-icon">📱</div>
+                <div class="feature-icon"><x-heroicon-o-qr-code class="w-8 h-8" /></div>
                 <div>
-                    <div class="feature-title">QR Code Access</div>
-                    <div class="feature-desc">Generate QR codes for instant public vehicle history access — no login required.</div>
+                    <div class="feature-title">{{ __('app.qr_code_access') }}</div>
+                    <div class="feature-desc">{{ __('app.qr_code_access_desc') }}</div>
                 </div>
             </div>
         </div>
 
         {{-- CTA --}}
         <div class="cta">
-            <h2>Ready to <span>AutoMate</span> Your Vehicle?</h2>
-            <p>Join vehicle owners who manage their maintenance smarter.</p>
+            <h2>{!! __('app.cta_title') !!}</h2>
+            <p>{{ __('app.cta_p') }}</p>
             @auth
-                <a href="{{ url('/dashboard') }}" class="hero-btn-main">GO TO DASHBOARD →</a>
+                <a href="{{ url('/dashboard') }}" class="hero-btn-main">{{ __('app.go_to_dashboard') }}</a>
             @else
-                <a href="{{ route('register') }}" class="hero-btn-main">CREATE FREE ACCOUNT →</a>
+                <a href="{{ route('register') }}" class="hero-btn-main">{{ __('app.create_free_account') }}</a>
             @endauth
         </div>
 
         {{-- Footer --}}
         <footer>
-            <p>© {{ date('Y') }} <span>AutoMateX</span> · Built with Laravel · PUSL3190</p>
+            <p>{!! __('app.footer_text', ['year' => date('Y')]) !!}</p>
         </footer>
 
     </div>
