@@ -64,23 +64,4 @@ class GarageController extends Controller
 
         return view('garages.dashboard', compact('garage', 'bookings'));
     }
-
-    // Update booking status & add invoice
-    public function updateBooking(Request $request, \App\Models\Booking $booking)
-    {
-        $request->validate([
-            'status'         => 'required|in:pending,confirmed,completed,cancelled',
-            'invoice_amount' => 'nullable|numeric|min:0',
-            'invoice_notes'  => 'nullable|string|max:500',
-        ]);
-
-        $booking->update([
-            'status'         => $request->status,
-            'invoice_amount' => $request->invoice_amount,
-            'invoice_notes'  => $request->invoice_notes,
-        ]);
-
-        return redirect()->route('garage.dashboard')
-                         ->with('success', 'Booking updated successfully!');
-    }
 }

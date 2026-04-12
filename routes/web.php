@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\FuelLogController;
@@ -16,9 +17,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'vehicle.owner'])->name('dashboard');
 
 // Offline fallback page
 Route::get('/offline', function () {
@@ -34,46 +37,48 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Vehicle routes
-    Route::resource('vehicles', VehicleController::class);
-    Route::patch('vehicles/{vehicle}/mileage', [VehicleController::class, 'updateMileage'])->name('vehicles.updateMileage');
+    // Vehicle owner routes — restricted to vehicle_owner + admin
+    Route::middleware('vehicle.owner')->group(function () {
+        // Vehicles
+        Route::resource('vehicles', VehicleController::class);
+        Route::patch('vehicles/{vehicle}/mileage', [VehicleController::class, 'updateMileage'])->name('vehicles.updateMileage');
 
-    // Fuel Log routes
-    Route::get('vehicles/{vehicle}/fuel', [FuelLogController::class, 'index'])->name('fuel.index');
-    Route::get('vehicles/{vehicle}/fuel/create', [FuelLogController::class, 'create'])->name('fuel.create');
-    Route::post('vehicles/{vehicle}/fuel', [FuelLogController::class, 'store'])->name('fuel.store');
-    Route::delete('vehicles/{vehicle}/fuel/{fuelLog}', [FuelLogController::class, 'destroy'])->name('fuel.destroy');
+        // Fuel Log routes
+        Route::get('vehicles/{vehicle}/fuel', [FuelLogController::class, 'index'])->name('fuel.index');
+        Route::get('vehicles/{vehicle}/fuel/create', [FuelLogController::class, 'create'])->name('fuel.create');
+        Route::post('vehicles/{vehicle}/fuel', [FuelLogController::class, 'store'])->name('fuel.store');
+        Route::delete('vehicles/{vehicle}/fuel/{fuelLog}', [FuelLogController::class, 'destroy'])->name('fuel.destroy');
 
-    // Service Log routes
-    Route::get('vehicles/{vehicle}/service', [ServiceLogController::class, 'index'])->name('service.index');
-    Route::get('vehicles/{vehicle}/service/create', [ServiceLogController::class, 'create'])->name('service.create');
-    Route::post('vehicles/{vehicle}/service', [ServiceLogController::class, 'store'])->name('service.store');
-    Route::delete('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'destroy'])->name('service.destroy');
+        // Service Log routes
+        Route::get('vehicles/{vehicle}/service', [ServiceLogController::class, 'index'])->name('service.index');
+        Route::get('vehicles/{vehicle}/service/create', [ServiceLogController::class, 'create'])->name('service.create');
+        Route::post('vehicles/{vehicle}/service', [ServiceLogController::class, 'store'])->name('service.store');
+        Route::delete('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'destroy'])->name('service.destroy');
 
-    // Suggestion Engine
-    Route::get('vehicles/{vehicle}/suggestions', [SuggestionController::class, 'index'])->name('suggestions.index');
+        // Suggestion Engine
+        Route::get('vehicles/{vehicle}/suggestions', [SuggestionController::class, 'index'])->name('suggestions.index');
 
-    // QR Code
-    Route::get('vehicles/{vehicle}/qrcode', [QrCodeController::class, 'show'])->name('qrcode.show');
+        // QR Code
+        Route::get('vehicles/{vehicle}/qrcode', [QrCodeController::class, 'show'])->name('qrcode.show');
 
-    // Parts Verification
+        // Bookings
+        Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+        Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
+        Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
+    });
+
+    // Accessible by all authenticated users
     Route::get('/parts', [PartsController::class, 'index'])->name('parts.index');
-
-    // Garages
     Route::get('/garages', [GarageController::class, 'index'])->name('garages.index');
-    Route::get('/garages/create', [GarageController::class, 'create'])->name('garages.create');
-    Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
-    Route::get('/garage/dashboard', [GarageController::class, 'dashboard'])->name('garage.dashboard');
-    Route::post('/garage/bookings/{booking}', [GarageController::class, 'updateBooking'])->name('garage.updateBooking');
 
-    // Bookings
-    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
-    Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
-    Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
-
-    // Booking invoice
-    Route::patch('/bookings/{booking}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
-    Route::patch('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
+    // Garage routes — restricted to garage role
+    Route::middleware('garage')->group(function () {
+        Route::get('/garages/create', [GarageController::class, 'create'])->name('garages.create');
+        Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
+        Route::get('/garage/dashboard', [GarageController::class, 'dashboard'])->name('garage.dashboard');
+        Route::patch('/bookings/{booking}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
+        Route::patch('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
+    });
 
     // Admin routes — protected by admin middleware
     Route::middleware('admin')->group(function () {
@@ -81,6 +86,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
         Route::post('/admin/users/{user}/make-admin', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
         Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
+
+        // Parts CRUD (admin only)
+        Route::get('/parts/create',      [PartsController::class, 'create'])->name('parts.create');
+        Route::post('/parts',            [PartsController::class, 'store'])->name('parts.store');
+        Route::get('/parts/{part}/edit', [PartsController::class, 'edit'])->name('parts.edit');
+        Route::patch('/parts/{part}',    [PartsController::class, 'update'])->name('parts.update');
+        Route::delete('/parts/{part}',   [PartsController::class, 'destroy'])->name('parts.destroy');
     });
 });
 

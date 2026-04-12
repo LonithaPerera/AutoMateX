@@ -28,6 +28,12 @@ class BookingController extends Controller
             'notes'        => 'nullable|string|max:500',
         ]);
 
+        // Ensure the vehicle belongs to the authenticated user
+        $vehicle = Vehicle::findOrFail($request->vehicle_id);
+        if ($vehicle->user_id !== Auth::id()) {
+            abort(403, 'This vehicle does not belong to you.');
+        }
+
         Booking::create([
             'vehicle_id'   => $request->vehicle_id,
             'garage_id'    => $garage->id,
@@ -39,6 +45,48 @@ class BookingController extends Controller
 
         return redirect()->route('bookings.index')
                          ->with('success', 'Booking submitted successfully!');
+    }
+
+    // Garage owner — update booking status
+    public function update(Request $request, Booking $booking)
+    {
+        // Ensure the booking belongs to the authenticated garage user
+        $garage = Auth::user()->garage;
+        if (!$garage || $booking->garage_id !== $garage->id) {
+            abort(403, 'You are not authorized to update this booking.');
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,completed,cancelled',
+        ]);
+
+        $booking->update(['status' => $request->status]);
+
+        return redirect()->route('garage.dashboard')
+                         ->with('success', 'Booking status updated.');
+    }
+
+    // Garage owner — save invoice details
+    public function invoice(Request $request, Booking $booking)
+    {
+        // Ensure the booking belongs to the authenticated garage user
+        $garage = Auth::user()->garage;
+        if (!$garage || $booking->garage_id !== $garage->id) {
+            abort(403, 'You are not authorized to invoice this booking.');
+        }
+
+        $request->validate([
+            'invoice_amount' => 'nullable|numeric|min:0',
+            'invoice_notes'  => 'nullable|string|max:500',
+        ]);
+
+        $booking->update([
+            'invoice_amount' => $request->invoice_amount,
+            'invoice_notes'  => $request->invoice_notes,
+        ]);
+
+        return redirect()->route('garage.dashboard')
+                         ->with('success', 'Invoice saved successfully.');
     }
 
     // Vehicle owner — see all their bookings
