@@ -8,14 +8,24 @@
            style="color:#64748b;">
             {{ __('app.back_to_garages') }}
         </a>
-        <p class="section-label mb-1">{{ __('app.garage_dash_label') }}</p>
-        <h1 class="heading text-3xl font-bold text-white">
-            {{ $garage->name }}
-        </h1>
-        <p class="text-xs mt-1" style="color:#64748b;">
-            <x-heroicon-o-map-pin class="w-3 h-3 inline-block mr-0.5 align-middle" /> {{ $garage->city }}
-            @if($garage->phone) · {{ $garage->phone }} @endif
-        </p>
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="section-label mb-1">{{ __('app.garage_dash_label') }}</p>
+                <h1 class="heading text-3xl font-bold text-white">
+                    {{ $garage->name }}
+                </h1>
+                <p class="text-xs mt-1" style="color:#64748b;">
+                    <x-heroicon-o-map-pin class="w-3 h-3 inline-block mr-0.5 align-middle" /> {{ $garage->city }}
+                    @if($garage->phone) · {{ $garage->phone }} @endif
+                </p>
+            </div>
+            <a href="{{ route('garages.edit') }}"
+               class="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 border"
+               style="background:rgba(0,245,255,0.06);border-color:rgba(0,245,255,0.2);color:#00f5ff;">
+                <x-heroicon-o-pencil-square class="w-3.5 h-3.5" />
+                {{ __('app.edit_profile_btn') }}
+            </a>
+        </div>
     </div>
 
     {{-- Flash --}}

@@ -89,6 +89,24 @@ class BookingController extends Controller
                          ->with('success', 'Invoice saved successfully.');
     }
 
+    // Vehicle owner — cancel a booking
+    public function cancel(Booking $booking)
+    {
+        // Ensure the booking belongs to the authenticated user's vehicle
+        if ($booking->vehicle->user_id !== Auth::id()) {
+            abort(403, 'You are not authorized to cancel this booking.');
+        }
+
+        // Only allow cancellation of pending or confirmed bookings
+        if (!in_array($booking->status, ['pending', 'confirmed'])) {
+            return back()->with('error', __('app.booking_cannot_cancel'));
+        }
+
+        $booking->update(['status' => 'cancelled']);
+
+        return back()->with('success', __('app.booking_cancelled'));
+    }
+
     // Vehicle owner — see all their bookings
     public function index()
     {

@@ -276,7 +276,11 @@ return [
 
     // ─── Garages create ───────────────────────────────────────────────────────
     'back_to_garages'       => '← ගරාජ්වලට ආපසු',
+    'back_to_dashboard'     => '← උපකරණ පුවරුවට ආපසු',
     'register_garage_label' => '// ගරාජ් ලියාපදිංචිය',
+    'edit_garage_label'     => '// ගරාජ් සංස්කරණය',
+    'edit_garage_title'     => 'ගරාජ් ප්‍රොෆයිලය සංස්කරණය කරන්න',
+    'edit_profile_btn'      => 'ප්‍රොෆයිලය සංස්කරණය',
     'new_garage_title'      => 'නව ගරාජ් ප්‍රොෆයිලය',
     'field_garage_name'     => '// ගරාජ් නම',
     'field_city'            => '// නගරය',
@@ -312,6 +316,10 @@ return [
     'no_bookings_yet'       => 'වෙන්කිරීම් නැත',
     'book_first_appt'       => 'ඔබේ පළමු ගරාජ් හමුවීම වෙන් කරන්න',
     'browse_garages_btn'    => 'ගරාජ් බලන්න',
+    'cancel_booking_btn'    => 'වෙන්කිරීම අවලංගු කරන්න',
+    'cancel_confirm_msg'    => 'ඔබට මෙම වෙන්කිරීම අවලංගු කිරීමට අවශ්‍යද?',
+    'booking_cancelled'     => 'වෙන්කිරීම සාර්ථකව අවලංගු කෙරිණි.',
+    'booking_cannot_cancel' => 'මෙම වෙන්කිරීම අවලංගු කළ නොහැක.',
 
     // ─── Bookings create ──────────────────────────────────────────────────────
     'book_appt_label'       => '// හමුවීම වෙන් කරන්න',
@@ -442,5 +450,9 @@ return [
     'create_account_btn'     => 'ගිණුම සාදන්න →',
     'already_registered'     => 'දැනටමත් ලියාපදිංචිද?',
     'sign_in_link'           => 'පිවිසෙන්න',
+
+    // ─── Breadcrumb nav labels ─────────────────────────────────────────────────
+    'nav_vehicles'           => 'රථ වාහන',
+    'nav_garages'            => 'ගරාජ',
 
 ];

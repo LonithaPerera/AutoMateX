@@ -8,6 +8,22 @@
         </h1>
     </div>
 
+    {{-- Flash messages --}}
+    @if(session('success'))
+        <div class="rounded-2xl p-3 mb-4 border fade-in"
+             style="background:rgba(0,245,255,0.06);border-color:rgba(0,245,255,0.2);">
+            <x-heroicon-o-check-circle class="w-4 h-4 inline-block mr-1" style="color:var(--cyan);" />
+            <span class="text-sm" style="color:rgba(0,245,255,0.8);">{{ session('success') }}</span>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="rounded-2xl p-3 mb-4 border fade-in"
+             style="background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.2);">
+            <x-heroicon-o-x-circle class="w-4 h-4 inline-block mr-1" style="color:#f87171;" />
+            <span class="text-sm" style="color:#f87171;">{{ session('error') }}</span>
+        </div>
+    @endif
+
     {{-- Stats --}}
     @php
         $pending = $bookings->where('status','pending')->count();
@@ -89,6 +105,20 @@
             <p class="text-xs mt-1" style="color:#64748b;">{{ $booking->invoice_notes }}</p>
             @endif
         </div>
+        @endif
+
+        {{-- Cancel button — only for pending or confirmed --}}
+        @if(in_array($booking->status, ['pending', 'confirmed']))
+        <form method="POST" action="{{ route('bookings.cancel', $booking) }}" class="mt-3"
+              onsubmit="return confirm('{{ __('app.cancel_confirm_msg') }}')">
+            @csrf @method('PATCH')
+            <button type="submit"
+                    class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 border"
+                    style="background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.2);color:#f87171;">
+                <x-heroicon-o-x-circle class="w-3.5 h-3.5 inline-block mr-1 align-middle" />
+                {{ __('app.cancel_booking_btn') }}
+            </button>
+        </form>
         @endif
     </div>
     @empty

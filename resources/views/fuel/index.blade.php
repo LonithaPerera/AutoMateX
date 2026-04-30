@@ -1,6 +1,15 @@
 <x-app-layout>
 <div class="max-w-lg mx-auto px-4 pt-5 pb-24">
 
+    {{-- Breadcrumb --}}
+    <nav class="flex items-center gap-1.5 text-xs mb-3 fade-in" style="color:#64748b;">
+        <a href="{{ route('vehicles.index') }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ __('app.nav_vehicles') }}</a>
+        <span>›</span>
+        <a href="{{ route('vehicles.show', $vehicle) }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ $vehicle->make }} {{ $vehicle->model }}</a>
+        <span>›</span>
+        <span style="color:#94a3b8;">{{ __('app.fuel_tracker_label') }}</span>
+    </nav>
+
     {{-- Header --}}
     <div class="flex items-center justify-between mb-5 fade-in fade-in-1">
         <div>

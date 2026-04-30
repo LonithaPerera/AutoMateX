@@ -1,5 +1,12 @@
 <x-app-layout>
 <div class="max-w-lg mx-auto px-4 pt-5 pb-24">
+    {{-- Breadcrumb --}}
+    <nav class="flex items-center gap-1.5 text-xs mb-3 fade-in" style="color:#64748b;">
+        <a href="{{ route('vehicles.index') }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ __('app.nav_vehicles') }}</a>
+        <span>›</span>
+        <span style="color:#94a3b8;">{{ $vehicle->make }} {{ $vehicle->model }}</span>
+    </nav>
+
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
         <p class="section-label mb-1">{{ __('app.vehicle_details_label') }}</p>

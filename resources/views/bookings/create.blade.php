@@ -2,11 +2,13 @@
 <div class="max-w-lg mx-auto px-4 pt-5 pb-8">
 
     <div class="mb-5 fade-in fade-in-1">
-        <a href="{{ route('garages.index') }}"
-           class="inline-flex items-center gap-2 text-sm mb-3"
-           style="color:#64748b;">
-            {{ __('app.back_to_garages') }}
-        </a>
+        <nav class="flex items-center gap-1.5 text-xs mb-3 fade-in" style="color:#64748b;">
+            <a href="{{ route('garages.index') }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ __('app.nav_garages') }}</a>
+            <span>›</span>
+            <span style="color:#94a3b8;">{{ $garage->name }}</span>
+            <span>›</span>
+            <span style="color:#94a3b8;">{{ __('app.new_booking_title') }}</span>
+        </nav>
         <p class="section-label mb-1">{{ __('app.book_appt_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
             {{ __('app.new_booking_title') }}

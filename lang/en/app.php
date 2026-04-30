@@ -276,7 +276,11 @@ return [
 
     // ─── Garages create ───────────────────────────────────────────────────────
     'back_to_garages'       => '← Back to Garages',
+    'back_to_dashboard'     => '← Back to Dashboard',
     'register_garage_label' => '// REGISTER GARAGE',
+    'edit_garage_label'     => '// EDIT GARAGE',
+    'edit_garage_title'     => 'Edit Garage Profile',
+    'edit_profile_btn'      => 'Edit Profile',
     'new_garage_title'      => 'New Garage Profile',
     'field_garage_name'     => '// garage name',
     'field_city'            => '// city',
@@ -312,6 +316,10 @@ return [
     'no_bookings_yet'       => 'No Bookings Yet',
     'book_first_appt'       => 'Book your first garage appointment',
     'browse_garages_btn'    => 'BROWSE GARAGES',
+    'cancel_booking_btn'    => 'CANCEL BOOKING',
+    'cancel_confirm_msg'    => 'Are you sure you want to cancel this booking?',
+    'booking_cancelled'     => 'Booking cancelled successfully.',
+    'booking_cannot_cancel' => 'This booking cannot be cancelled.',
 
     // ─── Bookings create ──────────────────────────────────────────────────────
     'book_appt_label'       => '// BOOK APPOINTMENT',
@@ -442,5 +450,9 @@ return [
     'create_account_btn'     => 'CREATE ACCOUNT →',
     'already_registered'     => 'Already registered?',
     'sign_in_link'           => 'Sign in',
+
+    // ─── Breadcrumb nav labels ─────────────────────────────────────────────────
+    'nav_vehicles'           => 'Vehicles',
+    'nav_garages'            => 'Garages',
 
 ];

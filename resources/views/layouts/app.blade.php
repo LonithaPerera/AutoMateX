@@ -238,62 +238,109 @@
     <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-50 py-2 px-2">
         <div class="max-w-lg mx-auto flex items-center justify-around">
 
-            <!-- Home -->
-            <a href="{{ route('dashboard') }}"
-               class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('dashboard') ? '' : 'hover:bg-white/5' }}"
-               style="{{ request()->routeIs('dashboard') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <x-heroicon-o-home class="w-5 h-5" style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }};" />
-                <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
-                @if(request()->routeIs('dashboard'))
-                    <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
-                @endif
-            </a>
+            @php $role = Auth::user()->role; @endphp
 
-            <!-- Vehicles -->
-            <a href="{{ route('vehicles.index') }}"
-               class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('vehicles.*') ? '' : 'hover:bg-white/5' }}"
-               style="{{ request()->routeIs('vehicles.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <x-heroicon-o-truck class="w-5 h-5" style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }};" />
-                <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.vehicles') }}</span>
-                @if(request()->routeIs('vehicles.*'))
-                    <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
-                @endif
-            </a>
+            @if($role === 'garage')
+                {{-- ── GARAGE: Home · Parts · Profile ── --}}
 
-            <!-- Parts (center) -->
-            <a href="{{ route('parts.index') }}" class="flex flex-col items-center -mt-5">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-95"
-                     style="background:linear-gradient(135deg,#0066ff,#00f5ff);box-shadow:0 0 20px rgba(0,245,255,0.4),0 4px 16px rgba(0,102,255,0.5);">
-                    <x-heroicon-o-wrench-screwdriver class="w-6 h-6" style="color:white;" />
-                </div>
-                <span class="text-xs font-semibold heading tracking-wide mt-1.5 text-cyan">{{ __('app.parts') }}</span>
-            </a>
+                <!-- Home → garage dashboard -->
+                <a href="{{ route('garage.dashboard') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('garage.dashboard') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('garage.dashboard') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-home class="w-5 h-5" style="color:{{ request()->routeIs('garage.dashboard') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('garage.dashboard') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
+                    @if(request()->routeIs('garage.dashboard'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
 
-            <!-- Bookings -->
-            <a href="{{ route('bookings.index') }}"
-               class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('bookings.*') ? '' : 'hover:bg-white/5' }}"
-               style="{{ request()->routeIs('bookings.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <x-heroicon-o-calendar-days class="w-5 h-5" style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }};" />
-                <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.bookings') }}</span>
-                @if(request()->routeIs('bookings.*'))
-                    <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
-                @endif
-            </a>
+                <!-- Parts (center) -->
+                <a href="{{ route('parts.index') }}" class="flex flex-col items-center -mt-5">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-95"
+                         style="background:linear-gradient(135deg,#0066ff,#00f5ff);box-shadow:0 0 20px rgba(0,245,255,0.4),0 4px 16px rgba(0,102,255,0.5);">
+                        <x-heroicon-o-wrench-screwdriver class="w-6 h-6" style="color:white;" />
+                    </div>
+                    <span class="text-xs font-semibold heading tracking-wide mt-1.5 text-cyan">{{ __('app.parts') }}</span>
+                </a>
 
-            <!-- Profile -->
-            <a href="{{ route('profile.edit') }}"
-               class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('profile.*') ? '' : 'hover:bg-white/5' }}"
-               style="{{ request()->routeIs('profile.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                <x-heroicon-o-user-circle class="w-5 h-5" style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }};" />
-                <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                      style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.profile') }}</span>
-                @if(request()->routeIs('profile.*'))
-                    <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
-                @endif
-            </a>
+                <!-- Profile -->
+                <a href="{{ route('profile.edit') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('profile.*') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('profile.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-user-circle class="w-5 h-5" style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.profile') }}</span>
+                    @if(request()->routeIs('profile.*'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+            @else
+                {{-- ── VEHICLE OWNER & ADMIN: Home · Vehicles · Parts · Bookings · Profile ── --}}
+
+                <!-- Home -->
+                @php
+                    $homeRoute = $role === 'admin' ? route('admin.dashboard') : route('dashboard');
+                    $homeActive = $role === 'admin' ? request()->routeIs('admin.dashboard') : request()->routeIs('dashboard');
+                @endphp
+                <a href="{{ $homeRoute }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ $homeActive ? '' : 'hover:bg-white/5' }}"
+                   style="{{ $homeActive ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-home class="w-5 h-5" style="color:{{ $homeActive ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ $homeActive ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
+                    @if($homeActive)
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+                <!-- Vehicles -->
+                <a href="{{ route('vehicles.index') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('vehicles.*') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('vehicles.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-truck class="w-5 h-5" style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('vehicles.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.vehicles') }}</span>
+                    @if(request()->routeIs('vehicles.*'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+                <!-- Parts (center) -->
+                <a href="{{ route('parts.index') }}" class="flex flex-col items-center -mt-5">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-95"
+                         style="background:linear-gradient(135deg,#0066ff,#00f5ff);box-shadow:0 0 20px rgba(0,245,255,0.4),0 4px 16px rgba(0,102,255,0.5);">
+                        <x-heroicon-o-wrench-screwdriver class="w-6 h-6" style="color:white;" />
+                    </div>
+                    <span class="text-xs font-semibold heading tracking-wide mt-1.5 text-cyan">{{ __('app.parts') }}</span>
+                </a>
+
+                <!-- Bookings -->
+                <a href="{{ route('bookings.index') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('bookings.*') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('bookings.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-calendar-days class="w-5 h-5" style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('bookings.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.bookings') }}</span>
+                    @if(request()->routeIs('bookings.*'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+                <!-- Profile -->
+                <a href="{{ route('profile.edit') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('profile.*') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('profile.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-user-circle class="w-5 h-5" style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.profile') }}</span>
+                    @if(request()->routeIs('profile.*'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+            @endif
 
         </div>
     </nav>

@@ -3,11 +3,15 @@
 
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
-        <a href="{{ route('service.index', $vehicle) }}"
-           class="inline-flex items-center gap-2 text-sm mb-3"
-           style="color:#64748b;">
-            {{ __('app.back_to_service') }}
-        </a>
+        <nav class="flex items-center gap-1.5 text-xs mb-3 fade-in" style="color:#64748b;">
+            <a href="{{ route('vehicles.index') }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ __('app.nav_vehicles') }}</a>
+            <span>›</span>
+            <a href="{{ route('vehicles.show', $vehicle) }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ $vehicle->make }} {{ $vehicle->model }}</a>
+            <span>›</span>
+            <a href="{{ route('service.index', $vehicle) }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ __('app.service_history_label') }}</a>
+            <span>›</span>
+            <span style="color:#94a3b8;">{{ __('app.new_service_title') }}</span>
+        </nav>
         <p class="section-label mb-1">{{ __('app.log_service_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
             {{ __('app.new_service_title') }}

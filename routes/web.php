@@ -65,16 +65,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
         Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
         Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
+        Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     });
 
     // Accessible by all authenticated users
     Route::get('/parts', [PartsController::class, 'index'])->name('parts.index');
     Route::get('/garages', [GarageController::class, 'index'])->name('garages.index');
+    Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
 
     // Garage routes — restricted to garage role
     Route::middleware('garage')->group(function () {
         Route::get('/garages/create', [GarageController::class, 'create'])->name('garages.create');
-        Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
+        Route::get('/garage/edit', [GarageController::class, 'edit'])->name('garages.edit');
+        Route::patch('/garage', [GarageController::class, 'update'])->name('garages.update');
         Route::get('/garage/dashboard', [GarageController::class, 'dashboard'])->name('garage.dashboard');
         Route::patch('/bookings/{booking}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
         Route::patch('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
