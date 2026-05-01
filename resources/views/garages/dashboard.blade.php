@@ -3,11 +3,6 @@
 
     {{-- Header --}}
     <div class="mb-5 fade-in fade-in-1">
-        <a href="{{ route('garages.index') }}"
-           class="inline-flex items-center gap-2 text-sm mb-3"
-           style="color:#64748b;">
-            {{ __('app.back_to_garages') }}
-        </a>
         <div class="flex items-start justify-between">
             <div>
                 <p class="section-label mb-1">{{ __('app.garage_dash_label') }}</p>
