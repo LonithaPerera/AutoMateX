@@ -8,6 +8,7 @@ use App\Models\Garage;
 use App\Models\Booking;
 use App\Models\FuelLog;
 use App\Models\ServiceLog;
+use App\Models\MaintenanceSchedule;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -16,6 +17,23 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // ─── MAINTENANCE SCHEDULE RULES ───────────────────────────────────────
+        $schedules = [
+            ['service_name' => 'Engine Oil & Filter Change',     'interval_km' => 5000,  'category' => 'maintenance', 'description' => 'Replace engine oil and oil filter to keep the engine clean and well-lubricated. Essential for engine longevity.'],
+            ['service_name' => 'Air Filter Replacement',          'interval_km' => 15000, 'category' => 'maintenance', 'description' => 'A clean air filter ensures proper air-fuel mixture and protects the engine from dust and debris.'],
+            ['service_name' => 'Spark Plug Replacement',          'interval_km' => 30000, 'category' => 'maintenance', 'description' => 'Worn spark plugs cause poor fuel economy and misfires. Replace to maintain engine performance.'],
+            ['service_name' => 'Tyre Rotation & Wheel Alignment', 'interval_km' => 10000, 'category' => 'maintenance', 'description' => 'Rotating tyres ensures even wear and extends tyre life. Wheel alignment prevents uneven wear and improves handling.'],
+            ['service_name' => 'Brake Fluid Change',              'interval_km' => 20000, 'category' => 'maintenance', 'description' => 'Brake fluid absorbs moisture over time, reducing braking effectiveness. Replace to maintain safe braking performance.'],
+            ['service_name' => 'Coolant Flush',                   'interval_km' => 40000, 'category' => 'maintenance', 'description' => 'Old coolant loses its anti-corrosion properties. Flushing and replacing coolant prevents overheating and corrosion.'],
+            ['service_name' => 'Transmission Fluid Change',       'interval_km' => 30000, 'category' => 'maintenance', 'description' => 'Fresh transmission fluid ensures smooth gear changes and prevents premature transmission wear.'],
+            ['service_name' => 'Timing Belt Inspection',          'interval_km' => 60000, 'category' => 'inspection',  'description' => 'A worn or snapped timing belt can cause catastrophic engine damage. Inspect and replace at recommended intervals.'],
+            ['service_name' => 'Battery & Electrical Check',      'interval_km' => 20000, 'category' => 'inspection',  'description' => 'Check battery charge, terminals, and electrical connections to prevent unexpected breakdowns.'],
+            ['service_name' => 'Brake Pad & Disc Inspection',     'interval_km' => 15000, 'category' => 'inspection',  'description' => 'Inspect brake pads and discs for wear. Replace when pads are below 3mm to ensure safe stopping distances.'],
+        ];
+        foreach ($schedules as $schedule) {
+            MaintenanceSchedule::create($schedule);
+        }
+
         // ─── ADMIN ────────────────────────────────────────────────────────────
         User::create([
             'name'              => 'Ashan Perera',
@@ -97,11 +115,16 @@ class DatabaseSeeder extends Seeder
             FuelLog::create(array_merge($log, ['vehicle_id' => $aqua->id]));
         }
 
-        // Aqua — Service Logs
+        // Aqua — Service Logs (names match MaintenanceSchedule rules for suggestions engine)
         $aquaServiceLogs = [
-            ['service_type' => 'Oil & Filter Change',            'service_date' => '2024-09-15', 'mileage_at_service' => 55000, 'cost' => 4500,  'garage_name' => 'Speedy Motors Nugegoda',  'type' => 'maintenance', 'notes' => 'Used 5W-30 fully synthetic oil'],
-            ['service_type' => 'Full Service & Brake Inspection', 'service_date' => '2024-12-20', 'mileage_at_service' => 57500, 'cost' => 12800, 'garage_name' => 'AutoCare Maharagama',     'type' => 'maintenance', 'notes' => 'Brake pads 60% remaining, front discs good'],
-            ['service_type' => 'Tyre Rotation & Wheel Alignment', 'service_date' => '2025-02-10', 'mileage_at_service' => 58000, 'cost' => 3200,  'garage_name' => 'Speedy Motors Nugegoda',  'type' => 'maintenance', 'notes' => null],
+            // Oil change at 52,800 → next due 57,800 → 600km overdue → OVERDUE
+            ['service_type' => 'Engine Oil & Filter Change',     'service_date' => '2024-08-12', 'mileage_at_service' => 52800, 'cost' => 4500,  'garage_name' => 'Speedy Motors Nugegoda', 'type' => 'maintenance', 'notes' => 'Used 5W-30 fully synthetic oil'],
+            // Tyre rotation at 48,200 → next due 58,200 → 200km overdue → OVERDUE
+            ['service_type' => 'Tyre Rotation & Wheel Alignment','service_date' => '2024-06-05', 'mileage_at_service' => 48200, 'cost' => 3200,  'garage_name' => 'Speedy Motors Nugegoda', 'type' => 'maintenance', 'notes' => null],
+            // Brake pad check at 43,450 → next due 58,450 → 50km remaining → DUE SOON
+            ['service_type' => 'Brake Pad & Disc Inspection',    'service_date' => '2024-03-20', 'mileage_at_service' => 43450, 'cost' => 2800,  'garage_name' => 'AutoCare Maharagama',    'type' => 'inspection',  'notes' => 'Front pads at 5mm, rear at 6mm'],
+            // Air filter at 45,000 → next due 60,000 → 1,600km away → Upcoming
+            ['service_type' => 'Air Filter Replacement',          'service_date' => '2024-04-18', 'mileage_at_service' => 45000, 'cost' => 1800,  'garage_name' => 'Speedy Motors Nugegoda', 'type' => 'maintenance', 'notes' => null],
         ];
         foreach ($aquaServiceLogs as $log) {
             ServiceLog::create(array_merge($log, ['vehicle_id' => $aqua->id]));
@@ -154,10 +177,14 @@ class DatabaseSeeder extends Seeder
             FuelLog::create(array_merge($log, ['vehicle_id' => $swift->id]));
         }
 
-        // Swift — Service Logs
+        // Swift — Service Logs (names match MaintenanceSchedule rules for suggestions engine)
         $swiftServiceLogs = [
-            ['service_type' => 'Engine Oil Change',                      'service_date' => '2024-10-05', 'mileage_at_service' => 38500, 'cost' => 3800, 'garage_name' => 'Suzuki Authorized Service Kandy', 'type' => 'maintenance', 'notes' => 'Used Suzuki genuine oil'],
-            ['service_type' => 'Air Filter & Spark Plug Replacement',    'service_date' => '2025-01-20', 'mileage_at_service' => 40800, 'cost' => 5600, 'garage_name' => 'Suzuki Authorized Service Kandy', 'type' => 'repair',      'notes' => 'Replaced all 4 spark plugs and air filter'],
+            // Oil change at 36,000 → next due 41,000 → 200km overdue → OVERDUE
+            ['service_type' => 'Engine Oil & Filter Change',     'service_date' => '2024-09-10', 'mileage_at_service' => 36000, 'cost' => 3800, 'garage_name' => 'Suzuki Authorized Service Kandy', 'type' => 'maintenance', 'notes' => 'Used Suzuki genuine 5W-30 oil'],
+            // Air filter at 26,500 → next due 41,500 → 300km remaining → DUE SOON
+            ['service_type' => 'Air Filter Replacement',          'service_date' => '2024-01-15', 'mileage_at_service' => 26500, 'cost' => 1600, 'garage_name' => 'Suzuki Authorized Service Kandy', 'type' => 'maintenance', 'notes' => null],
+            // Spark plugs at 12,000 → next due 42,000 → 800km away → Upcoming
+            ['service_type' => 'Spark Plug Replacement',          'service_date' => '2023-04-20', 'mileage_at_service' => 12000, 'cost' => 4200, 'garage_name' => 'Suzuki Authorized Service Kandy', 'type' => 'repair',      'notes' => 'Replaced all 4 NGK spark plugs'],
         ];
         foreach ($swiftServiceLogs as $log) {
             ServiceLog::create(array_merge($log, ['vehicle_id' => $swift->id]));
