@@ -1,11 +1,19 @@
 <x-app-layout>
 <div class="max-w-lg mx-auto px-4 pt-5 pb-24">
 
-    <div class="mb-5 fade-in fade-in-1">
-        <p class="section-label mb-1">{{ __('app.my_bookings_label') }}</p>
-        <h1 class="heading text-3xl font-bold text-white">
-            {{ __('app.service_appointments') }}
-        </h1>
+    <div class="flex items-start justify-between mb-5 fade-in fade-in-1">
+        <div>
+            <p class="section-label mb-1">{{ __('app.my_bookings_label') }}</p>
+            <h1 class="heading text-3xl font-bold text-white">
+                {{ __('app.service_appointments') }}
+            </h1>
+        </div>
+        <a href="{{ route('garages.index') }}"
+           class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 mt-1"
+           style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 16px rgba(0,245,255,0.25);">
+            <x-heroicon-o-plus class="w-3.5 h-3.5" />
+            {{ __('app.book_appt_btn') }}
+        </a>
     </div>
 
     {{-- Flash messages --}}

@@ -101,6 +101,14 @@
         </a>
     </div>
 
+    {{-- Book a Service --}}
+    <a href="{{ route('garages.index') }}"
+       class="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl font-semibold heading tracking-widest text-sm transition-all active:scale-95 mb-4 fade-in fade-in-4"
+       style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 24px rgba(0,245,255,0.3);">
+        <x-heroicon-o-calendar-days class="w-5 h-5" />
+        {{ __('app.book_service_btn') }}
+    </a>
+
     {{-- Back --}}
     <a href="{{ route('vehicles.index') }}"
        class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl fade-in fade-in-4"
