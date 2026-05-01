@@ -151,6 +151,11 @@
                 </div>
 
                 {{-- Actions --}}
+                <a href="{{ route('vehicles.show', $vehicle) }}"
+                   class="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95 mb-2"
+                   style="background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
+                    <x-heroicon-o-eye class="w-3 h-3 align-middle" />{{ __('app.view_details') }}
+                </a>
                 <div class="flex gap-2">
                     <a href="{{ route('suggestions.index', $vehicle) }}"
                        class="flex-1 py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95"
