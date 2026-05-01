@@ -44,7 +44,7 @@ class BookingController extends Controller
         ]);
 
         return redirect()->route('bookings.index')
-                         ->with('success', 'Booking submitted successfully!');
+                         ->with('success', __('app.booking_submitted'));
     }
 
     // Garage owner — update booking status

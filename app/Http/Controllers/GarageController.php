@@ -44,7 +44,7 @@ class GarageController extends Controller
         ]);
 
         return redirect()->route('garage.dashboard')
-                         ->with('success', 'Garage profile created successfully!');
+                         ->with('success', __('app.garage_created'));
     }
 
     // Show garage profile edit form
@@ -83,7 +83,7 @@ class GarageController extends Controller
         ]);
 
         return redirect()->route('garage.dashboard')
-                         ->with('success', 'Garage profile updated successfully!');
+                         ->with('success', __('app.garage_updated'));
     }
 
     // Garage owner dashboard — see all bookings

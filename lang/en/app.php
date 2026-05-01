@@ -271,6 +271,7 @@ return [
     'km_unit'               => 'km/L',
     'specialisation_label'  => '// specialisation',
     'book_appt_btn'         => 'BOOK APPOINTMENT',
+    'book_service_btn'      => 'Book a Service',
     'no_garages'            => 'No Garages Yet',
     'garages_hint'          => 'Garage operators can register their service centre',
 
@@ -450,6 +451,11 @@ return [
     'create_account_btn'     => 'CREATE ACCOUNT →',
     'already_registered'     => 'Already registered?',
     'sign_in_link'           => 'Sign in',
+
+    // ─── Success flash messages ────────────────────────────────────────────────
+    'booking_submitted'      => 'Booking submitted successfully.',
+    'garage_created'         => 'Garage profile created successfully.',
+    'garage_updated'         => 'Garage profile updated successfully.',
 
     // ─── Breadcrumb nav labels ─────────────────────────────────────────────────
     'nav_vehicles'           => 'Vehicles',

@@ -271,6 +271,7 @@ return [
     'km_unit'               => 'km/L',
     'specialisation_label'  => '// විශේෂීකරණය',
     'book_appt_btn'         => 'හමුවීම වෙන් කරන්න',
+    'book_service_btn'      => 'සේවාවක් වෙන් කරන්න',
     'no_garages'            => 'ගරාජ් නැත',
     'garages_hint'          => 'ගරාජ් ක්‍රියාකරුවන්ට ඔවුන්ගේ සේවා මධ්‍යස්ථානය ලියාපදිංචි කළ හැකිය',
 
@@ -450,6 +451,11 @@ return [
     'create_account_btn'     => 'ගිණුම සාදන්න →',
     'already_registered'     => 'දැනටමත් ලියාපදිංචිද?',
     'sign_in_link'           => 'පිවිසෙන්න',
+
+    // ─── Success flash messages ────────────────────────────────────────────────
+    'booking_submitted'      => 'වෙන්කිරීම සාර්ථකව ඉදිරිපත් කරන ලදී.',
+    'garage_created'         => 'ගරාජ් පැතිකඩ සාර්ථකව නිර්මාණය කරන ලදී.',
+    'garage_updated'         => 'ගරාජ් පැතිකඩ සාර්ථකව යාවත්කාලීන කරන ලදී.',
 
     // ─── Breadcrumb nav labels ─────────────────────────────────────────────────
     'nav_vehicles'           => 'රථ වාහන',
