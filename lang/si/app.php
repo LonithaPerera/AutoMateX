@@ -516,6 +516,24 @@ return [
     'note_saved'             => 'සටහන සාර්ථකව සුරකින ලදී.',
     'garage_reply_label'     => '// ගරාජ් සිට සටහනක්',
 
+    // ─── Vehicle owner improvements ───────────────────────────────────────────
+    'recent_booking_label'   => '// මෑත වෙන්කිරීම',
+    'no_recent_booking'      => 'තවම වෙන්කිරීම් නැත',
+    'view_all_bookings'      => 'සියලු වෙන්කිරීම් බලන්න',
+    'last_service_label'     => 'අවසාන සේවාව',
+    'total_spend_label'      => 'මුළු වියදම',
+    'next_service_due_label' => 'ඊළඟ සේවාව',
+    'km_away'                => 'කි.මී. ඉතිරිව',
+    'km_overdue'             => 'කි.මී. කල් ඉකුත්',
+    'efficiency_trend_label' => '// කාර්යක්ෂමතා ප්‍රවණතාව',
+    'edit_log_btn'           => 'සංස්කරණය',
+    'edit_fuel_title'        => 'ඉන්ධන සටහන සංස්කරණය කරන්න',
+    'edit_service_title'     => 'සේවා සටහන සංස්කරණය කරන්න',
+    'update_fillup_btn'      => 'යාවත්කාලීන කරන්න →',
+    'update_service_btn'     => 'සේවා සටහන යාවත්කාලීන කරන්න →',
+    'fuel_updated'           => 'ඉන්ධන සටහන සාර්ථකව යාවත්කාලීන කෙරිණි.',
+    'service_updated'        => 'සේවා සටහන සාර්ථකව යාවත්කාලීන කෙරිණි.',
+
     // ─── Garage 7-feature upgrade ─────────────────────────────────────────────
     'quick_confirm_btn'      => 'තහවුරු කරන්න',
     'quick_complete_btn'     => 'සම්පූර්ණ ලෙස සලකුණු කරන්න',

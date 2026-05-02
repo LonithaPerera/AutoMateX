@@ -25,6 +25,40 @@
     @endif
 
     @forelse($vehicles as $index => $vehicle)
+    @php
+        // ── Multi-factor health score ──────────────────────────────────────
+        $mileageScore = max(0, (int) round(40 - ($vehicle->mileage / 100000) * 40));
+
+        $lastSvc = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
+            ->orderBy('service_date', 'desc')->first();
+        if (!$lastSvc) {
+            $svcScore = 10;
+        } else {
+            $daysSince = \Carbon\Carbon::parse($lastSvc->service_date)->diffInDays(now());
+            $svcScore  = max(0, min(40, (int) round(40 - ($daysSince / 365) * 40)));
+        }
+
+        $schedules = \App\Models\MaintenanceSchedule::all();
+        $overdueCount = 0;
+        foreach ($schedules as $sched) {
+            $lastMaint = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
+                ->where('service_type', 'like', '%' . explode(' ', $sched->service_name)[0] . '%')
+                ->orderBy('mileage_at_service', 'desc')->first();
+            $lastKm = $lastMaint ? $lastMaint->mileage_at_service : 0;
+            if ($vehicle->mileage >= $lastKm + $sched->interval_km) $overdueCount++;
+        }
+        $maintScore = max(0, 20 - ($overdueCount * 10));
+        $health     = $mileageScore + $svcScore + $maintScore;
+
+        $ringColor = $health >= 70 ? '#00f5ff' : ($health >= 40 ? '#ff6b00' : '#f87171');
+        $ringGlow  = $health >= 70 ? 'rgba(0,245,255,0.3)' : ($health >= 40 ? 'rgba(255,107,0,0.3)' : 'rgba(248,113,113,0.3)');
+
+        // Pre-compute stats
+        $avg        = \App\Models\FuelLog::where('vehicle_id',$vehicle->id)->whereNotNull('km_per_liter')->avg('km_per_liter');
+        $svc        = \App\Models\ServiceLog::where('vehicle_id',$vehicle->id)->count();
+        $totalSpend = \App\Models\ServiceLog::where('vehicle_id',$vehicle->id)->sum('cost')
+                    + \App\Models\FuelLog::where('vehicle_id',$vehicle->id)->sum('cost');
+    @endphp
     <div class="glass-bright rounded-2xl p-4 mb-4 vehicle-card fade-in fade-in-{{ $index + 2 }} animate-glow border">
 
         {{-- Top row --}}
@@ -41,33 +75,62 @@
                 </p>
             </div>
             {{-- Ring gauge --}}
-            @php $health = max(10, min(99, 100 - round(($vehicle->mileage / 100000) * 100))); @endphp
-            <div style="
-                width:56px;height:56px;border-radius:50%;
-                background:conic-gradient(var(--cyan) 0% {{ $health }}%, rgba(255,255,255,0.05) {{ $health }}% 100%);
-                display:flex;align-items:center;justify-content:center;
-                box-shadow:0 0 15px rgba(0,245,255,0.3);">
-                <div style="width:44px;height:44px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;">
-                    <span class="mono text-xs font-bold text-cyan">{{ $health }}%</span>
+            <div class="relative ring-wrap flex-shrink-0">
+                <div class="health-ring"
+                     data-health="{{ $health }}"
+                     data-color="{{ $ringColor }}"
+                     style="width:56px;height:56px;border-radius:50%;
+                            background:conic-gradient({{ $ringColor }} 0% 0%,rgba(255,255,255,0.05) 0% 100%);
+                            display:flex;align-items:center;justify-content:center;
+                            box-shadow:0 0 15px {{ $ringGlow }};">
+                    <div style="width:44px;height:44px;border-radius:50%;background:var(--card);
+                                display:flex;align-items:center;justify-content:center;">
+                        <span class="mono text-xs font-bold" style="color:{{ $ringColor }};">{{ $health }}%</span>
+                    </div>
+                </div>
+                {{-- Tooltip --}}
+                <div class="absolute right-0 bottom-full mb-2 w-44 rounded-xl p-2.5 ring-tip pointer-events-none z-50"
+                     style="background:rgba(8,12,20,0.97);border:1px solid rgba(0,245,255,0.18);">
+                    <p class="mono text-xs font-bold mb-1.5" style="color:{{ $ringColor }};">HEALTH: {{ $health }}/100</p>
+                    <div class="text-xs space-y-1" style="color:#64748b;">
+                        <div class="flex justify-between"><span>Mileage</span><span class="mono">{{ $mileageScore }}/40</span></div>
+                        <div class="flex justify-between"><span>Last Service</span><span class="mono">{{ $svcScore }}/40</span></div>
+                        <div class="flex justify-between"><span>Maintenance</span><span class="mono">{{ $maintScore }}/20</span></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         {{-- Stats row --}}
-        <div class="grid grid-cols-3 gap-2 mb-3">
+        <div class="grid grid-cols-3 gap-2 mb-2">
             <div class="rounded-xl p-2.5 text-center" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
                 <p class="mono text-sm font-bold text-white">{{ number_format($vehicle->mileage) }}</p>
                 <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.km_odo') }}</p>
             </div>
             <div class="rounded-xl p-2.5 text-center" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
-                @php $avg = \App\Models\FuelLog::where('vehicle_id',$vehicle->id)->whereNotNull('km_per_liter')->avg('km_per_liter'); @endphp
                 <p class="mono text-sm font-bold" style="color:#4ade80;">{{ $avg ? number_format($avg,1) : '—' }}</p>
                 <p class="text-xs mt-0.5" style="color:#64748b;">km/L</p>
             </div>
             <div class="rounded-xl p-2.5 text-center" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
-                @php $svc = \App\Models\ServiceLog::where('vehicle_id',$vehicle->id)->count(); @endphp
                 <p class="mono text-sm font-bold text-white">{{ $svc }}</p>
                 <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.km_services') }}</p>
+            </div>
+        </div>
+        {{-- Last service + total spend --}}
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <div class="rounded-xl p-2 flex items-center gap-2" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);">
+                <x-heroicon-o-wrench-screwdriver class="w-3 h-3 flex-shrink-0" style="color:#64748b;" />
+                <div>
+                    <p class="text-xs" style="color:#64748b;">{{ __('app.last_service_label') }}</p>
+                    <p class="mono text-xs font-bold text-white">{{ $lastSvc ? $lastSvc->service_date->format('d M Y') : '—' }}</p>
+                </div>
+            </div>
+            <div class="rounded-xl p-2 flex items-center gap-2" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);">
+                <x-heroicon-o-banknotes class="w-3 h-3 flex-shrink-0" style="color:#64748b;" />
+                <div>
+                    <p class="text-xs" style="color:#64748b;">{{ __('app.total_spend_label') }}</p>
+                    <p class="mono text-xs font-bold" style="color:#4ade80;">LKR {{ number_format($totalSpend) }}</p>
+                </div>
             </div>
         </div>
 
@@ -120,3 +183,26 @@
 
 </div>
 </x-app-layout>
+<style>
+.ring-wrap:hover .ring-tip { opacity: 1; }
+.ring-tip { opacity: 0; transition: opacity 0.2s ease; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.health-ring').forEach(function (ring) {
+        var target = parseInt(ring.dataset.health, 10);
+        var color  = ring.dataset.color;
+        var current = 0;
+        var steps   = 48;
+        var inc     = target / steps;
+        var i = 0;
+        var timer = setInterval(function () {
+            i++;
+            current = Math.min(i * inc, target);
+            ring.style.background =
+                'conic-gradient(' + color + ' 0% ' + current + '%, rgba(255,255,255,0.05) ' + current + '% 100%)';
+            if (i >= steps) clearInterval(timer);
+        }, 16);
+    });
+});
+</script>

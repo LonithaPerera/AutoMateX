@@ -1,0 +1,109 @@
+<x-app-layout>
+<div class="max-w-lg mx-auto px-4 pt-5 pb-8">
+
+    <div class="mb-5 fade-in fade-in-1">
+        <nav class="flex items-center gap-1.5 text-xs mb-3 fade-in" style="color:#64748b;">
+            <a href="{{ route('vehicles.index') }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ __('app.nav_vehicles') }}</a>
+            <span>›</span>
+            <a href="{{ route('vehicles.show', $vehicle) }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ $vehicle->make }} {{ $vehicle->model }}</a>
+            <span>›</span>
+            <a href="{{ route('service.index', $vehicle) }}" class="transition-colors hover:text-white" style="color:#64748b;">{{ __('app.service_history_label') }}</a>
+            <span>›</span>
+            <span style="color:#94a3b8;">{{ __('app.edit_service_title') }}</span>
+        </nav>
+        <p class="section-label mb-1">{{ __('app.log_service_label') }}</p>
+        <h1 class="heading text-3xl font-bold text-white">{{ __('app.edit_service_title') }}</h1>
+        <p class="text-xs mono mt-1" style="color:#64748b;">
+            {{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->year }}
+        </p>
+    </div>
+
+    <div class="glass-bright rounded-2xl p-5 fade-in fade-in-2 border animate-glow">
+        <form method="POST" action="{{ route('service.update', [$vehicle, $serviceLog]) }}">
+            @csrf @method('PATCH')
+
+            <div class="mb-4">
+                <label class="section-label mb-2 block">{{ __('app.field_service_type') }}</label>
+                <input type="text" name="service_type"
+                       value="{{ old('service_type', $serviceLog->service_type) }}"
+                       required
+                       class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+            </div>
+
+            <div class="mb-4">
+                <label class="section-label mb-2 block">{{ __('app.field_category') }}</label>
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach(['maintenance','repair','inspection'] as $cat)
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="type" value="{{ $cat }}"
+                               {{ old('type', $serviceLog->type) === $cat ? 'checked' : '' }}
+                               class="peer absolute opacity-0 w-0 h-0">
+                        <div class="py-2.5 rounded-xl text-center text-xs font-semibold heading tracking-wider transition-all border peer-checked:border-cyan-400"
+                             style="background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);">
+                            {{ __('app.cat_' . $cat) }}
+                        </div>
+                    </label>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="section-label mb-2 block">{{ __('app.field_date') }}</label>
+                    <input type="date" name="service_date"
+                           value="{{ old('service_date', $serviceLog->service_date->format('Y-m-d')) }}"
+                           required
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
+                </div>
+                <div>
+                    <label class="section-label mb-2 block">{{ __('app.field_mileage_km') }}</label>
+                    <input type="number" name="mileage_at_service"
+                           value="{{ old('mileage_at_service', $serviceLog->mileage_at_service) }}"
+                           required min="0"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="section-label mb-2 block">{{ __('app.field_cost') }}</label>
+                    <input type="number" name="cost"
+                           value="{{ old('cost', $serviceLog->cost) }}"
+                           required min="0" step="0.01"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+                <div>
+                    <label class="section-label mb-2 block">{{ __('app.field_garage_name') }}</label>
+                    <input type="text" name="garage_name"
+                           value="{{ old('garage_name', $serviceLog->garage_name) }}"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="section-label mb-2 block">{{ __('app.field_notes') }}</label>
+                <textarea name="notes" rows="3"
+                          class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
+                          style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('notes', $serviceLog->notes) }}</textarea>
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm transition-all active:scale-95"
+                    style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 24px rgba(0,245,255,0.3);">
+                {{ __('app.update_service_btn') }}
+            </button>
+
+            <a href="{{ route('service.index', $vehicle) }}"
+               class="block text-center mt-3 text-sm py-2" style="color:#64748b;">
+                {{ __('app.cancel') }}
+            </a>
+        </form>
+    </div>
+
+</div>
+</x-app-layout>

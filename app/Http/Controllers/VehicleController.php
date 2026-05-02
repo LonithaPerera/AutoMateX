@@ -36,7 +36,32 @@ class VehicleController extends Controller
     // Show a single vehicle
     public function show(Vehicle $vehicle)
     {
-        return view('vehicles.show', compact('vehicle'));
+        // Find the next due or most overdue service
+        $schedules   = \App\Models\MaintenanceSchedule::all();
+        $nextService = null;
+        $minKmLeft   = PHP_INT_MAX;
+
+        foreach ($schedules as $schedule) {
+            $lastService = $vehicle->serviceLogs()
+                ->where('service_type', 'like', '%' . $schedule->service_name . '%')
+                ->orderBy('mileage_at_service', 'desc')
+                ->first();
+
+            $lastKm  = $lastService ? $lastService->mileage_at_service : 0;
+            $nextDue = $lastKm + $schedule->interval_km;
+            $kmLeft  = $nextDue - $vehicle->mileage;
+
+            if ($kmLeft < $minKmLeft) {
+                $minKmLeft   = $kmLeft;
+                $nextService = [
+                    'name'    => $schedule->service_name,
+                    'km_left' => $kmLeft,
+                    'status'  => $kmLeft <= 0 ? 'overdue' : ($kmLeft <= 500 ? 'due_soon' : 'upcoming'),
+                ];
+            }
+        }
+
+        return view('vehicles.show', compact('vehicle', 'nextService'));
     }
     // Update vehicle mileage manually
     public function updateMileage(Request $request, Vehicle $vehicle)

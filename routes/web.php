@@ -21,7 +21,11 @@ Route::get('/', function () {
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $latestBooking = auth()->user()->bookings()
+        ->with('garage', 'vehicle')
+        ->latest('booking_date')
+        ->first();
+    return view('dashboard', compact('latestBooking'));
 })->middleware(['auth', 'verified', 'vehicle.owner'])->name('dashboard');
 
 // Offline fallback page
@@ -48,12 +52,16 @@ Route::middleware('auth')->group(function () {
         Route::get('vehicles/{vehicle}/fuel', [FuelLogController::class, 'index'])->name('fuel.index');
         Route::get('vehicles/{vehicle}/fuel/create', [FuelLogController::class, 'create'])->name('fuel.create');
         Route::post('vehicles/{vehicle}/fuel', [FuelLogController::class, 'store'])->name('fuel.store');
+        Route::get('vehicles/{vehicle}/fuel/{fuelLog}/edit', [FuelLogController::class, 'edit'])->name('fuel.edit');
+        Route::patch('vehicles/{vehicle}/fuel/{fuelLog}', [FuelLogController::class, 'update'])->name('fuel.update');
         Route::delete('vehicles/{vehicle}/fuel/{fuelLog}', [FuelLogController::class, 'destroy'])->name('fuel.destroy');
 
         // Service Log routes
         Route::get('vehicles/{vehicle}/service', [ServiceLogController::class, 'index'])->name('service.index');
         Route::get('vehicles/{vehicle}/service/create', [ServiceLogController::class, 'create'])->name('service.create');
         Route::post('vehicles/{vehicle}/service', [ServiceLogController::class, 'store'])->name('service.store');
+        Route::get('vehicles/{vehicle}/service/{serviceLog}/edit', [ServiceLogController::class, 'edit'])->name('service.edit');
+        Route::patch('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'update'])->name('service.update');
         Route::delete('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'destroy'])->name('service.destroy');
 
         // Suggestion Engine

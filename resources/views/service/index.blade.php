@@ -104,16 +104,23 @@
         </div>
         @endif
 
-        {{-- Delete --}}
-        <form method="POST" action="{{ route('service.destroy', [$vehicle, $log]) }}"
-              onsubmit="return confirm('{{ __('app.delete_service_confirm') }}')">
-            @csrf @method('DELETE')
-            <button type="submit"
-                    class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
-                    style="background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.15);color:#f87171;">
-                {{ __('app.delete_record_btn') }}
-            </button>
-        </form>
+        {{-- Edit + Delete --}}
+        <div class="flex gap-2">
+            <a href="{{ route('service.edit', [$vehicle, $log]) }}"
+               class="flex-1 py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95"
+               style="background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
+                {{ __('app.edit_log_btn') }}
+            </a>
+            <form method="POST" action="{{ route('service.destroy', [$vehicle, $log]) }}"
+                  onsubmit="return confirm('{{ __('app.delete_service_confirm') }}')" class="flex-1">
+                @csrf @method('DELETE')
+                <button type="submit"
+                        class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+                        style="background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.15);color:#f87171;">
+                    {{ __('app.delete_record_btn') }}
+                </button>
+            </form>
+        </div>
     </div>
     @empty
         <div class="glass rounded-2xl p-10 text-center border fade-in fade-in-3"

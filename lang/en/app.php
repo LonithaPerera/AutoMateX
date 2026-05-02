@@ -516,6 +516,24 @@ return [
     'note_saved'             => 'Note saved successfully.',
     'garage_reply_label'     => '// NOTE FROM GARAGE',
 
+    // ─── Vehicle owner improvements ───────────────────────────────────────────
+    'recent_booking_label'   => '// RECENT BOOKING',
+    'no_recent_booking'      => 'No bookings yet',
+    'view_all_bookings'      => 'View all bookings',
+    'last_service_label'     => 'Last Service',
+    'total_spend_label'      => 'Total Spend',
+    'next_service_due_label' => 'Next Service Due',
+    'km_away'                => 'km away',
+    'km_overdue'             => 'km overdue',
+    'efficiency_trend_label' => '// EFFICIENCY TREND',
+    'edit_log_btn'           => 'EDIT',
+    'edit_fuel_title'        => 'Edit Fuel Log',
+    'edit_service_title'     => 'Edit Service Record',
+    'update_fillup_btn'      => 'UPDATE FILL-UP →',
+    'update_service_btn'     => 'UPDATE SERVICE RECORD →',
+    'fuel_updated'           => 'Fuel log updated successfully.',
+    'service_updated'        => 'Service log updated successfully.',
+
     // ─── Garage 7-feature upgrade ─────────────────────────────────────────────
     'quick_confirm_btn'      => 'CONFIRM BOOKING',
     'quick_complete_btn'     => 'MARK AS COMPLETE',

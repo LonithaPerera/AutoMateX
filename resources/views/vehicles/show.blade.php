@@ -25,6 +25,45 @@
         </div>
     @endif
 
+    {{-- Next Service Reminder --}}
+    @if(isset($nextService) && $nextService)
+    @php
+        $nsColor  = $nextService['status'] === 'overdue' ? '#f87171' : ($nextService['status'] === 'due_soon' ? '#ff6b00' : '#00f5ff');
+        $nsBg     = $nextService['status'] === 'overdue' ? 'rgba(248,113,113,0.08)' : ($nextService['status'] === 'due_soon' ? 'rgba(255,107,0,0.08)' : 'rgba(0,245,255,0.06)');
+        $nsBorder = $nextService['status'] === 'overdue' ? 'rgba(248,113,113,0.3)' : ($nextService['status'] === 'due_soon' ? 'rgba(255,107,0,0.3)' : 'rgba(0,245,255,0.2)');
+        $nsIcon   = $nextService['status'] === 'overdue' ? 'exclamation-triangle' : ($nextService['status'] === 'due_soon' ? 'exclamation-circle' : 'clock');
+    @endphp
+    <div class="rounded-2xl p-4 mb-4 border fade-in fade-in-2 flex items-center gap-3"
+         style="background:{{ $nsBg }};border-color:{{ $nsBorder }};">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+             style="background:{{ $nsBg }};border:1px solid {{ $nsBorder }};">
+            @if($nextService['status'] === 'overdue')
+                <x-heroicon-o-exclamation-triangle class="w-4 h-4" style="color:{{ $nsColor }};" />
+            @elseif($nextService['status'] === 'due_soon')
+                <x-heroicon-o-exclamation-circle class="w-4 h-4" style="color:{{ $nsColor }};" />
+            @else
+                <x-heroicon-o-clock class="w-4 h-4" style="color:{{ $nsColor }};" />
+            @endif
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="section-label mb-0.5">{{ __('app.next_service_due_label') }}</p>
+            <p class="heading font-bold text-white text-sm leading-tight">{{ $nextService['name'] }}</p>
+            <p class="text-xs mt-0.5" style="color:{{ $nsColor }};">
+                @if($nextService['status'] === 'overdue')
+                    {{ number_format(abs($nextService['km_left'])) }} {{ __('app.km_overdue') }}
+                @else
+                    {{ number_format($nextService['km_left']) }} {{ __('app.km_away') }}
+                @endif
+            </p>
+        </div>
+        <a href="{{ route('suggestions.index', $vehicle) }}"
+           class="text-xs py-1.5 px-3 rounded-lg heading font-semibold tracking-wide flex-shrink-0"
+           style="background:{{ $nsBg }};border:1px solid {{ $nsBorder }};color:{{ $nsColor }};">
+            {{ __('app.view_maintenance') }}
+        </a>
+    </div>
+    @endif
+
     {{-- Details card --}}
     <div class="glass-bright rounded-2xl p-5 mb-4 border fade-in fade-in-2"
          style="border-color:rgba(0,245,255,0.12);">

@@ -516,6 +516,24 @@ return [
     'note_saved'             => 'குறிப்பு வெற்றிகரமாக சேமிக்கப்பட்டது.',
     'garage_reply_label'     => '// கேரேஜிலிருந்து குறிப்பு',
 
+    // ─── Vehicle owner improvements ───────────────────────────────────────────
+    'recent_booking_label'   => '// சமீபத்திய முன்பதிவு',
+    'no_recent_booking'      => 'இன்னும் முன்பதிவுகள் இல்லை',
+    'view_all_bookings'      => 'அனைத்து முன்பதிவுகளையும் காண்க',
+    'last_service_label'     => 'கடைசி சேவை',
+    'total_spend_label'      => 'மொத்த செலவு',
+    'next_service_due_label' => 'அடுத்த சேவை',
+    'km_away'                => 'கி.மீ. தொலைவில்',
+    'km_overdue'             => 'கி.மீ. காலாவதி',
+    'efficiency_trend_label' => '// செயல்திறன் போக்கு',
+    'edit_log_btn'           => 'திருத்து',
+    'edit_fuel_title'        => 'எரிபொருள் பதிவை திருத்து',
+    'edit_service_title'     => 'சேவை பதிவை திருத்து',
+    'update_fillup_btn'      => 'புதுப்பி →',
+    'update_service_btn'     => 'சேவை பதிவை புதுப்பி →',
+    'fuel_updated'           => 'எரிபொருள் பதிவு வெற்றிகரமாக புதுப்பிக்கப்பட்டது.',
+    'service_updated'        => 'சேவை பதிவு வெற்றிகரமாக புதுப்பிக்கப்பட்டது.',
+
     // ─── Garage 7-feature upgrade ─────────────────────────────────────────────
     'quick_confirm_btn'      => 'உறுதிப்படுத்து',
     'quick_complete_btn'     => 'நிறைவு செய்தாக குறி',

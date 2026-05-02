@@ -72,6 +72,55 @@ class FuelLogController extends Controller
                          ->with('success', 'Fuel log added successfully!');
     }
 
+    // Show edit form for a fuel log
+    public function edit(Vehicle $vehicle, FuelLog $fuelLog)
+    {
+        return view('fuel.edit', compact('vehicle', 'fuelLog'));
+    }
+
+    // Update a fuel log
+    public function update(Request $request, Vehicle $vehicle, FuelLog $fuelLog)
+    {
+        $request->validate([
+            'date'         => 'required|date',
+            'liters'       => 'required|numeric|min:0.1',
+            'cost'         => 'required|numeric|min:0',
+            'km_reading'   => 'required|integer|min:0',
+            'fuel_station' => 'nullable|string|max:100',
+            'notes'        => 'nullable|string|max:255',
+        ]);
+
+        // Recalculate km/L from the previous log (excluding this one)
+        $kmPerLiter = $fuelLog->km_per_liter;
+        $prevLog = $vehicle->fuelLogs()
+                           ->where('id', '!=', $fuelLog->id)
+                           ->where('km_reading', '<', $request->km_reading)
+                           ->orderBy('km_reading', 'desc')
+                           ->first();
+
+        if ($prevLog) {
+            $kmDriven   = $request->km_reading - $prevLog->km_reading;
+            $kmPerLiter = $kmDriven > 0 ? round($kmDriven / $request->liters, 2) : null;
+        }
+
+        $fuelLog->update([
+            'date'         => $request->date,
+            'liters'       => $request->liters,
+            'cost'         => $request->cost,
+            'km_reading'   => $request->km_reading,
+            'km_per_liter' => $kmPerLiter,
+            'fuel_station' => $request->fuel_station,
+            'notes'        => $request->notes,
+        ]);
+
+        if ($request->km_reading > $vehicle->mileage) {
+            $vehicle->update(['mileage' => $request->km_reading]);
+        }
+
+        return redirect()->route('fuel.index', $vehicle)
+                         ->with('success', __('app.fuel_updated'));
+    }
+
     // Delete a fuel log
     public function destroy(Vehicle $vehicle, FuelLog $fuelLog)
     {

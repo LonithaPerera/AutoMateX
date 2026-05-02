@@ -50,6 +50,38 @@ class ServiceLogController extends Controller
                          ->with('success', 'Service log added successfully!');
     }
 
+    // Show edit form for a service log
+    public function edit(Vehicle $vehicle, ServiceLog $serviceLog)
+    {
+        return view('service.edit', compact('vehicle', 'serviceLog'));
+    }
+
+    // Update a service log
+    public function update(Request $request, Vehicle $vehicle, ServiceLog $serviceLog)
+    {
+        $request->validate([
+            'service_type'       => 'required|string|max:150',
+            'service_date'       => 'required|date',
+            'mileage_at_service' => 'required|integer|min:0',
+            'cost'               => 'required|numeric|min:0',
+            'type'               => 'required|in:maintenance,repair,inspection',
+            'garage_name'        => 'nullable|string|max:150',
+            'notes'              => 'nullable|string|max:500',
+        ]);
+
+        if ($request->mileage_at_service > $vehicle->mileage) {
+            $vehicle->update(['mileage' => $request->mileage_at_service]);
+        }
+
+        $serviceLog->update($request->only([
+            'service_type', 'service_date', 'mileage_at_service',
+            'cost', 'type', 'garage_name', 'notes',
+        ]));
+
+        return redirect()->route('service.index', $vehicle)
+                         ->with('success', __('app.service_updated'));
+    }
+
     // Delete a service log
     public function destroy(Vehicle $vehicle, ServiceLog $serviceLog)
     {

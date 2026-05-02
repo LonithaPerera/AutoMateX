@@ -55,6 +55,55 @@
         </div>
     </div>
 
+    {{-- Efficiency Trend Chart --}}
+    @if($fuelLogs->where('km_per_liter', '!=', null)->count() >= 2)
+    @php
+        $chartLogs = $fuelLogs->whereNotNull('km_per_liter')->sortBy('km_reading')->values();
+    @endphp
+    <div class="glass-bright rounded-2xl p-4 mb-5 border fade-in fade-in-2" style="border-color:rgba(74,222,128,0.15);">
+        <p class="section-label mb-3">{{ __('app.efficiency_trend_label') }}</p>
+        <canvas id="efficiencyChart" height="120"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('efficiencyChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($chartLogs->map(fn($l) => \Carbon\Carbon::parse($l->date)->format('d M'))->values()) !!},
+                datasets: [{
+                    label: 'km/L',
+                    data: {!! json_encode($chartLogs->map(fn($l) => round($l->km_per_liter, 2))->values()) !!},
+                    borderColor: '#4ade80',
+                    backgroundColor: 'rgba(74,222,128,0.08)',
+                    pointBackgroundColor: '#4ade80',
+                    pointRadius: 4,
+                    tension: 0.4,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.parsed.y + ' km/L'
+                        }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                    y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: false }
+                }
+            }
+        });
+    });
+    </script>
+    @endif
+
     {{-- Success --}}
     @if(session('success'))
         <div class="rounded-2xl p-3 mb-4 border fade-in fade-in-1"
@@ -110,16 +159,23 @@
             </div>
         </div>
 
-        {{-- Delete --}}
-        <form method="POST" action="{{ route('fuel.destroy', [$vehicle, $log]) }}"
-              onsubmit="return confirm('{{ __('app.delete_fuel_confirm') }}')">
-            @csrf @method('DELETE')
-            <button type="submit"
-                    class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
-                    style="background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.15);color:#f87171;">
-                {{ __('app.delete_btn') }}
-            </button>
-        </form>
+        {{-- Edit + Delete --}}
+        <div class="flex gap-2">
+            <a href="{{ route('fuel.edit', [$vehicle, $log]) }}"
+               class="flex-1 py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95"
+               style="background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
+                {{ __('app.edit_log_btn') }}
+            </a>
+            <form method="POST" action="{{ route('fuel.destroy', [$vehicle, $log]) }}"
+                  onsubmit="return confirm('{{ __('app.delete_fuel_confirm') }}')" class="flex-1">
+                @csrf @method('DELETE')
+                <button type="submit"
+                        class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+                        style="background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.15);color:#f87171;">
+                    {{ __('app.delete_btn') }}
+                </button>
+            </form>
+        </div>
     </div>
     @empty
         <div class="glass rounded-2xl p-10 text-center border fade-in fade-in-3"
