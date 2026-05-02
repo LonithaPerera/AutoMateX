@@ -318,7 +318,10 @@ return [
     'book_first_appt'       => 'ඔබේ පළමු ගරාජ් හමුවීම වෙන් කරන්න',
     'browse_garages_btn'    => 'ගරාජ් බලන්න',
     'cancel_booking_btn'    => 'වෙන්කිරීම අවලංගු කරන්න',
+    'cancel_booking_label'  => 'මෙම වෙන්කිරීම අවලංගු කරන්න',
     'cancel_confirm_msg'    => 'ඔබට මෙම වෙන්කිරීම අවලංගු කිරීමට අවශ්‍යද?',
+    'cancel_reason_ph'      => 'අවලංගු කිරීමේ හේතුව (අවශ්‍ය නම්)...',
+    'cancel_reason_label'   => '// අවලංගු කිරීමේ හේතුව',
     'booking_cancelled'     => 'වෙන්කිරීම සාර්ථකව අවලංගු කෙරිණි.',
     'booking_cannot_cancel' => 'මෙම වෙන්කිරීම අවලංගු කළ නොහැක.',
 

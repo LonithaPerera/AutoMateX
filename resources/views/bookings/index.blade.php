@@ -194,18 +194,37 @@
         </a>
         @endif
 
-        {{-- Cancel button — only for pending or confirmed --}}
+        {{-- Cancel booking — only for pending or confirmed --}}
         @if(in_array($booking->status, ['pending', 'confirmed']))
-        <form method="POST" action="{{ route('bookings.cancel', $booking) }}" class="mt-3"
-              onsubmit="return confirm('{{ __('app.cancel_confirm_msg') }}')">
-            @csrf @method('PATCH')
-            <button type="submit"
-                    class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 border"
-                    style="background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.2);color:#f87171;">
-                <x-heroicon-o-x-circle class="w-3.5 h-3.5 inline-block mr-1 align-middle" />
-                {{ __('app.cancel_booking_btn') }}
-            </button>
-        </form>
+        <div class="mt-3 rounded-xl p-3 border" style="background:rgba(248,113,113,0.04);border-color:rgba(248,113,113,0.15);">
+            <p class="text-xs font-semibold mb-2" style="color:rgba(248,113,113,0.7);">{{ __('app.cancel_booking_label') }}</p>
+            <form method="POST" action="{{ route('bookings.cancel', $booking) }}">
+                @csrf @method('PATCH')
+                <textarea name="cancel_reason" rows="2"
+                          placeholder="{{ __('app.cancel_reason_ph') }}"
+                          class="w-full px-3 py-2 rounded-xl text-xs text-white placeholder-slate-600 outline-none resize-none mb-2"
+                          style="background:rgba(255,255,255,0.04);border:1px solid rgba(248,113,113,0.15);"></textarea>
+                <button type="submit"
+                        class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 border"
+                        style="background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.2);color:#f87171;"
+                        onclick="return confirm('{{ __('app.cancel_confirm_msg') }}')">
+                    <x-heroicon-o-x-circle class="w-3.5 h-3.5 inline-block mr-1 align-middle" />
+                    {{ __('app.cancel_booking_btn') }}
+                </button>
+            </form>
+        </div>
+        @endif
+
+        {{-- Show cancel reason if cancelled --}}
+        @if($booking->status === 'cancelled' && $booking->cancel_reason)
+        <div class="rounded-xl p-3 mt-2 border"
+             style="background:rgba(248,113,113,0.04);border-color:rgba(248,113,113,0.15);">
+            <div class="flex items-center gap-1.5 mb-1">
+                <x-heroicon-o-x-circle class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(248,113,113,0.5);" />
+                <p class="text-xs" style="color:rgba(248,113,113,0.5);">{{ __('app.cancel_reason_label') }}</p>
+            </div>
+            <p class="text-sm leading-relaxed" style="color:#94a3b8;">{{ $booking->cancel_reason }}</p>
+        </div>
         @endif
     </div>
     @empty

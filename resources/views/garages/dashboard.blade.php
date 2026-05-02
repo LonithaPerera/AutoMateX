@@ -471,6 +471,18 @@
             </div>
             @endif
 
+            {{-- Cancel reason (shown only on cancelled bookings) --}}
+            @if($booking->status === 'cancelled' && $booking->cancel_reason)
+            <div class="rounded-xl p-2.5 mb-3 border"
+                 style="background:rgba(248,113,113,0.04);border-color:rgba(248,113,113,0.15);">
+                <div class="flex items-center gap-1.5 mb-1">
+                    <x-heroicon-o-x-circle class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(248,113,113,0.5);" />
+                    <p class="text-xs" style="color:rgba(248,113,113,0.5);">{{ __('app.cancel_reason_label') }}</p>
+                </div>
+                <p class="text-xs leading-relaxed" style="color:#94a3b8;">{{ $booking->cancel_reason }}</p>
+            </div>
+            @endif
+
             {{-- [1] Quick action buttons --}}
             @if($booking->status === 'pending')
             <form method="POST" action="{{ route('bookings.update', $booking) }}" class="mb-3 no-print">

@@ -318,7 +318,10 @@ return [
     'book_first_appt'       => 'Book your first garage appointment',
     'browse_garages_btn'    => 'BROWSE GARAGES',
     'cancel_booking_btn'    => 'CANCEL BOOKING',
+    'cancel_booking_label'  => 'Cancel This Booking',
     'cancel_confirm_msg'    => 'Are you sure you want to cancel this booking?',
+    'cancel_reason_ph'      => 'Reason for cancellation (optional)...',
+    'cancel_reason_label'   => '// CANCELLATION REASON',
     'booking_cancelled'     => 'Booking cancelled successfully.',
     'booking_cannot_cancel' => 'This booking cannot be cancelled.',
 

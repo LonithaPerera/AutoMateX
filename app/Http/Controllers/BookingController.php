@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\BookingStatusUpdated;
+use App\Mail\NewBookingNotification;
 use App\Models\Booking;
 use App\Models\Garage;
 use App\Models\Vehicle;
@@ -36,7 +37,7 @@ class BookingController extends Controller
             abort(403, 'This vehicle does not belong to you.');
         }
 
-        Booking::create([
+        $booking = Booking::create([
             'vehicle_id'   => $request->vehicle_id,
             'garage_id'    => $garage->id,
             'booking_date' => $request->booking_date,
@@ -44,6 +45,17 @@ class BookingController extends Controller
             'service_type' => $request->service_type,
             'notes'        => $request->notes,
         ]);
+
+        // Notify the garage owner by email
+        try {
+            $booking->load('vehicle.user', 'garage.user');
+            if ($garage->user && $garage->user->email) {
+                Mail::to($garage->user->email)
+                    ->send(new NewBookingNotification($booking));
+            }
+        } catch (\Exception $e) {
+            // Mail not configured — continue silently
+        }
 
         return redirect()->route('bookings.index')
                          ->with('success', __('app.booking_submitted'));
@@ -156,7 +168,7 @@ class BookingController extends Controller
     }
 
     // Vehicle owner — cancel a booking
-    public function cancel(Booking $booking)
+    public function cancel(Request $request, Booking $booking)
     {
         // Ensure the booking belongs to the authenticated user's vehicle
         if ($booking->vehicle->user_id !== Auth::id()) {
@@ -168,7 +180,14 @@ class BookingController extends Controller
             return back()->with('error', __('app.booking_cannot_cancel'));
         }
 
-        $booking->update(['status' => 'cancelled']);
+        $request->validate([
+            'cancel_reason' => 'nullable|string|max:500',
+        ]);
+
+        $booking->update([
+            'status'        => 'cancelled',
+            'cancel_reason' => $request->cancel_reason,
+        ]);
 
         return back()->with('success', __('app.booking_cancelled'));
     }

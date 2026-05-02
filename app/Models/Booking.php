@@ -10,6 +10,7 @@ class Booking extends Model
         'vehicle_id', 'garage_id', 'booking_date', 'booking_time',
         'service_type', 'notes', 'garage_notes', 'status',
         'invoice_amount', 'invoice_notes', 'invoice_number', 'invoice_date',
+        'cancel_reason',
     ];
 
     protected $casts = [
