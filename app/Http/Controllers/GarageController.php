@@ -11,7 +11,10 @@ class GarageController extends Controller
     // List all garages (for vehicle owners to browse)
     public function index()
     {
-        $garages = Garage::where('is_active', true)->get();
+        $garages = Garage::where('is_active', true)
+                         ->withCount('ratings')
+                         ->withAvg('ratings', 'rating')
+                         ->get();
         return view('garages.index', compact('garages'));
     }
 

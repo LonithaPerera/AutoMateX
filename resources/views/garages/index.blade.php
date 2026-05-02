@@ -57,6 +57,19 @@
                         <x-heroicon-o-map-pin class="w-3 h-3 inline-block" style="color:#64748b;" /> {{ $garage->city }}
                         @if($garage->phone) · {{ $garage->phone }} @endif
                     </p>
+                    {{-- Average rating --}}
+                    @if($garage->ratings_count > 0)
+                    <div class="flex items-center gap-1 mt-1">
+                        @php $avg = round($garage->ratings_avg_rating ?? 0, 1); @endphp
+                        @for($i = 1; $i <= 5; $i++)
+                        <span style="font-size:12px;color:{{ $i <= $avg ? '#fbbf24' : '#334155' }};">★</span>
+                        @endfor
+                        <span class="mono text-xs font-bold ml-0.5" style="color:#fbbf24;">{{ $avg }}</span>
+                        <span class="text-xs" style="color:#475569;">({{ $garage->ratings_count }})</span>
+                    </div>
+                    @else
+                    <p class="text-xs mt-1" style="color:#334155;">No ratings yet</p>
+                    @endif
                 </div>
             </div>
             <span class="tag" style="background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);">

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingCancelledNotification;
+use App\Mail\BookingReceivedNotification;
 use App\Mail\BookingStatusUpdated;
 use App\Mail\NewBookingNotification;
 use App\Models\Booking;
@@ -46,9 +48,11 @@ class BookingController extends Controller
             'notes'        => $request->notes,
         ]);
 
-        // Notify the garage owner by email
+        // Send emails: acknowledgment to customer + alert to garage owner
         try {
             $booking->load('vehicle.user', 'garage.user');
+            Mail::to($booking->vehicle->user->email)
+                ->send(new BookingReceivedNotification($booking));
             if ($garage->user && $garage->user->email) {
                 Mail::to($garage->user->email)
                     ->send(new NewBookingNotification($booking));
@@ -188,6 +192,17 @@ class BookingController extends Controller
             'status'        => 'cancelled',
             'cancel_reason' => $request->cancel_reason,
         ]);
+
+        // Notify the garage owner about the cancellation
+        try {
+            $booking->load('vehicle.user', 'garage.user');
+            if ($booking->garage->user && $booking->garage->user->email) {
+                Mail::to($booking->garage->user->email)
+                    ->send(new BookingCancelledNotification($booking));
+            }
+        } catch (\Exception $e) {
+            // Mail not configured — continue silently
+        }
 
         return back()->with('success', __('app.booking_cancelled'));
     }
