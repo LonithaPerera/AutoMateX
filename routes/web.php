@@ -11,6 +11,7 @@ use App\Http\Controllers\PartsController;
 use App\Http\Controllers\GarageController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RatingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -66,6 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
         Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
         Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+        Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
     });
 
     // Accessible by all authenticated users
@@ -73,14 +75,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/garages', [GarageController::class, 'index'])->name('garages.index');
     Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
 
+    // Invoice view — vehicle owner or garage or admin (manual authz inside controller)
+    Route::get('/bookings/{booking}/invoice', [BookingController::class, 'showInvoice'])->name('bookings.invoice.show');
+
     // Garage routes — restricted to garage role
     Route::middleware('garage')->group(function () {
         Route::get('/garages/create', [GarageController::class, 'create'])->name('garages.create');
         Route::get('/garage/edit', [GarageController::class, 'edit'])->name('garages.edit');
         Route::patch('/garage', [GarageController::class, 'update'])->name('garages.update');
         Route::get('/garage/dashboard', [GarageController::class, 'dashboard'])->name('garage.dashboard');
+        Route::get('/garage/invoices', [GarageController::class, 'invoices'])->name('garage.invoices');
         Route::patch('/bookings/{booking}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
+        Route::patch('/bookings/{booking}/note', [BookingController::class, 'storeGarageNote'])->name('bookings.note');
         Route::patch('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
+        Route::patch('/garage/target', [GarageController::class, 'updateTarget'])->name('garage.updateTarget');
     });
 
     // Admin routes — protected by admin middleware

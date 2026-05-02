@@ -452,6 +452,19 @@ return [
     'already_registered'     => 'දැනටමත් ලියාපදිංචිද?',
     'sign_in_link'           => 'පිවිසෙන්න',
 
+    // ─── Garage dashboard improvements ────────────────────────────────────────
+    'revenue_summary_label'    => '// ආදායම් සාරාංශය',
+    'this_month_label'         => 'මෙම මාසය',
+    'all_time_label'           => 'සමස්ත',
+    'job_completed_singular'   => 'රැකියාවක් සම්පූර්ණ කළා',
+    'jobs_completed_plural'    => 'රැකියා සම්පූර්ණ කළා',
+    'last_6_months_label'      => 'ආදායම — පසුගිය මාස 6',
+    'from_completed_invoices'  => 'සම්පූර්ණ කළ ඉන්වොයිස් වලින්',
+    'filter_all'               => 'සියල්ල',
+    'upcoming_bookings_label'  => '// ඉදිරි වෙන්කිරීම්',
+    'booking_history_label'    => '// ඉතිහාසය',
+    'no_upcoming_bookings'     => 'ඉදිරි වෙන්කිරීම් නොමැත.',
+
     // ─── Success flash messages ────────────────────────────────────────────────
     'booking_submitted'      => 'වෙන්කිරීම සාර්ථකව ඉදිරිපත් කරන ලදී.',
     'garage_created'         => 'ගරාජ් පැතිකඩ සාර්ථකව නිර්මාණය කරන ලදී.',
@@ -460,5 +473,69 @@ return [
     // ─── Breadcrumb nav labels ─────────────────────────────────────────────────
     'nav_vehicles'           => 'රථ වාහන',
     'nav_garages'            => 'ගරාජ',
+
+    // ─── Invoice feature ──────────────────────────────────────────────────────
+    'invoice_number_label'   => 'ඉන්වොයිස් අංකය',
+    'invoice_date_label'     => 'ඉන්වොයිස් දිනය',
+    'view_invoice_btn'       => 'ඉන්වොයිස් බලන්න',
+    'print_invoice_btn'      => 'ඉන්වොයිස් මුද්‍රණය කරන්න',
+    'back_btn'               => 'ආපසු',
+    'invoice_history_label'  => '// ඉන්වොයිස් ඉතිහාසය',
+    'invoice_history_title'  => 'ඉන්වොයිස් ඉතිහාසය',
+    'all_invoices_btn'       => 'සියලු ඉන්වොයිස්',
+    'all_invoices_label'     => '// සියලු ඉන්වොයිස්',
+    'total_revenue_label'    => 'මුළු ආදායම',
+    'total_invoices_label'   => 'මුළු ඉන්වොයිස්',
+    'invoice_singular'       => 'ඉන්වොයිසය',
+    'invoices_plural'        => 'ඉන්වොයිස්',
+    'no_invoices_yet'        => 'ඉන්වොයිස් නොමැත',
+    'invoices_appear_hint'   => 'වෙන්කිරීම් සම්පූර්ණ වූ පසු ඉන්වොයිස් මෙහි දිස්වේ',
+    'invoice_saved'          => 'ඉන්වොයිසය සාර්ථකව සුරකින ලදී.',
+    'no_invoice_available'   => 'මෙම වෙන්කිරීම සඳහා ඉන්වොයිසයක් නොමැත.',
+
+    // ─── Garage dashboard 6-feature upgrade ───────────────────────────────────
+    'today_schedule_label'   => '// අද කාලසටහන',
+    'search_bookings_ph'     => 'නාමය හෝ වාහන අංකය මගින් සොයන්න...',
+    'avg_invoice_label'      => 'සාමාන්‍ය ඉන්වොයිස',
+    'most_booked_label'      => 'ජනප්‍රිය සේවාව',
+    'profile_complete_label' => 'පැතිකඩ',
+    'returning_customer_tag' => 'නැවත',
+
+    // ─── Garage dashboard 4-feature upgrade ───────────────────────────────────
+    'overdue_tag'            => 'කල් ඉකුත්',
+    'overdue_bookings_label' => '// කල් ඉකුත්',
+    'contact_label'          => 'සම්බන්ධතා',
+
+    // ─── Garage note + email notification ─────────────────────────────────────
+    'garage_note_label'      => '// ගරාජ් සටහන',
+    'garage_note_ph'         => 'ගනුදෙනුකරු සඳහා සටහනක් එකතු කරන්න...',
+    'save_note_btn'          => 'සටහන සුරකින්න',
+    'note_saved'             => 'සටහන සාර්ථකව සුරකින ලදී.',
+    'garage_reply_label'     => '// ගරාජ් සිට සටහනක්',
+
+    // ─── Garage 7-feature upgrade ─────────────────────────────────────────────
+    'quick_confirm_btn'      => 'තහවුරු කරන්න',
+    'quick_complete_btn'     => 'සම්පූර්ණ ලෙස සලකුණු කරන්න',
+    'print_schedule_btn'     => 'මුද්‍රණය',
+    'customer_history_label' => 'ගනුදෙනුකරු ඉතිහාසය',
+    'total_visits_label'     => 'සමස්ත සංචාර',
+    'prev_services_label'    => 'කලින්:',
+    'revenue_target_label'   => 'මාසික ඉලක්කය',
+    'set_target_ph'          => 'ඉලක්කය සකසන්න (LKR)',
+    'save_target_btn'        => 'ඉලක්කය සකසන්න',
+    'target_saved'           => 'මාසික ඉලක්කය යාවත්කාලීන කරන ලදී.',
+    'target_achieved'        => 'ඉලක්කය සාක්ෂාත් විය!',
+    'on_track_label'         => 'ගමන් කරමින්',
+    'calendar_label'         => 'වෙන්කිරීම් දිනදර්ශනය',
+    'show_calendar_btn'      => 'දිනදර්ශනය පෙන්වන්න',
+    'hide_calendar_btn'      => 'දිනදර්ශනය සඟවන්න',
+    'avg_rating_label'       => 'සාමාන්‍ය ශ්‍රේණිය',
+    'no_ratings_yet'         => 'ශ්‍රේණිගත කිරීම් නැත',
+    'rate_service_label'     => 'සේවාව ශ්‍රේණිගත කරන්න',
+    'write_review_ph'        => 'කෙටි සමාලෝචනයක් ලියන්න (අවශ්‍ය නම්)...',
+    'submit_rating_btn'      => 'ශ්‍රේණිය ඉදිරිපත් කරන්න',
+    'rating_saved'           => 'ඔබේ ශ්‍රේණිගත කිරීමට ස්තූතියි!',
+    'already_rated'          => 'ඔබ දැනටමත් මෙම වෙන්කිරීම ශ්‍රේණිගත කර ඇත.',
+    'your_rating_label'      => 'ඔබේ ශ්‍රේණිය',
 
 ];

@@ -10,7 +10,7 @@ class Garage extends Model
     use HasFactory;
     protected $fillable = [
         'user_id', 'name', 'address', 'city',
-        'phone', 'description', 'specialization', 'is_active',
+        'phone', 'description', 'specialization', 'is_active', 'monthly_target',
     ];
 
     public function user()
@@ -21,5 +21,10 @@ class Garage extends Model
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
     }
 }

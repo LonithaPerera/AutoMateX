@@ -452,6 +452,19 @@ return [
     'already_registered'     => 'ஏற்கனவே பதிவு செய்தீர்களா?',
     'sign_in_link'           => 'உள்நுழைக',
 
+    // ─── Garage dashboard improvements ────────────────────────────────────────
+    'revenue_summary_label'    => '// வருவாய் சுருக்கம்',
+    'this_month_label'         => 'இந்த மாதம்',
+    'all_time_label'           => 'மொத்தம்',
+    'job_completed_singular'   => 'பணி முடிந்தது',
+    'jobs_completed_plural'    => 'பணிகள் முடிந்தன',
+    'last_6_months_label'      => 'வருவாய் — கடந்த 6 மாதங்கள்',
+    'from_completed_invoices'  => 'நிறைவடைந்த இன்வாய்ஸ்களிலிருந்து',
+    'filter_all'               => 'அனைத்தும்',
+    'upcoming_bookings_label'  => '// வரவிருக்கும் முன்பதிவுகள்',
+    'booking_history_label'    => '// வரலாறு',
+    'no_upcoming_bookings'     => 'வரவிருக்கும் முன்பதிவுகள் இல்லை.',
+
     // ─── Success flash messages ────────────────────────────────────────────────
     'booking_submitted'      => 'முன்பதிவு வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது.',
     'garage_created'         => 'கேரேஜ் சுயவிவரம் வெற்றிகரமாக உருவாக்கப்பட்டது.',
@@ -460,5 +473,69 @@ return [
     // ─── Breadcrumb nav labels ─────────────────────────────────────────────────
     'nav_vehicles'           => 'வாகனங்கள்',
     'nav_garages'            => 'கேரேஜ்கள்',
+
+    // ─── Invoice feature ──────────────────────────────────────────────────────
+    'invoice_number_label'   => 'இன்வாய்ஸ் எண்',
+    'invoice_date_label'     => 'இன்வாய்ஸ் தேதி',
+    'view_invoice_btn'       => 'இன்வாய்ஸ் காண்க',
+    'print_invoice_btn'      => 'இன்வாய்ஸ் அச்சிடு',
+    'back_btn'               => 'திரும்பு',
+    'invoice_history_label'  => '// இன்வாய்ஸ் வரலாறு',
+    'invoice_history_title'  => 'இன்வாய்ஸ் வரலாறு',
+    'all_invoices_btn'       => 'அனைத்து இன்வாய்ஸ்கள்',
+    'all_invoices_label'     => '// அனைத்து இன்வாய்ஸ்கள்',
+    'total_revenue_label'    => 'மொத்த வருவாய்',
+    'total_invoices_label'   => 'மொத்த இன்வாய்ஸ்கள்',
+    'invoice_singular'       => 'இன்வாய்ஸ்',
+    'invoices_plural'        => 'இன்வாய்ஸ்கள்',
+    'no_invoices_yet'        => 'இன்வாய்ஸ்கள் இல்லை',
+    'invoices_appear_hint'   => 'முன்பதிவுகள் நிறைவடைந்த பிறகு இன்வாய்ஸ்கள் இங்கே தோன்றும்',
+    'invoice_saved'          => 'இன்வாய்ஸ் வெற்றிகரமாக சேமிக்கப்பட்டது.',
+    'no_invoice_available'   => 'இந்த முன்பதிவுக்கு இன்வாய்ஸ் இல்லை.',
+
+    // ─── Garage dashboard 6-feature upgrade ───────────────────────────────────
+    'today_schedule_label'   => '// இன்றைய அட்டவணை',
+    'search_bookings_ph'     => 'பெயர் அல்லது பலகை மூலம் தேடு...',
+    'avg_invoice_label'      => 'சராசரி இன்வாய்ஸ்',
+    'most_booked_label'      => 'சிறந்த சேவை',
+    'profile_complete_label' => 'சுயவிவரம்',
+    'returning_customer_tag' => 'மீண்டும்',
+
+    // ─── Garage dashboard 4-feature upgrade ───────────────────────────────────
+    'overdue_tag'            => 'காலாவதி',
+    'overdue_bookings_label' => '// காலாவதி',
+    'contact_label'          => 'தொடர்பு',
+
+    // ─── Garage note + email notification ─────────────────────────────────────
+    'garage_note_label'      => '// கேரேஜ் குறிப்பு',
+    'garage_note_ph'         => 'வாடிக்கையாளருக்கு குறிப்பு சேர்க்கவும்...',
+    'save_note_btn'          => 'குறிப்பு சேமி',
+    'note_saved'             => 'குறிப்பு வெற்றிகரமாக சேமிக்கப்பட்டது.',
+    'garage_reply_label'     => '// கேரேஜிலிருந்து குறிப்பு',
+
+    // ─── Garage 7-feature upgrade ─────────────────────────────────────────────
+    'quick_confirm_btn'      => 'உறுதிப்படுத்து',
+    'quick_complete_btn'     => 'நிறைவு செய்தாக குறி',
+    'print_schedule_btn'     => 'அச்சிடு',
+    'customer_history_label' => 'வாடிக்கையாளர் வரலாறு',
+    'total_visits_label'     => 'மொத்த வருகைகள்',
+    'prev_services_label'    => 'முந்தைய:',
+    'revenue_target_label'   => 'மாதாந்திர இலக்கு',
+    'set_target_ph'          => 'இலக்கு அமை (LKR)',
+    'save_target_btn'        => 'இலக்கு அமை',
+    'target_saved'           => 'மாதாந்திர இலக்கு புதுப்பிக்கப்பட்டது.',
+    'target_achieved'        => 'இலக்கு அடையப்பட்டது!',
+    'on_track_label'         => 'சரியான பாதையில்',
+    'calendar_label'         => 'முன்பதிவு நாட்காட்டி',
+    'show_calendar_btn'      => 'நாட்காட்டி காட்டு',
+    'hide_calendar_btn'      => 'நாட்காட்டி மறை',
+    'avg_rating_label'       => 'சராசரி மதிப்பீடு',
+    'no_ratings_yet'         => 'மதிப்பீடுகள் இல்லை',
+    'rate_service_label'     => 'சேவையை மதிப்பிடு',
+    'write_review_ph'        => 'சிறு விமர்சனம் எழுது (விரும்பினால்)...',
+    'submit_rating_btn'      => 'மதிப்பீட்டை சமர்ப்பி',
+    'rating_saved'           => 'உங்கள் மதிப்பீட்டிற்கு நன்றி!',
+    'already_rated'          => 'நீங்கள் ஏற்கனவே இந்த முன்பதிவை மதிப்பிட்டுவிட்டீர்கள்.',
+    'your_rating_label'      => 'உங்கள் மதிப்பீடு',
 
 ];

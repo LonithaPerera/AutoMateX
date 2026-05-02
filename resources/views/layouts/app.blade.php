@@ -242,12 +242,25 @@
 
             @if($role === 'garage')
                 {{-- ── GARAGE: Home · Parts · Profile ── --}}
+                @php
+                    $garagePending = Auth::user()->garage
+                        ? Auth::user()->garage->bookings()->where('status','pending')->count()
+                        : 0;
+                @endphp
 
                 <!-- Home → garage dashboard -->
                 <a href="{{ route('garage.dashboard') }}"
                    class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('garage.dashboard') ? '' : 'hover:bg-white/5' }}"
                    style="{{ request()->routeIs('garage.dashboard') ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                    <x-heroicon-o-home class="w-5 h-5" style="color:{{ request()->routeIs('garage.dashboard') ? 'var(--cyan)' : '#64748b' }};" />
+                    <div class="relative">
+                        <x-heroicon-o-home class="w-5 h-5" style="color:{{ request()->routeIs('garage.dashboard') ? 'var(--cyan)' : '#64748b' }};" />
+                        @if($garagePending > 0)
+                            <span class="absolute -top-1 -right-1.5 flex items-center justify-center rounded-full text-white font-bold"
+                                  style="background:#f87171;font-size:9px;min-width:15px;height:15px;padding:0 3px;font-family:'Share Tech Mono',monospace;">
+                                {{ $garagePending > 9 ? '9+' : $garagePending }}
+                            </span>
+                        @endif
+                    </div>
                     <span class="text-xs font-semibold heading tracking-wide mt-0.5"
                           style="color:{{ request()->routeIs('garage.dashboard') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
                     @if(request()->routeIs('garage.dashboard'))

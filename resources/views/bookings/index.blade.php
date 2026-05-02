@@ -103,16 +103,95 @@
             </p>
         </div>
 
+        {{-- Garage note / reply --}}
+        @if($booking->garage_notes)
+        <div class="rounded-xl p-3 mb-3 border"
+             style="background:rgba(0,245,255,0.04);border-color:rgba(0,245,255,0.15);">
+            <div class="flex items-center gap-1.5 mb-1.5">
+                <x-heroicon-o-chat-bubble-left-ellipsis class="w-3.5 h-3.5 flex-shrink-0" style="color:rgba(0,245,255,0.5);" />
+                <p class="text-xs" style="color:rgba(0,245,255,0.5);">{{ __('app.garage_reply_label') }}</p>
+            </div>
+            <p class="text-sm leading-relaxed" style="color:#94a3b8;">{{ $booking->garage_notes }}</p>
+        </div>
+        @endif
+
+        {{-- [7] Customer Rating widget --}}
+        @if($booking->status === 'completed')
+            @if($booking->rating)
+            <div class="rounded-xl p-3 mb-3 border"
+                 style="background:rgba(251,191,36,0.05);border-color:rgba(251,191,36,0.15);">
+                <div class="flex items-center gap-1.5 mb-1.5">
+                    <span style="color:#fbbf24;font-size:14px;">★</span>
+                    <p class="text-xs font-semibold" style="color:rgba(251,191,36,0.7);">{{ __('app.your_rating_label') }}</p>
+                </div>
+                <div class="flex gap-0.5 mb-1">
+                    @for($i = 1; $i <= 5; $i++)
+                    <span style="font-size:20px;color:{{ $i <= $booking->rating->rating ? '#fbbf24' : '#334155' }};">★</span>
+                    @endfor
+                </div>
+                @if($booking->rating->review)
+                <p class="text-xs mt-1 leading-relaxed" style="color:#64748b;">{{ $booking->rating->review }}</p>
+                @endif
+            </div>
+            @else
+            <div class="rounded-xl p-3 mb-3 border"
+                 style="background:rgba(251,191,36,0.04);border-color:rgba(251,191,36,0.15);">
+                <p class="text-xs font-semibold mb-2" style="color:rgba(251,191,36,0.7);">{{ __('app.rate_service_label') }}</p>
+                <form method="POST" action="{{ route('ratings.store') }}">
+                    @csrf
+                    <input type="hidden" name="booking_id" value="{{ $booking->id }}">
+                    <div class="flex gap-1 mb-2" id="stars-{{ $booking->id }}">
+                        @for($i = 1; $i <= 5; $i++)
+                        <label class="cursor-pointer">
+                            <input type="radio" name="rating" value="{{ $i }}" class="sr-only" required>
+                            <span class="star-btn text-2xl transition-all select-none"
+                                  style="color:#334155;"
+                                  onmouseover="hoverStars({{ $booking->id }}, {{ $i }})"
+                                  onmouseout="resetStars({{ $booking->id }})"
+                                  onclick="selectStars({{ $booking->id }}, {{ $i }})">★</span>
+                        </label>
+                        @endfor
+                    </div>
+                    <textarea name="review" rows="2"
+                              placeholder="{{ __('app.write_review_ph') }}"
+                              class="w-full px-3 py-2 rounded-xl text-xs text-white placeholder-slate-600 outline-none resize-none mb-2"
+                              style="background:rgba(255,255,255,0.04);border:1px solid rgba(251,191,36,0.15);"></textarea>
+                    <button type="submit"
+                            class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 border"
+                            style="background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.2);color:#fbbf24;">
+                        {{ __('app.submit_rating_btn') }}
+                    </button>
+                </form>
+            </div>
+            @endif
+        @endif
+
         @if($booking->status === 'completed' && $booking->invoice_amount)
-        <div class="rounded-xl p-3" style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);">
-            <p class="text-xs mb-1" style="color:rgba(74,222,128,0.6);">{{ __('app.invoice_label') }}</p>
+        <div class="rounded-xl p-3 mb-3" style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);">
+            <div class="flex items-center justify-between mb-1">
+                <p class="text-xs" style="color:rgba(74,222,128,0.6);">{{ __('app.invoice_label') }}</p>
+                @if($booking->invoice_number)
+                <p class="mono text-xs" style="color:#64748b;">{{ $booking->invoice_number }}</p>
+                @endif
+            </div>
             <p class="heading font-bold text-lg" style="color:#4ade80;">
                 LKR {{ number_format($booking->invoice_amount) }}
             </p>
+            @if($booking->invoice_date)
+            <p class="text-xs mt-0.5" style="color:#64748b;">
+                {{ __('app.invoice_date_label') }}: {{ \Carbon\Carbon::parse($booking->invoice_date)->format('d M Y') }}
+            </p>
+            @endif
             @if($booking->invoice_notes)
             <p class="text-xs mt-1" style="color:#64748b;">{{ $booking->invoice_notes }}</p>
             @endif
         </div>
+        <a href="{{ route('bookings.invoice.show', $booking) }}"
+           class="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 mb-3"
+           style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);color:#4ade80;">
+            <x-heroicon-o-document-text class="w-3.5 h-3.5" />
+            {{ __('app.view_invoice_btn') }}
+        </a>
         @endif
 
         {{-- Cancel button — only for pending or confirmed --}}
@@ -143,4 +222,24 @@
     @endforelse
 
 </div>
+
+<script>
+function hoverStars(bookingId, n) {
+    document.querySelectorAll(`#stars-${bookingId} .star-btn`).forEach((s, i) => {
+        s.style.color = i < n ? '#fbbf24' : '#334155';
+    });
+}
+function resetStars(bookingId) {
+    const sel = document.querySelector(`#stars-${bookingId} input[type=radio]:checked`);
+    const val = sel ? parseInt(sel.value) : 0;
+    document.querySelectorAll(`#stars-${bookingId} .star-btn`).forEach((s, i) => {
+        s.style.color = i < val ? '#fbbf24' : '#334155';
+    });
+}
+function selectStars(bookingId, n) {
+    document.querySelectorAll(`#stars-${bookingId} .star-btn`).forEach((s, i) => {
+        s.style.color = i < n ? '#fbbf24' : '#334155';
+    });
+}
+</script>
 </x-app-layout>

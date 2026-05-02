@@ -336,83 +336,91 @@ class DatabaseSeeder extends Seeder
         ] as $log) ServiceLog::create(array_merge($log, ['vehicle_id' => $vitz->id]));
 
         // ─── BOOKINGS ─────────────────────────────────────────────────────────
+        // Toyota Aqua → Speedy Motors (completed · March 2026 → shows on chart)
         Booking::create([
             'vehicle_id'     => $aqua->id,
             'garage_id'      => $speedyGarage->id,
-            'booking_date'   => '2025-04-10',
+            'booking_date'   => '2026-03-15',
             'booking_time'   => '09:00:00',
             'service_type'   => 'Full Service & Oil Change',
             'notes'          => 'Please check tyre pressure as well.',
             'status'         => 'completed',
             'invoice_amount' => 12500.00,
             'invoice_notes'  => 'Completed full service including oil change, filter replacement and brake fluid top-up.',
+            'invoice_number' => 'INV-2026-0001',
+            'invoice_date'   => '2026-03-15',
         ]);
+        // Honda Vezel → AutoCare (confirmed · upcoming)
         Booking::create([
             'vehicle_id'   => $vezel->id,
             'garage_id'    => $autocareGarage->id,
-            'booking_date' => '2025-04-25',
+            'booking_date' => '2026-05-20',
             'booking_time' => '10:30:00',
             'service_type' => 'AC Service & Diagnostic Check',
             'notes'        => 'AC is not cooling properly. Please run full diagnostic.',
             'status'       => 'confirmed',
         ]);
+        // Suzuki Swift → Speedy Motors (pending · upcoming)
         Booking::create([
             'vehicle_id'   => $swift->id,
             'garage_id'    => $speedyGarage->id,
-            'booking_date' => '2025-05-05',
+            'booking_date' => '2026-05-10',
             'booking_time' => '08:30:00',
             'service_type' => 'Engine Oil Change & Tyre Rotation',
             'notes'        => 'Due for regular service. Please check brake fluid level too.',
             'status'       => 'pending',
         ]);
+        // Toyota Prius → AutoCare (confirmed · upcoming)
         Booking::create([
             'vehicle_id'   => $prius->id,
             'garage_id'    => $autocareGarage->id,
-            'booking_date' => '2025-05-08',
+            'booking_date' => '2026-05-28',
             'booking_time' => '09:30:00',
             'service_type' => 'Engine Oil Change & Hybrid System Check',
             'notes'        => 'Overdue for oil change. Also check hybrid battery cooling fan.',
             'status'       => 'confirmed',
         ]);
+        // Nissan Leaf → AutoCare (pending · upcoming)
         Booking::create([
             'vehicle_id'   => $leaf->id,
             'garage_id'    => $autocareGarage->id,
-            'booking_date' => '2025-05-12',
+            'booking_date' => '2026-05-18',
             'booking_time' => '11:00:00',
             'service_type' => 'Battery Health Check & Brake Fluid Change',
             'notes'        => 'Check battery SOH and replace brake fluid.',
             'status'       => 'pending',
         ]);
-
-        // Honda Fit → Speedy Motors (completed with invoice)
+        // Honda Fit → Speedy Motors (completed · May 2026 → shows on chart + this month)
         Booking::create([
             'vehicle_id'     => $fit->id,
             'garage_id'      => $speedyGarage->id,
-            'booking_date'   => '2025-03-18',
+            'booking_date'   => '2026-05-08',
             'booking_time'   => '08:00:00',
             'service_type'   => 'Engine Oil Change & Air Filter Replacement',
             'notes'          => 'Overdue for oil change and air filter is due soon.',
             'status'         => 'completed',
             'invoice_amount' => 8500.00,
             'invoice_notes'  => 'Completed oil change with Honda genuine 0W-20, replaced air filter. Vehicle running smoothly.',
+            'invoice_number' => 'INV-2026-0002',
+            'invoice_date'   => '2026-05-08',
         ]);
 
-        // Mazda Demio → AutoCare (cancelled)
+        // Mazda Demio → AutoCare (cancelled · past)
         Booking::create([
             'vehicle_id'   => $demio->id,
             'garage_id'    => $autocareGarage->id,
-            'booking_date' => '2025-04-02',
+            'booking_date' => '2026-02-10',
             'booking_time' => '10:00:00',
             'service_type' => 'Full Service & Wheel Alignment',
             'notes'        => 'Need full service and alignment checked.',
             'status'       => 'cancelled',
         ]);
 
-        // Toyota Vitz → Speedy Motors (cancelled)
+        // Toyota Vitz → Speedy Motors (cancelled · past)
         Booking::create([
             'vehicle_id'   => $vitz->id,
             'garage_id'    => $speedyGarage->id,
-            'booking_date' => '2025-04-15',
+            'booking_date' => '2026-01-20',
             'booking_time' => '09:00:00',
             'service_type' => 'Engine Oil Change & Brake Pad Inspection',
             'notes'        => 'Overdue oil change and brake pads need checking.',

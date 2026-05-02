@@ -452,6 +452,19 @@ return [
     'already_registered'     => 'Already registered?',
     'sign_in_link'           => 'Sign in',
 
+    // ─── Garage dashboard improvements ────────────────────────────────────────
+    'revenue_summary_label'    => '// REVENUE SUMMARY',
+    'this_month_label'         => 'This Month',
+    'all_time_label'           => 'All Time',
+    'job_completed_singular'   => 'job completed',
+    'jobs_completed_plural'    => 'jobs completed',
+    'last_6_months_label'      => 'Revenue — last 6 months',
+    'from_completed_invoices'  => 'From completed invoices',
+    'filter_all'               => 'All',
+    'upcoming_bookings_label'  => '// UPCOMING',
+    'booking_history_label'    => '// HISTORY',
+    'no_upcoming_bookings'     => 'No upcoming bookings.',
+
     // ─── Success flash messages ────────────────────────────────────────────────
     'booking_submitted'      => 'Booking submitted successfully.',
     'garage_created'         => 'Garage profile created successfully.',
@@ -460,5 +473,69 @@ return [
     // ─── Breadcrumb nav labels ─────────────────────────────────────────────────
     'nav_vehicles'           => 'Vehicles',
     'nav_garages'            => 'Garages',
+
+    // ─── Invoice feature ──────────────────────────────────────────────────────
+    'invoice_number_label'   => 'Invoice No.',
+    'invoice_date_label'     => 'Invoice Date',
+    'view_invoice_btn'       => 'VIEW INVOICE',
+    'print_invoice_btn'      => 'PRINT INVOICE',
+    'back_btn'               => 'Back',
+    'invoice_history_label'  => '// INVOICE HISTORY',
+    'invoice_history_title'  => 'Invoice History',
+    'all_invoices_btn'       => 'ALL INVOICES',
+    'all_invoices_label'     => '// ALL INVOICES',
+    'total_revenue_label'    => 'Total Revenue',
+    'total_invoices_label'   => 'Total Invoices',
+    'invoice_singular'       => 'invoice',
+    'invoices_plural'        => 'invoices',
+    'no_invoices_yet'        => 'No Invoices Yet',
+    'invoices_appear_hint'   => 'Invoices will appear here once bookings are completed',
+    'invoice_saved'          => 'Invoice saved successfully.',
+    'no_invoice_available'   => 'No invoice is available for this booking.',
+
+    // ─── Garage dashboard 6-feature upgrade ───────────────────────────────────
+    'today_schedule_label'   => "// TODAY'S SCHEDULE",
+    'search_bookings_ph'     => 'Search by name or plate...',
+    'avg_invoice_label'      => 'Avg Invoice',
+    'most_booked_label'      => 'Top Service',
+    'profile_complete_label' => 'Profile',
+    'returning_customer_tag' => 'RETURNING',
+
+    // ─── Garage dashboard 4-feature upgrade ───────────────────────────────────
+    'overdue_tag'            => 'OVERDUE',
+    'overdue_bookings_label' => '// OVERDUE',
+    'contact_label'          => 'Contact',
+
+    // ─── Garage note + email notification ─────────────────────────────────────
+    'garage_note_label'      => '// GARAGE NOTE',
+    'garage_note_ph'         => 'Add a note for the customer...',
+    'save_note_btn'          => 'SAVE NOTE',
+    'note_saved'             => 'Note saved successfully.',
+    'garage_reply_label'     => '// NOTE FROM GARAGE',
+
+    // ─── Garage 7-feature upgrade ─────────────────────────────────────────────
+    'quick_confirm_btn'      => 'CONFIRM BOOKING',
+    'quick_complete_btn'     => 'MARK AS COMPLETE',
+    'print_schedule_btn'     => 'Print',
+    'customer_history_label' => 'Customer History',
+    'total_visits_label'     => 'total visit(s)',
+    'prev_services_label'    => 'Previous:',
+    'revenue_target_label'   => 'Monthly Target',
+    'set_target_ph'          => 'Set target (LKR)',
+    'save_target_btn'        => 'SET TARGET',
+    'target_saved'           => 'Monthly target updated.',
+    'target_achieved'        => 'Target Achieved!',
+    'on_track_label'         => 'on track',
+    'calendar_label'         => 'Booking Calendar',
+    'show_calendar_btn'      => 'Show Calendar',
+    'hide_calendar_btn'      => 'Hide Calendar',
+    'avg_rating_label'       => 'Avg Rating',
+    'no_ratings_yet'         => 'No ratings yet',
+    'rate_service_label'     => 'Rate This Service',
+    'write_review_ph'        => 'Write a short review (optional)...',
+    'submit_rating_btn'      => 'SUBMIT RATING',
+    'rating_saved'           => 'Thank you for your rating!',
+    'already_rated'          => 'You have already rated this booking.',
+    'your_rating_label'      => 'Your Rating',
 
 ];
