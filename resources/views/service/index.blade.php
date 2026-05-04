@@ -138,7 +138,7 @@
 
     {{-- Back --}}
     <div class="mt-2">
-        <a href="{{ route('vehicles.index') }}"
+        <a href="{{ route('vehicles.show', $vehicle) }}"
            class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl"
            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
             {{ __('app.back_to_vehicles') }}

@@ -70,16 +70,16 @@
 
     <div class="rounded-2xl p-4 mb-3 fade-in fade-in-{{ min($index+3,5) }} border"
          style="background:{{ $bg }};border-color:{{ $borderColor }};">
-        <div class="flex items-start justify-between mb-2">
-            <div class="flex items-center gap-2">
+        <div class="flex items-start justify-between gap-2 mb-2">
+            <div class="flex items-start gap-2 flex-1 min-w-0">
                 @if($isOverdue)
-                    <x-heroicon-o-exclamation-triangle class="w-5 h-5 flex-shrink-0" style="color:#f87171;" />
+                    <x-heroicon-o-exclamation-triangle class="w-5 h-5 flex-shrink-0 mt-0.5" style="color:#f87171;" />
                 @elseif($isDueSoon)
-                    <x-heroicon-o-bell class="w-5 h-5 flex-shrink-0" style="color:var(--orange);" />
+                    <x-heroicon-o-bell class="w-5 h-5 flex-shrink-0 mt-0.5" style="color:var(--orange);" />
                 @else
-                    <x-heroicon-o-check-circle class="w-5 h-5 flex-shrink-0" style="color:var(--cyan);" />
+                    <x-heroicon-o-check-circle class="w-5 h-5 flex-shrink-0 mt-0.5" style="color:var(--cyan);" />
                 @endif
-                <div>
+                <div class="min-w-0">
                     <h3 class="heading font-bold text-white text-base leading-tight">
                         {{ $item['service_name'] }}
                     </h3>
@@ -87,9 +87,14 @@
                         {{ __('app.every_km', ['km' => number_format($item['interval_km'])]) }}
                         @if(isset($item['category'])) · {{ $item['category'] }} @endif
                     </p>
+                    @if(!empty($item['description']))
+                    <p class="text-xs mt-1.5 leading-relaxed" style="color:#475569;">
+                        {{ $item['description'] }}
+                    </p>
+                    @endif
                 </div>
             </div>
-            <span class="tag" style="background:{{ $tagBg }};color:{{ $accentColor }};border:1px solid {{ $borderColor }};">
+            <span class="tag flex-shrink-0" style="background:{{ $tagBg }};color:{{ $accentColor }};border:1px solid {{ $borderColor }};">
                 @if($isOverdue){{ strtoupper(__('app.overdue_status')) }}@elseif($isDueSoon){{ strtoupper(__('app.due_soon_status')) }}@else{{ strtoupper(__('app.upcoming_status')) }}@endif
             </span>
         </div>
@@ -106,17 +111,31 @@
                 @else
                     <span style="color:{{ $accentColor }};">{{ __('app.km_remaining_text', ['km' => number_format($item['km_remaining'])]) }}</span>
                 @endif
+                @if(!$isOverdue && isset($item['days_left']) && $item['days_left'] !== null)
+                    <span style="color:#475569;"> · ~{{ $item['days_left'] }} days</span>
+                @endif
             </p>
             <p class="mono text-xs" style="color:#475569;">
                 {{ __('app.due_at_text', ['km' => number_format($item['next_due_km'])]) }}
             </p>
         </div>
+
+        {{-- Book a Garage button — only for Overdue and Due Soon --}}
+        @if($isOverdue || $isDueSoon)
+        <a href="{{ route('garages.index') }}"
+           class="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+           style="background:{{ $tagBg }};border:1px solid {{ $borderColor }};color:{{ $accentColor }};">
+            <x-heroicon-o-wrench-screwdriver class="w-3.5 h-3.5" />
+            {{ __('app.book_garage_btn') }}
+        </a>
+        @endif
+
     </div>
     @endforeach
 
     {{-- Back button --}}
     <div class="mt-4 mb-6 fade-in fade-in-5">
-        <a href="{{ route('vehicles.index') }}"
+        <a href="{{ route('vehicles.show', $vehicle) }}"
            class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl transition-all"
            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
             {{ __('app.back_to_vehicles') }}

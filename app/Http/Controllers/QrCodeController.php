@@ -22,7 +22,11 @@ class QrCodeController extends Controller
 
         $qrCode = (new QRCode($options))->render($publicUrl);
 
-        return view('qrcode.show', compact('vehicle', 'qrCode', 'publicUrl'));
+        $serviceLogs = $vehicle->serviceLogs()
+                               ->orderBy('service_date', 'desc')
+                               ->get();
+
+        return view('qrcode.show', compact('vehicle', 'qrCode', 'publicUrl', 'serviceLogs'));
     }
 
     public function publicView(string $token)

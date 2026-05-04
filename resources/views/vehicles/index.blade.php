@@ -9,11 +9,19 @@
                 {{ __('app.my_vehicles_title') }}
             </h1>
         </div>
-        <a href="{{ route('vehicles.create') }}"
-           class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
-           style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
-            {{ __('app.add_btn') }}
-        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('vehicles.archived') }}"
+               class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);color:#f87171;">
+                <x-heroicon-o-archive-box class="w-3.5 h-3.5" />
+                {{ __('app.view_archived_btn') }}
+            </a>
+            <a href="{{ route('vehicles.create') }}"
+               class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
+                {{ __('app.add_btn') }}
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -40,12 +48,20 @@
 
         $schedules = \App\Models\MaintenanceSchedule::all();
         $overdueCount = 0;
+        $overdueServiceName = null;
+        $dueSoonServiceName = null;
         foreach ($schedules as $sched) {
             $lastMaint = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
                 ->where('service_type', 'like', '%' . explode(' ', $sched->service_name)[0] . '%')
                 ->orderBy('mileage_at_service', 'desc')->first();
             $lastKm = $lastMaint ? $lastMaint->mileage_at_service : 0;
-            if ($vehicle->mileage >= $lastKm + $sched->interval_km) $overdueCount++;
+            $kmLeft = ($lastKm + $sched->interval_km) - $vehicle->mileage;
+            if ($kmLeft <= 0) {
+                $overdueCount++;
+                if (!$overdueServiceName) $overdueServiceName = explode(' ', $sched->service_name)[0];
+            } elseif ($kmLeft <= 500 && !$dueSoonServiceName) {
+                $dueSoonServiceName = explode(' ', $sched->service_name)[0];
+            }
         }
         $maintScore = max(0, 20 - ($overdueCount * 10));
         $health     = $mileageScore + $svcScore + $maintScore;
@@ -59,20 +75,38 @@
         $totalSpend = \App\Models\ServiceLog::where('vehicle_id',$vehicle->id)->sum('cost')
                     + \App\Models\FuelLog::where('vehicle_id',$vehicle->id)->sum('cost');
     @endphp
-    <div class="glass-bright rounded-2xl p-4 mb-4 vehicle-card fade-in fade-in-{{ $index + 2 }} animate-glow border">
+    <div class="glass-bright rounded-2xl overflow-hidden mb-4 vehicle-card fade-in fade-in-{{ $index + 2 }} animate-glow border">
 
+        {{-- Vehicle photo strip --}}
+        @if($vehicle->image)
+        <div class="w-full overflow-hidden" style="height:120px;">
+            <img src="{{ asset('storage/' . $vehicle->image) }}"
+                 alt="{{ $vehicle->make }} {{ $vehicle->model }}"
+                 class="w-full h-full object-cover">
+        </div>
+        @endif
+
+        <div class="p-4">
         {{-- Top row --}}
         <div class="flex items-start justify-between mb-3">
             <div>
                 <div class="flex items-center gap-2 mb-1">
                     <span class="tag" style="background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.25);">{{ __('app.active_tag') }}</span>
                     <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper($vehicle->fuel_type) }}</span>
+                    @if($overdueServiceName)
+                    <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3);">{{ strtoupper($overdueServiceName) }} {{ strtoupper(__('app.overdue_status')) }}</span>
+                    @elseif($dueSoonServiceName)
+                    <span class="tag" style="background:rgba(255,107,0,0.1);color:#ff6b00;border:1px solid rgba(255,107,0,0.25);">{{ strtoupper($dueSoonServiceName) }} {{ strtoupper(__('app.due_soon_status')) }}</span>
+                    @endif
                 </div>
                 <h3 class="heading text-xl font-bold text-white">{{ $vehicle->make }} {{ $vehicle->model }}</h3>
                 <p class="text-xs mono mt-0.5" style="color:#64748b;">
                     {{ $vehicle->year }}
                     @if($vehicle->license_plate) · {{ $vehicle->license_plate }} @endif
                 </p>
+                @if($vehicle->notes)
+                <p class="text-xs mt-1 leading-snug" style="color:#475569;">{{ Str::limit($vehicle->notes, 60) }}</p>
+                @endif
             </div>
             {{-- Ring gauge --}}
             <div class="relative ring-wrap flex-shrink-0">
@@ -147,7 +181,7 @@
                 <x-heroicon-o-qr-code class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.qr_pass') }}
             </a>
         </div>
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-4 gap-2">
             <a href="{{ route('service.index', $vehicle) }}"
                class="py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95"
                style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#94a3b8;">
@@ -158,15 +192,21 @@
                style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#94a3b8;">
                 <x-heroicon-o-beaker class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.fuel_action') }}
             </a>
+            <a href="{{ route('suggestions.index', $vehicle) }}"
+               class="py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95"
+               style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);color:#a855f7;">
+                <x-heroicon-o-light-bulb class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.insights') }}
+            </a>
             <form method="POST" action="{{ route('vehicles.destroy', $vehicle) }}"
-                  onsubmit="return confirm('{{ __('app.remove_confirm', ['name' => $vehicle->make . ' ' . $vehicle->model]) }}')">
+                  onsubmit="return confirm('{{ __('app.archive_confirm', ['name' => $vehicle->make . ' ' . $vehicle->model]) }}')">
                 @csrf @method('DELETE')
                 <button type="submit" class="w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
-                        style="background:rgba(255,60,60,0.08);border:1px solid rgba(255,60,60,0.2);color:#f87171;">
-                    <x-heroicon-o-trash class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.remove_btn') }}
+                        style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);color:#f87171;">
+                    <x-heroicon-o-archive-box class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.archive_vehicle_btn') }}
                 </button>
             </form>
         </div>
+        </div>{{-- /p-4 --}}
     </div>
     @empty
         <div class="glass rounded-2xl p-10 text-center fade-in fade-in-2 border" style="border-color:rgba(255,255,255,0.06);">

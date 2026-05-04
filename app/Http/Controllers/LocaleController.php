@@ -10,6 +10,11 @@ class LocaleController extends Controller
     {
         if (in_array($locale, ['en', 'si', 'ta'])) {
             session(['locale' => $locale]);
+
+            // Persist to database if logged in
+            if ($request->user()) {
+                $request->user()->update(['locale' => $locale]);
+            }
         }
 
         return redirect()->back();

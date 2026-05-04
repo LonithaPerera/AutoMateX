@@ -19,7 +19,21 @@
             </p>
             <form method="POST" action="{{ route('profile.destroy') }}">
                 @csrf @method('DELETE')
+
+                {{-- Step 1: type DELETE --}}
                 <div class="mb-3">
+                    <label class="section-label mb-2 block">TYPE <span style="color:#f87171;letter-spacing:0.15em;">DELETE</span> TO CONFIRM</label>
+                    <input id="delete_confirm_text"
+                           type="text"
+                           autocomplete="off"
+                           placeholder="DELETE"
+                           oninput="onDeleteTextInput()"
+                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(248,113,113,0.3);letter-spacing:0.1em;">
+                </div>
+
+                {{-- Step 2: password (locked until DELETE typed) --}}
+                <div class="mb-3" id="delete-pw-section" style="opacity:0.35;pointer-events:none;transition:opacity 0.2s;">
                     <label class="section-label mb-2 block">{{ __('app.field_confirm_password') }}</label>
                     <div class="relative">
                         <input id="delete_password" type="password" name="password" required
@@ -37,16 +51,19 @@
                         <p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>
                     @enderror
                 </div>
+
                 <div class="grid grid-cols-2 gap-2">
                     <button type="button"
-                            onclick="document.getElementById('confirm-delete').classList.add('hidden')"
+                            onclick="document.getElementById('confirm-delete').classList.add('hidden');document.getElementById('delete_confirm_text').value='';onDeleteTextInput();"
                             class="py-2.5 rounded-xl text-sm font-semibold heading tracking-wider"
                             style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#64748b;">
                         {{ __('app.delete_cancel_btn') }}
                     </button>
                     <button type="submit"
+                            id="delete-submit-btn"
+                            disabled
                             class="py-2.5 rounded-xl text-sm font-semibold heading tracking-wider"
-                            style="background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.3);color:#f87171;">
+                            style="background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);color:rgba(248,113,113,0.35);cursor:not-allowed;transition:all 0.2s;">
                         {{ __('app.confirm_delete_btn') }}
                     </button>
                 </div>
@@ -61,6 +78,31 @@
             inp.type = show ? 'text' : 'password';
             btn.querySelector('.icon-eye').style.display = show ? 'none' : '';
             btn.querySelector('.icon-eye-off').style.display = show ? '' : 'none';
+        }
+
+        function onDeleteTextInput() {
+            const val     = document.getElementById('delete_confirm_text').value;
+            const matched = val === 'DELETE';
+            const pwSect  = document.getElementById('delete-pw-section');
+            const submitBtn = document.getElementById('delete-submit-btn');
+
+            // Unlock password section
+            pwSect.style.opacity = matched ? '1' : '0.35';
+            pwSect.style.pointerEvents = matched ? 'auto' : 'none';
+
+            // Enable/disable submit button
+            submitBtn.disabled = !matched;
+            if (matched) {
+                submitBtn.style.background   = 'rgba(248,113,113,0.15)';
+                submitBtn.style.borderColor  = 'rgba(248,113,113,0.3)';
+                submitBtn.style.color        = '#f87171';
+                submitBtn.style.cursor       = 'pointer';
+            } else {
+                submitBtn.style.background   = 'rgba(248,113,113,0.06)';
+                submitBtn.style.borderColor  = 'rgba(248,113,113,0.15)';
+                submitBtn.style.color        = 'rgba(248,113,113,0.35)';
+                submitBtn.style.cursor       = 'not-allowed';
+            }
         }
     </script>
 </section>

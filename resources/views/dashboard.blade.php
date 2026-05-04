@@ -2,24 +2,39 @@
 
     <div class="max-w-lg mx-auto px-4 pt-5">
 
-        {{-- Greeting --}}
-        <div class="fade-in fade-in-1 mb-5">
-            <p class="section-label mb-1">{{ __('app.welcome_back') }}</p>
-            <h1 class="heading text-3xl font-bold text-white">
-                {{ explode(' ', Auth::user()->name)[0] }}
-                <span class="text-cyan">{{ explode(' ', Auth::user()->name)[1] ?? '' }}</span>
-            </h1>
-            <p class="text-slate-400 text-sm mt-0.5">
-                {{ Auth::user()->vehicles()->count() }} {{ __('app.vehicles_active') }}
-            </p>
-        </div>
-
         @php
             $vehicles     = Auth::user()->vehicles;
             $vehicleIds   = $vehicles->pluck('id');
             $serviceCount = \App\Models\ServiceLog::whereIn('vehicle_id', $vehicleIds)->count();
             $fuelCount    = \App\Models\FuelLog::whereIn('vehicle_id', $vehicleIds)->count();
             $bookingCount = Auth::user()->bookings()->count();
+
+            // #2 Total spend this month
+            $monthlyFuel    = (float) \App\Models\FuelLog::whereIn('vehicle_id', $vehicleIds)
+                                ->whereYear('date', now()->year)->whereMonth('date', now()->month)->sum('cost');
+            $monthlySvc     = (float) \App\Models\ServiceLog::whereIn('vehicle_id', $vehicleIds)
+                                ->whereYear('service_date', now()->year)->whereMonth('service_date', now()->month)->sum('cost');
+            $monthlyTotal   = $monthlyFuel + $monthlySvc;
+
+            // #3 Last activity
+            $lastFuel = \App\Models\FuelLog::whereIn('vehicle_id', $vehicleIds)->orderBy('date','desc')->orderBy('id','desc')->first();
+            $lastSvcAll = \App\Models\ServiceLog::whereIn('vehicle_id', $vehicleIds)->orderBy('service_date','desc')->orderBy('id','desc')->first();
+            $lastActivity = null;
+            if ($lastFuel && $lastSvcAll) {
+                $lastActivity = $lastFuel->date >= $lastSvcAll->service_date
+                    ? ['type' => 'fuel',    'label' => __('app.activity_fuelled'), 'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastFuel->date)->startOfDay(), false)]
+                    : ['type' => 'service', 'label' => __('app.activity_serviced'),'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastSvcAll->service_date)->startOfDay(), false)];
+            } elseif ($lastFuel) {
+                $lastActivity = ['type' => 'fuel',    'label' => __('app.activity_fuelled'), 'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastFuel->date)->startOfDay(), false)];
+            } elseif ($lastSvcAll) {
+                $lastActivity = ['type' => 'service', 'label' => __('app.activity_serviced'),'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastSvcAll->service_date)->startOfDay(), false)];
+            }
+
+            // #1 Quick-log smart link — direct if single vehicle
+            $singleVehicle = $vehicles->count() === 1 ? $vehicles->first() : null;
+
+            // Latest booking for status card
+            $latestBooking = Auth::user()->bookings()->with(['garage','vehicle'])->latest()->first();
 
             // Find overdue suggestions across all vehicles
             $overdueVehicle = null;
@@ -40,6 +55,33 @@
                 }
             }
         @endphp
+
+        {{-- Greeting --}}
+        <div class="fade-in fade-in-1 mb-5">
+            <p class="section-label mb-1">{{ __('app.welcome_back') }}</p>
+            <h1 class="heading text-3xl font-bold text-white">
+                {{ explode(' ', Auth::user()->name)[0] }}
+                <span class="text-cyan">{{ explode(' ', Auth::user()->name)[1] ?? '' }}</span>
+            </h1>
+            <p class="text-slate-400 text-sm mt-0.5">
+                {{ $vehicles->count() }} {{ __('app.vehicles_active') }}
+            </p>
+            {{-- #3 Last activity --}}
+            @if($lastActivity)
+            <p class="text-xs mt-1" style="color:#475569;">
+                @if($lastActivity['type'] === 'fuel')
+                    <x-heroicon-o-beaker class="w-3 h-3 inline-block mr-0.5 align-middle" style="color:#4ade80;" />
+                @else
+                    <x-heroicon-o-wrench-screwdriver class="w-3 h-3 inline-block mr-0.5 align-middle" style="color:#6699ff;" />
+                @endif
+                {{ $lastActivity['label'] }}
+                @if($lastActivity['days'] == 0) {{ __('app.activity_today') }}
+                @elseif($lastActivity['days'] == -1) {{ __('app.activity_yesterday') }}
+                @else {{ __('app.activity_days_ago', ['days' => abs((int)$lastActivity['days'])]) }}
+                @endif
+            </p>
+            @endif
+        </div>
 
         {{-- ⚠️ NEXT SERVICE DUE ALERT --}}
         @if($overdueVehicle)
@@ -119,7 +161,7 @@
         @endif
 
         {{-- STATS ROW --}}
-        <div class="grid grid-cols-3 gap-3 mb-5 fade-in fade-in-3">
+        <div class="grid grid-cols-2 gap-3 mb-3 fade-in fade-in-3">
             <div class="glass rounded-2xl p-3 text-center border" style="border-color:rgba(255,255,255,0.06);">
                 <p class="heading text-2xl font-bold text-white">{{ $serviceCount }}</p>
                 <p class="text-xs text-slate-500 mt-0.5">{{ __('app.services') }}</p>
@@ -132,7 +174,32 @@
                 <p class="heading text-2xl font-bold" style="color:var(--orange);">{{ $bookingCount }}</p>
                 <p class="text-xs text-slate-500 mt-0.5">{{ __('app.bookings') }}</p>
             </div>
+            {{-- #2 Total spend this month --}}
+            <div class="glass rounded-2xl p-3 text-center border" style="border-color:rgba(74,222,128,0.1);">
+                <p class="heading text-lg font-bold" style="color:#4ade80;">
+                    @if($monthlyTotal > 0) {{ number_format($monthlyTotal) }} @else — @endif
+                </p>
+                <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.this_month_spend') }}</p>
+            </div>
         </div>
+
+        {{-- #1 QUICK LOG ACTIONS --}}
+        @if($vehicles->isNotEmpty())
+        <div class="grid grid-cols-2 gap-3 mb-5 fade-in fade-in-3">
+            <a href="{{ $singleVehicle ? route('fuel.create', $singleVehicle) : route('vehicles.index') }}"
+               class="flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:#4ade80;">
+                <x-heroicon-o-beaker class="w-3.5 h-3.5" />
+                {{ __('app.quick_log_fuel') }}
+            </a>
+            <a href="{{ $singleVehicle ? route('service.create', $singleVehicle) : route('vehicles.index') }}"
+               class="flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.25);color:#6699ff;">
+                <x-heroicon-o-wrench-screwdriver class="w-3.5 h-3.5" />
+                {{ __('app.quick_log_service') }}
+            </a>
+        </div>
+        @endif
 
         {{-- MY VEHICLES --}}
         <p class="section-label mb-3 fade-in fade-in-3">{{ __('app.my_vehicles') }}</p>
@@ -156,12 +223,20 @@
             // 3. Overdue maintenance (20 pts): -10 per overdue item
             $schedules = \App\Models\MaintenanceSchedule::all();
             $overdueCount = 0;
+            $overdueServiceName = null;
+            $dueSoonServiceName = null;
             foreach ($schedules as $sched) {
                 $lastMaint = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
                     ->where('service_type', 'like', '%' . explode(' ', $sched->service_name)[0] . '%')
                     ->orderBy('mileage_at_service', 'desc')->first();
                 $lastKm = $lastMaint ? $lastMaint->mileage_at_service : 0;
-                if ($vehicle->mileage >= $lastKm + $sched->interval_km) $overdueCount++;
+                $kmLeft = ($lastKm + $sched->interval_km) - $vehicle->mileage;
+                if ($kmLeft <= 0) {
+                    $overdueCount++;
+                    if (!$overdueServiceName) $overdueServiceName = explode(' ', $sched->service_name)[0];
+                } elseif ($kmLeft <= 500 && !$dueSoonServiceName) {
+                    $dueSoonServiceName = explode(' ', $sched->service_name)[0];
+                }
             }
             $maintScore = max(0, 20 - ($overdueCount * 10));
             $health     = $mileageScore + $svcScore + $maintScore;   // 0–100
@@ -175,16 +250,48 @@
             $svcCount      = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)->count();
             $totalSpend    = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)->sum('cost')
                            + \App\Models\FuelLog::where('vehicle_id', $vehicle->id)->sum('cost');
+
+            // Document expiry alerts
+            $expiryAlerts = [];
+            foreach ([
+                __('app.insurance_expiry_label') => $vehicle->insurance_expiry,
+                __('app.registration_expiry_label') => $vehicle->registration_expiry,
+                __('app.emission_due_label') => $vehicle->emission_due,
+            ] as $docName => $docDate) {
+                if ($docDate) {
+                    $dLeft = now()->startOfDay()->diffInDays($docDate->copy()->startOfDay(), false);
+                    if ($dLeft < 0)       $expiryAlerts[] = ['name' => $docName, 'days' => abs((int)$dLeft), 'status' => 'expired'];
+                    elseif ($dLeft <= 30) $expiryAlerts[] = ['name' => $docName, 'days' => (int)$dLeft,      'status' => 'soon'];
+                }
+            }
+
         @endphp
-            <div class="glass-bright rounded-2xl p-4 mb-3 vehicle-card fade-in fade-in-{{ $index + 3 }} animate-glow border">
+            <div class="glass-bright rounded-2xl overflow-hidden mb-3 vehicle-card fade-in fade-in-{{ $index + 3 }} animate-glow border">
+                {{-- Vehicle photo strip --}}
+                @if($vehicle->image)
+                <div class="w-full overflow-hidden" style="height:100px;">
+                    <img src="{{ asset('storage/' . $vehicle->image) }}"
+                         alt="{{ $vehicle->make }} {{ $vehicle->model }}"
+                         class="w-full h-full object-cover">
+                </div>
+                @endif
+                <div class="p-4">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <span class="tag" style="background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.25);">{{ __('app.active_badge') }}</span>
                             <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper($vehicle->fuel_type) }}</span>
+                            @if($overdueServiceName)
+                            <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3);">{{ strtoupper($overdueServiceName) }} OVERDUE</span>
+                            @elseif($dueSoonServiceName)
+                            <span class="tag" style="background:rgba(255,107,0,0.1);color:#ff6b00;border:1px solid rgba(255,107,0,0.25);">{{ strtoupper($dueSoonServiceName) }} DUE SOON</span>
+                            @endif
                         </div>
                         <h3 class="heading text-xl font-bold text-white">{{ $vehicle->make }} {{ $vehicle->model }}</h3>
                         <p class="text-xs text-slate-500 mono mt-0.5">{{ $vehicle->year }} · {{ $vehicle->license_plate ?? __('app.no_plate') }}</p>
+                        @if($vehicle->notes)
+                        <p class="text-xs mt-1 leading-snug" style="color:#475569;">{{ Str::limit($vehicle->notes, 55) }}</p>
+                        @endif
                     </div>
                     <!-- Ring gauge -->
                     <div class="relative ring-wrap flex-shrink-0">
@@ -246,6 +353,23 @@
                     </div>
                 </div>
 
+                {{-- Document expiry alerts --}}
+                @if(count($expiryAlerts) > 0)
+                <div class="rounded-xl p-2.5 mb-3 space-y-1.5" style="background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.15);">
+                    @foreach($expiryAlerts as $alert)
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <x-heroicon-o-exclamation-triangle class="w-3 h-3 flex-shrink-0" style="color:{{ $alert['status'] === 'expired' ? '#f87171' : '#ff6b00' }};" />
+                            <span class="text-xs" style="color:#94a3b8;">{{ $alert['name'] }}</span>
+                        </div>
+                        <span class="mono text-xs font-bold" style="color:{{ $alert['status'] === 'expired' ? '#f87171' : '#ff6b00' }};">
+                            {{ $alert['status'] === 'expired' ? __('app.doc_expired_days', ['days' => $alert['days']]) : __('app.doc_expires_in', ['days' => $alert['days']]) }}
+                        </span>
+                    </div>
+                    @endforeach
+                </div>
+                @endif
+
                 {{-- Actions --}}
                 <a href="{{ route('vehicles.show', $vehicle) }}"
                    class="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl text-xs font-semibold heading tracking-wider text-center transition-all active:scale-95 mb-2"
@@ -269,6 +393,7 @@
                         <x-heroicon-o-beaker class="w-3 h-3 inline-block mr-0.5 align-middle" />{{ __('app.fuel_btn') }}
                     </a>
                 </div>
+                </div>{{-- /p-4 --}}
             </div>
         @empty
             <div class="glass rounded-2xl p-8 text-center mb-4 fade-in fade-in-3 border" style="border-color:rgba(255,255,255,0.06);">
@@ -283,56 +408,120 @@
             </div>
         @endforelse
 
-        {{-- QR HISTORY PASS --}}
+        {{-- QR HISTORY PASS CAROUSEL --}}
         @if($vehicles->isNotEmpty())
-            @php $firstVehicle = $vehicles->first(); @endphp
-            <p class="section-label mb-3 fade-in fade-in-5">{{ __('app.history_pass_label') }}</p>
-            <div class="fade-in fade-in-5 rounded-2xl p-5 mb-6 relative overflow-hidden border animate-glow"
-                 style="background:linear-gradient(135deg,rgba(0,102,255,0.12),rgba(0,245,255,0.06));border-color:rgba(0,245,255,0.2);">
-                <div class="absolute top-0 left-0 w-32 h-32 opacity-20 pointer-events-none"
-                     style="background:radial-gradient(circle at top left,var(--cyan),transparent);"></div>
-                <div class="flex items-center gap-4">
-                    <!-- QR Visual -->
-                    <div class="flex-shrink-0 relative rounded-xl overflow-hidden p-3"
-                         style="background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.2);">
-                        <div class="relative" style="width:80px;height:80px;">
-                            <div class="absolute top-0 left-0 w-5 h-5 border-2 border-cyan-400 rounded-sm"></div>
-                            <div class="absolute top-0 right-0 w-5 h-5 border-2 border-cyan-400 rounded-sm"></div>
-                            <div class="absolute bottom-0 left-0 w-5 h-5 border-2 border-cyan-400 rounded-sm"></div>
-                            <div class="absolute top-1.5 left-1.5 w-2 h-2 bg-cyan-400"></div>
-                            <div class="absolute top-1.5 right-1.5 w-2 h-2 bg-cyan-400"></div>
-                            <div class="absolute bottom-1.5 left-1.5 w-2 h-2 bg-cyan-400"></div>
-                            <div class="scan-line" style="opacity:0.6;"></div>
-                        </div>
-                    </div>
-                    <!-- Info -->
-                    <div class="flex-1 min-w-0">
-                        <h3 class="heading text-base font-bold text-white">{{ __('app.history_pass') }}</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">{{ $firstVehicle->make }} {{ $firstVehicle->model }} · {{ $firstVehicle->license_plate ?? __('app.no_plate') }}</p>
-                        <div class="mt-2 space-y-1">
-                            <div class="flex items-center gap-1.5">
-                                <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                                <span class="text-xs text-slate-400">{{ \App\Models\ServiceLog::where('vehicle_id', $firstVehicle->id)->count() }} {{ __('app.service_records') }}</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <div class="w-1.5 h-1.5 rounded-full" style="background:var(--cyan);"></div>
-                                <span class="text-xs text-slate-400">{{ __('app.shareable') }}</span>
-                            </div>
-                        </div>
-                        <a href="{{ route('qrcode.show', $firstVehicle) }}"
-                           class="mt-3 inline-block px-4 py-1.5 rounded-lg text-xs font-semibold heading tracking-wider"
-                           style="background:rgba(0,245,255,0.15);border:1px solid rgba(0,245,255,0.3);color:var(--cyan);">
-                            {{ __('app.view_qr_code') }}
-                        </a>
-                    </div>
+            <div class="flex items-center justify-between mb-3 fade-in fade-in-5">
+                <p class="section-label">{{ __('app.history_pass_label') }}</p>
+                @if($vehicles->count() > 1)
+                <div class="flex items-center gap-2">
+                    <button onclick="qrSlide(-1)"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90"
+                            style="background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:14px;height:14px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+                    </button>
+                    <span id="qr-counter" class="mono text-xs" style="color:#64748b;">1 / {{ $vehicles->count() }}</span>
+                    <button onclick="qrSlide(1)"
+                            class="w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90"
+                            style="background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:14px;height:14px;"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                    </button>
                 </div>
-                @if($firstVehicle->qr_token)
-                    <div class="mt-4 pt-3 border-t" style="border-color:rgba(0,245,255,0.1);">
-                        <p class="section-label mb-1">{{ __('app.public_token') }}</p>
-                        <p class="mono text-xs truncate" style="color:rgba(0,245,255,0.6);">{{ $firstVehicle->qr_token }}</p>
-                    </div>
                 @endif
             </div>
+
+            {{-- Carousel track --}}
+            <div style="overflow:hidden;" class="fade-in fade-in-5 mb-6">
+                <div id="qr-track" style="display:flex;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);will-change:transform;">
+                    @foreach($vehicles as $qrVehicle)
+                    <div style="min-width:100%;padding-right:0;">
+                        <div class="rounded-2xl p-5 relative overflow-hidden border animate-glow"
+                             style="background:linear-gradient(135deg,rgba(0,102,255,0.12),rgba(0,245,255,0.06));border-color:rgba(0,245,255,0.2);">
+                            <div class="absolute top-0 left-0 w-32 h-32 opacity-20 pointer-events-none"
+                                 style="background:radial-gradient(circle at top left,var(--cyan),transparent);"></div>
+                            <div class="flex items-center gap-4">
+                                <!-- QR Visual -->
+                                <div class="flex-shrink-0 relative rounded-xl overflow-hidden p-3"
+                                     style="background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.2);">
+                                    <div class="relative" style="width:80px;height:80px;">
+                                        <div class="absolute top-0 left-0 w-5 h-5 border-2 border-cyan-400 rounded-sm"></div>
+                                        <div class="absolute top-0 right-0 w-5 h-5 border-2 border-cyan-400 rounded-sm"></div>
+                                        <div class="absolute bottom-0 left-0 w-5 h-5 border-2 border-cyan-400 rounded-sm"></div>
+                                        <div class="absolute top-1.5 left-1.5 w-2 h-2 bg-cyan-400"></div>
+                                        <div class="absolute top-1.5 right-1.5 w-2 h-2 bg-cyan-400"></div>
+                                        <div class="absolute bottom-1.5 left-1.5 w-2 h-2 bg-cyan-400"></div>
+                                        <div class="scan-line" style="opacity:0.6;"></div>
+                                    </div>
+                                </div>
+                                <!-- Info -->
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="heading text-base font-bold text-white">{{ __('app.history_pass') }}</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">{{ $qrVehicle->make }} {{ $qrVehicle->model }} · {{ $qrVehicle->license_plate ?? __('app.no_plate') }}</p>
+                                    <div class="mt-2 space-y-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+                                            <span class="text-xs text-slate-400">{{ \App\Models\ServiceLog::where('vehicle_id', $qrVehicle->id)->count() }} {{ __('app.service_records') }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <div class="w-1.5 h-1.5 rounded-full" style="background:var(--cyan);"></div>
+                                            <span class="text-xs text-slate-400">{{ __('app.shareable') }}</span>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('qrcode.show', $qrVehicle) }}"
+                                       class="mt-3 inline-block px-4 py-1.5 rounded-lg text-xs font-semibold heading tracking-wider"
+                                       style="background:rgba(0,245,255,0.15);border:1px solid rgba(0,245,255,0.3);color:var(--cyan);">
+                                        {{ __('app.view_qr_code') }}
+                                    </a>
+                                </div>
+                            </div>
+                            @if($qrVehicle->qr_token)
+                                <div class="mt-4 pt-3 border-t" style="border-color:rgba(0,245,255,0.1);">
+                                    <p class="section-label mb-1">{{ __('app.public_token') }}</p>
+                                    <p class="mono text-xs truncate" style="color:rgba(0,245,255,0.6);">{{ $qrVehicle->qr_token }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Dot indicators (only when >1 vehicle) --}}
+            @if($vehicles->count() > 1)
+            <div id="qr-dots" class="flex justify-center gap-1.5 -mt-4 mb-6">
+                @foreach($vehicles as $i => $v)
+                <div class="qr-dot rounded-full transition-all"
+                     style="width:{{ $i === 0 ? '16px' : '6px' }};height:6px;background:{{ $i === 0 ? 'var(--cyan)' : 'rgba(255,255,255,0.15)' }};"></div>
+                @endforeach
+            </div>
+            @endif
+
+            <script>
+            (function () {
+                var total   = {{ $vehicles->count() }};
+                var current = 0;
+                var track   = document.getElementById('qr-track');
+                var counter = document.getElementById('qr-counter');
+                var dots    = document.querySelectorAll('.qr-dot');
+
+                // Touch/swipe support
+                var startX = 0;
+                track.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+                track.addEventListener('touchend',   function (e) {
+                    var diff = startX - e.changedTouches[0].clientX;
+                    if (Math.abs(diff) > 40) qrSlide(diff > 0 ? 1 : -1);
+                }, { passive: true });
+
+                window.qrSlide = function (dir) {
+                    current = (current + dir + total) % total;
+                    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+                    if (counter) counter.textContent = (current + 1) + ' / ' + total;
+                    dots.forEach(function (d, i) {
+                        d.style.width      = i === current ? '16px' : '6px';
+                        d.style.background = i === current ? 'var(--cyan)' : 'rgba(255,255,255,0.15)';
+                    });
+                };
+            })();
+            </script>
         @endif
 
         {{-- Admin panel link --}}

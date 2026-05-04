@@ -65,6 +65,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 16px;
             padding: 20px 0;
         }
         .logo {
@@ -75,7 +76,7 @@
             letter-spacing: 1px;
         }
         .logo span { color: #00f5ff; }
-        .nav-links { display: flex; gap: 10px; align-items: center; }
+        .nav-links { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
         .btn-outline {
             padding: 8px 18px;
             border-radius: 10px;
@@ -300,7 +301,10 @@
 
         {{-- Nav --}}
         <nav>
-            <div class="logo" style="display:flex;align-items:center;"><img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;margin-right:8px;"><span style="display:inline-flex;align-items:center;color:white;">Auto<span style="color:#00f5ff;">Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                <img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;">
+                <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;letter-spacing:1px;color:#fff;display:inline-flex;align-items:center;">Auto<span style="color:#00f5ff;">Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></span>
+            </div>
             <div class="nav-links">
                 {{-- Language Switcher --}}
                 <div class="lang-switcher">

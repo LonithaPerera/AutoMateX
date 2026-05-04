@@ -66,7 +66,7 @@ class VehicleTest extends TestCase
 
         $response = $this->actingAs($user)->delete("/vehicles/{$vehicle->id}");
 
-        $this->assertDatabaseMissing('vehicles', ['id' => $vehicle->id]);
+        $this->assertSoftDeleted('vehicles', ['id' => $vehicle->id]);
         $response->assertRedirect('/vehicles');
     }
 

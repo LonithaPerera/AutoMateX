@@ -15,6 +15,9 @@ use App\Http\Controllers\RatingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
     return view('welcome');
 });
 
@@ -41,12 +44,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
+    Route::delete('/profile/avatar', [ProfileController::class, 'removeAvatar'])->name('profile.avatar.remove');
 
     // Vehicle owner routes — restricted to vehicle_owner + admin
     Route::middleware('vehicle.owner')->group(function () {
-        // Vehicles
+        // Vehicles — specific routes BEFORE resource to avoid {vehicle} capture
+        Route::get('vehicles/archived', [VehicleController::class, 'archived'])->name('vehicles.archived');
         Route::resource('vehicles', VehicleController::class);
-        Route::patch('vehicles/{vehicle}/mileage', [VehicleController::class, 'updateMileage'])->name('vehicles.updateMileage');
+        Route::patch('vehicles/{vehicle}/mileage',   [VehicleController::class, 'updateMileage'])->name('vehicles.updateMileage');
+        Route::patch('vehicles/{vehicle}/notes',     [VehicleController::class, 'updateNotes'])->name('vehicles.updateNotes');
+        Route::patch('vehicles/{vehicle}/photo',     [VehicleController::class, 'updatePhoto'])->name('vehicles.updatePhoto');
+        Route::delete('vehicles/{vehicle}/photo',    [VehicleController::class, 'removePhoto'])->name('vehicles.removePhoto');
+        Route::patch('vehicles/{vehicle}/documents', [VehicleController::class, 'updateDocuments'])->name('vehicles.updateDocuments');
+        Route::patch('vehicles/{id}/restore',         [VehicleController::class, 'restore'])->name('vehicles.restore');
+        Route::get('vehicles/{vehicle}/export',      [VehicleController::class, 'export'])->name('vehicles.export');
 
         // Fuel Log routes
         Route::get('vehicles/{vehicle}/fuel', [FuelLogController::class, 'index'])->name('fuel.index');
@@ -72,6 +84,7 @@ Route::middleware('auth')->group(function () {
 
         // Bookings
         Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+        Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
         Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
         Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
         Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');

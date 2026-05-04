@@ -115,6 +115,20 @@
     {{-- Fuel log list --}}
     <p class="section-label mb-3 fade-in fade-in-2">{{ __('app.fillup_history') }}</p>
 
+    @php
+        // Build cost-per-km map: sort ascending by km_reading, compute per log
+        $sortedForCost = $fuelLogs->sortBy('km_reading')->values();
+        $costPerKmMap  = [];
+        foreach ($sortedForCost as $idx => $l) {
+            if ($idx > 0) {
+                $kmDriven = $l->km_reading - $sortedForCost[$idx - 1]->km_reading;
+                $costPerKmMap[$l->id] = $kmDriven > 0 ? round($l->cost / $kmDriven, 2) : null;
+            } else {
+                $costPerKmMap[$l->id] = null;
+            }
+        }
+    @endphp
+
     @forelse($fuelLogs as $index => $log)
     <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }}"
          style="border-color:rgba(0,245,255,0.1);">
@@ -144,10 +158,10 @@
         </div>
 
         {{-- Stats row --}}
-        <div class="grid grid-cols-3 gap-2 mb-3">
+        <div class="grid grid-cols-4 gap-2 mb-3">
             <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.odometer') }}</p>
-                <p class="mono text-sm font-bold text-white">{{ number_format($log->km_reading) }} km</p>
+                <p class="mono text-sm font-bold text-white">{{ number_format($log->km_reading) }}</p>
             </div>
             <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.liters') }}</p>
@@ -155,7 +169,17 @@
             </div>
             <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.cost') }}</p>
-                <p class="mono text-sm font-bold" style="color:#4ade80;">LKR {{ number_format($log->cost) }}</p>
+                <p class="mono text-sm font-bold" style="color:#4ade80;">{{ number_format($log->cost) }}</p>
+            </div>
+            <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.cost_per_km') }}</p>
+                <p class="mono text-sm font-bold" style="color:#f59e0b;">
+                    @if($costPerKmMap[$log->id] ?? null)
+                        {{ $costPerKmMap[$log->id] }}
+                    @else
+                        —
+                    @endif
+                </p>
             </div>
         </div>
 
@@ -193,7 +217,7 @@
 
     {{-- Back --}}
     <div class="mt-2">
-        <a href="{{ route('vehicles.index') }}"
+        <a href="{{ route('vehicles.show', $vehicle) }}"
            class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl"
            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
             {{ __('app.back_to_vehicles') }}

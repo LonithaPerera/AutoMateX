@@ -207,6 +207,20 @@ class BookingController extends Controller
         return back()->with('success', __('app.booking_cancelled'));
     }
 
+    // Vehicle owner — see detail for one booking
+    public function show(Booking $booking)
+    {
+        $user = Auth::user();
+
+        // Must belong to the authenticated user's vehicle
+        if ($booking->vehicle->user_id !== $user->id) {
+            abort(403, 'You are not authorized to view this booking.');
+        }
+
+        $booking->load('garage', 'vehicle', 'rating');
+        return view('bookings.show', compact('booking'));
+    }
+
     // Vehicle owner — see all their bookings
     public function index()
     {

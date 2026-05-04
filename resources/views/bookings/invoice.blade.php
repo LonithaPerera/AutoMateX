@@ -616,7 +616,7 @@
 
 {{-- ── Action bar (screen only) ──────────────────────────── --}}
 <div class="action-bar">
-    <a href="javascript:history.back()" class="btn btn-back">
+    <a href="{{ route('bookings.index') }}" class="btn btn-back">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>

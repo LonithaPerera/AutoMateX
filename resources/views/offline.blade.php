@@ -6,6 +6,7 @@
     <title>AutoMateX — Offline</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=DM+Sans:wght@400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
+        :root { --cyan: #00f5ff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #080c14;
@@ -40,9 +41,6 @@
             box-shadow: 0 0 60px rgba(0,245,255,0.06);
         }
         .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            display: block;
             animation: pulse 2s ease-in-out infinite;
         }
         @keyframes pulse {
@@ -119,43 +117,44 @@
             text-decoration: none;
         }
         .retry-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .logo {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 26px;
-            font-weight: 700;
-            color: white;
-            letter-spacing: 1px;
-            margin-top: 0;
-            display: inline-flex;
-            align-items: center;
-        }
-        .logo span { color: #00f5ff; }
     </style>
 </head>
 <body>
     <div class="card">
-        <x-heroicon-o-signal-slash class="icon w-16 h-16 mx-auto" style="color:var(--cyan);margin-bottom:20px;" />
+        <x-heroicon-o-signal-slash class="icon" style="color:var(--cyan);width:72px;height:72px;display:block;margin:0 auto 20px;" />
         <p class="label">{{ __('app.connection_lost') }}</p>
         <h1>{{ __('app.youre_offline') }}</h1>
         <p>{{ __('app.offline_desc') }}</p>
 
         <div class="divider"></div>
 
-        <p class="cached-label">{{ __('app.available_offline') }}</p>
+        <p class="cached-label">{{ __('app.needs_connection') }}</p>
         <div class="cached-list">
-            <div class="cached-item"><x-heroicon-o-truck class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_vehicle_data') }}</div>
-            <div class="cached-item"><x-heroicon-o-wrench-screwdriver class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_svc_history') }}</div>
-            <div class="cached-item"><x-heroicon-o-beaker class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_fuel_logs') }}</div>
-            <div class="cached-item"><x-heroicon-o-light-bulb class="w-4 h-4 mr-2 inline-block" style="color:var(--cyan);" /> {{ __('app.offline_suggestions') }}</div>
+            <div class="cached-item">
+                <x-heroicon-o-truck style="color:var(--cyan);width:18px;height:18px;flex-shrink:0;" />
+                {{ __('app.offline_vehicle_data') }}
+            </div>
+            <div class="cached-item">
+                <x-heroicon-o-wrench-screwdriver style="color:var(--cyan);width:18px;height:18px;flex-shrink:0;" />
+                {{ __('app.offline_svc_history') }}
+            </div>
+            <div class="cached-item">
+                <x-heroicon-o-beaker style="color:var(--cyan);width:18px;height:18px;flex-shrink:0;" />
+                {{ __('app.offline_fuel_logs') }}
+            </div>
+            <div class="cached-item">
+                <x-heroicon-o-light-bulb style="color:var(--cyan);width:18px;height:18px;flex-shrink:0;" />
+                {{ __('app.offline_suggestions') }}
+            </div>
         </div>
 
         <button class="retry-btn" onclick="window.location.reload()">
-            <x-heroicon-o-arrow-path class="w-4 h-4 inline-block mr-1 align-middle" />{{ __('app.retry_connection') }}
+            <x-heroicon-o-arrow-path style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;" />{{ __('app.retry_connection') }}
         </button>
 
-        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:20px;">
-            <img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;">
-            <p class="logo">Auto<span>Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;">
+            <img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;flex-shrink:0;">
+            <span style="display:inline-flex;align-items:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;letter-spacing:1px;color:#fff;">Auto<span style="color:#00f5ff;">Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></span>
         </div>
     </div>
 </body>

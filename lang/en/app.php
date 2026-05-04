@@ -211,7 +211,19 @@ return [
     'public_access_tag'    => 'PUBLIC ACCESS',
     'qr_scan_desc'         => 'Anyone who scans this QR can view the complete verified service history — perfect for resale transparency',
     'public_link_label'    => '// PUBLIC LINK',
+    'book_garage_btn'      => 'BOOK A GARAGE',
     'preview_public_btn'   => 'PREVIEW PUBLIC PAGE',
+    'copy_link_btn'        => 'COPY LINK',
+    'link_copied'          => 'COPIED!',
+    'download_qr_btn'      => 'DOWNLOAD QR',
+    'visitors_see_label'   => '// WHAT VISITORS WILL SEE',
+    'visitors_photo_yes'   => 'Vehicle photo included',
+    'visitors_photo_no'    => 'No photo uploaded',
+    'visitors_vin_yes'     => 'VIN visible',
+    'visitors_vin_no'      => 'VIN not set',
+    'visitors_services'    => ':count service records',
+    'visitors_last_svc'    => 'Last serviced :date',
+    'visitors_no_svc'      => 'No service records yet',
     'qr_privacy_note'      => 'Only service history is visible publicly. Personal details and contact information remain private.',
 
     // ─── Parts ────────────────────────────────────────────────────────────────
@@ -374,8 +386,9 @@ return [
     // ─── Offline ──────────────────────────────────────────────────────────────
     'connection_lost'      => '// CONNECTION LOST',
     'youre_offline'        => "You're Offline",
-    'offline_desc'         => 'No internet connection detected. Some features may be unavailable, but your cached data is still accessible.',
+    'offline_desc'         => 'No internet connection detected. Please reconnect to access your vehicle data, fuel logs, and service history.',
     'available_offline'    => '// AVAILABLE OFFLINE',
+    'needs_connection'     => '// REQUIRES CONNECTION',
     'offline_vehicle_data' => 'Your vehicle data',
     'offline_svc_history'  => 'Service history',
     'offline_fuel_logs'    => 'Fuel logs',
@@ -464,9 +477,7 @@ return [
     'last_6_months_label'      => 'Revenue — last 6 months',
     'from_completed_invoices'  => 'From completed invoices',
     'filter_all'               => 'All',
-    'upcoming_bookings_label'  => '// UPCOMING',
     'booking_history_label'    => '// HISTORY',
-    'no_upcoming_bookings'     => 'No upcoming bookings.',
 
     // ─── Success flash messages ────────────────────────────────────────────────
     'booking_submitted'      => 'Booking submitted successfully.',
@@ -533,6 +544,13 @@ return [
     'update_service_btn'     => 'UPDATE SERVICE RECORD →',
     'fuel_updated'           => 'Fuel log updated successfully.',
     'service_updated'        => 'Service log updated successfully.',
+    'field_vehicle_notes'    => '// VEHICLE NOTES',
+    'vehicle_notes_ph'       => 'e.g. Insurance expires June · Check tyre pressure monthly',
+    'update_notes_btn'       => 'SAVE NOTES',
+    'notes_updated'          => 'Vehicle notes updated.',
+    'cost_per_km'            => 'LKR/km',
+    'monthly_spend_label'    => '// MONTHLY SPEND',
+    'export_pdf_btn'         => 'DOWNLOAD HISTORY REPORT',
 
     // ─── Garage 7-feature upgrade ─────────────────────────────────────────────
     'quick_confirm_btn'      => 'CONFIRM BOOKING',
@@ -559,4 +577,94 @@ return [
     'already_rated'          => 'You have already rated this booking.',
     'your_rating_label'      => 'Your Rating',
 
+
+    // ─── Vehicle photo & documents ──────────────────────────────────────────
+    'vehicle_photo_label'      => 'Vehicle Photo',
+    'upload_photo_btn'         => 'Upload Photo',
+    'update_photo_btn'         => 'Update Photo',
+    'photo_updated'            => 'Vehicle photo updated.',
+    'photo_removed'            => 'Vehicle photo removed.',
+    'remove_photo_btn'         => 'Remove Photo',
+    'remove_photo_confirm'     => 'Remove this photo? The vehicle will show the default placeholder.',
+    'vehicle_added'            => 'Vehicle added successfully!',
+    'mileage_updated'          => 'Mileage updated successfully!',
+    'documents_updated'        => 'Documents updated successfully.',
+    'doc_expiry_section'       => 'Documents & Expiry',
+    'insurance_expiry_label'   => 'Insurance Expiry',
+    'registration_expiry_label'=> 'Registration Renewal',
+    'emission_due_label'       => 'Emission Test Due',
+    'doc_expires_in'           => 'Expires in :days days',
+    'doc_expired_days'         => 'Expired :days days ago',
+    'doc_due_today'            => 'Due today!',
+    'doc_not_set'              => 'Not set',
+
+    // ─── Archive / Restore vehicle ───────────────────────────────────────────
+    'archive_vehicle_btn'      => 'Archive Vehicle',
+    'archived_vehicles_label'  => 'Archived Vehicles',
+    'archived_vehicles_title'  => 'Archive',
+    'restore_vehicle_btn'      => 'Restore',
+    'vehicle_archived'         => 'Vehicle archived. You can restore it any time.',
+    'vehicle_restored'         => 'Vehicle restored successfully.',
+    'no_archived_vehicles'     => 'No archived vehicles.',
+    'archive_confirm'          => 'Archive :name? You can restore it later.',
+    'view_archived_btn'        => 'View Archived',
+
+    // ─── Bookings: Upcoming / Past ──────────────────────────────────────────
+    'upcoming_bookings_label'  => 'Upcoming',
+    'past_bookings_label'      => 'History',
+    'no_upcoming_bookings'     => 'No upcoming appointments.',
+    'no_past_bookings'         => 'No past bookings yet.',
+
+
+    'no_spend_chart_hint'     => 'Add fuel or service logs to see your chart.',
+    'spend_breakdown_label'   => 'Spend Breakdown',
+    'optional'                => 'optional',
+
+    // Vehicle edit
+    'edit_vehicle_label'    => '// EDIT VEHICLE',
+    'edit_vehicle_title'    => 'Edit Vehicle',
+    'edit_vehicle_btn'      => 'Edit',
+    'vehicle_updated'       => 'Vehicle updated successfully.',
+
+    // New stats
+    'mileage_history_label' => '// MILEAGE HISTORY',
+    'cost_per_km_stat'      => 'Cost per km',
+
+    // #1 Quick log
+    'quick_log_fuel'        => 'Log Fuel',
+    'quick_log_service'     => 'Log Service',
+
+    // #2 Monthly spend
+    'this_month_spend'      => 'This Month (LKR)',
+
+    // #3 Last activity
+    'activity_fuelled'      => 'Last fuelled',
+    'activity_serviced'     => 'Last serviced',
+    'activity_today'        => 'today',
+    'activity_yesterday'    => 'yesterday',
+    'activity_days_ago'     => ':days days ago',
+
+    // #4 Efficiency trend
+    'efficiency_trend_label'=> 'Efficiency Trend',
+
+    // #7 Booking detail
+    'booking_detail_label'  => '// BOOKING DETAIL',
+    'appointment_details_label' => 'Appointment Details',
+    'garage_label'          => 'Garage',
+    'garage_phone_label'    => 'Garage Phone',
+    'your_notes_label'      => 'Your Notes',
+    'cancel_booking_hint'   => 'Cancellations notify the garage. Pending/confirmed bookings only.',
+    'back_to_bookings'      => 'Back to Bookings',
+
+    // #8 Parts fit-my-vehicle
+    'parts_my_vehicles_label' => '// MY VEHICLES — Quick Fill',
+    'clear_btn'             => 'Clear',
+
+    // #9 Avatar
+    'profile_photo_label'   => '// PROFILE PHOTO',
+    'avatar_updated'        => 'Profile photo updated.',
+    'avatar_removed'        => 'Profile photo removed.',
+    'change_photo_btn'      => 'Change Photo',
+
+    // #10 Language preference — saved automatically, no new keys needed
 ];

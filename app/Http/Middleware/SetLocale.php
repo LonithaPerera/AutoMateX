@@ -11,10 +11,17 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = session('locale', config('app.locale'));
+        // Prefer DB-persisted locale (logged-in users), fall back to session, then app default
+        if ($request->user() && $request->user()->locale) {
+            $locale = $request->user()->locale;
+        } else {
+            $locale = session('locale', config('app.locale'));
+        }
 
         if (in_array($locale, ['en', 'si', 'ta'])) {
             App::setLocale($locale);
+            // Keep session in sync
+            session(['locale' => $locale]);
         }
 
         return $next($request);

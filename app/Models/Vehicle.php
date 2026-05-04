@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Vehicle extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'user_id',
         'make',
@@ -19,8 +20,18 @@ class Vehicle extends Model
         'license_plate',
         'color',
         'fuel_type',
+        'notes',
         'image',
         'qr_token',
+        'insurance_expiry',
+        'registration_expiry',
+        'emission_due',
+    ];
+
+    protected $casts = [
+        'insurance_expiry'    => 'date',
+        'registration_expiry' => 'date',
+        'emission_due'        => 'date',
     ];
 
     // Auto-generate QR token when vehicle is created

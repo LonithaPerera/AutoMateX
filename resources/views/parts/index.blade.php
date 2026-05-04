@@ -27,6 +27,29 @@
     </div>
     @endif
 
+    {{-- #8 My Vehicles quick-fill --}}
+    @php $myVehicles = auth()->user()->vehicles ?? collect(); @endphp
+    @if($myVehicles->isNotEmpty())
+    <div class="glass-bright rounded-2xl p-4 mb-4 border fade-in fade-in-2" style="border-color:rgba(168,85,247,0.15);">
+        <p class="section-label mb-2">{{ __('app.parts_my_vehicles_label') }}</p>
+        <div class="flex flex-wrap gap-2">
+            @foreach($myVehicles as $mv)
+            <button type="button"
+                    onclick="prefillVehicle('{{ $mv->make }}','{{ $mv->model }}','{{ $mv->year }}')"
+                    class="px-3 py-1.5 rounded-xl text-xs font-semibold heading tracking-wide transition-all active:scale-95"
+                    style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);color:#a855f7;">
+                {{ $mv->make }} {{ $mv->model }} · {{ $mv->year }}
+            </button>
+            @endforeach
+            <button type="button" onclick="clearVehicleFill()"
+                    class="px-3 py-1.5 rounded-xl text-xs font-semibold heading tracking-wide transition-all active:scale-95"
+                    style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
+                {{ __('app.clear_btn') }}
+            </button>
+        </div>
+    </div>
+    @endif
+
     {{-- Search form --}}
     <div class="glass-bright rounded-2xl p-4 mb-5 border fade-in fade-in-2"
          style="border-color:rgba(0,245,255,0.12);">
@@ -46,14 +69,14 @@
             <div class="grid grid-cols-2 gap-3 mb-3">
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_veh_make') }}</label>
-                    <input type="text" name="make" value="{{ request('make') }}"
+                    <input type="text" name="make" id="part-make" value="{{ request('make') }}"
                            placeholder="Toyota"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_veh_model') }}</label>
-                    <input type="text" name="model" value="{{ request('model') }}"
+                    <input type="text" name="model" id="part-model" value="{{ request('model') }}"
                            placeholder="Premio"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
@@ -184,4 +207,26 @@
     @endif
 
 </div>
+
+<script>
+function prefillVehicle(make, model, year) {
+    var makeEl  = document.getElementById('part-make');
+    var modelEl = document.getElementById('part-model');
+    if (makeEl)  makeEl.value  = make;
+    if (modelEl) modelEl.value = model;
+    // Highlight to show it was filled
+    [makeEl, modelEl].forEach(function(el) {
+        if (!el) return;
+        el.style.borderColor = 'rgba(168,85,247,0.5)';
+        el.style.color = '#a855f7';
+        setTimeout(function() { el.style.borderColor = ''; el.style.color = ''; }, 1500);
+    });
+}
+function clearVehicleFill() {
+    var makeEl  = document.getElementById('part-make');
+    var modelEl = document.getElementById('part-model');
+    if (makeEl)  makeEl.value  = '';
+    if (modelEl) modelEl.value = '';
+}
+</script>
 </x-app-layout>

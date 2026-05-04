@@ -219,12 +219,20 @@
                         <x-heroicon-o-shield-check class="w-4 h-4" style="color:#a855f7;" />
                     </a>
                 @endif
-                <div class="w-9 h-9 rounded-xl overflow-hidden border-2" style="border-color:rgba(0,245,255,0.3);">
-                    <div class="w-full h-full flex items-center justify-center text-sm font-bold heading"
-                         style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:white;">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                    </div>
-                </div>
+                <a href="{{ route('profile.edit') }}"
+                   class="w-16 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 block"
+                   style="border-color:rgba(0,245,255,0.3);">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
+                             alt="{{ Auth::user()->name }}"
+                             class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center text-lg font-bold heading"
+                             style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:white;">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                        </div>
+                    @endif
+                </a>
             </div>
         </div>
     </header>
@@ -357,6 +365,39 @@
 
         </div>
     </nav>
+
+    <!-- Unsaved Changes Warning -->
+    <script>
+        (function () {
+            let formDirty = false;
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('form').forEach(function (form) {
+                    // Skip forms with no real user inputs (delete/archive/logout forms)
+                    if (!form.querySelector('input[type="text"], input[type="number"], input[type="email"], input[type="file"], textarea, select')) return;
+                    // Skip forms explicitly opted out
+                    if (form.hasAttribute('data-no-warn')) return;
+
+                    form.querySelectorAll('input, textarea, select').forEach(function (el) {
+                        if (el.type === 'hidden') return;
+                        el.addEventListener('input',  function () { formDirty = true; });
+                        el.addEventListener('change', function () { formDirty = true; });
+                    });
+
+                    // Clear flag when the form is intentionally submitted
+                    form.addEventListener('submit', function () { formDirty = false; });
+                });
+            });
+
+            window.addEventListener('beforeunload', function (e) {
+                if (formDirty) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    return e.returnValue;
+                }
+            });
+        })();
+    </script>
 
     <!-- PWA Service Worker -->
     <script>
