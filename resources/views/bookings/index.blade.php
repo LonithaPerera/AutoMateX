@@ -88,9 +88,22 @@
             default     => ['bg'=>'rgba(255,255,255,0.05)','color'=>'#94a3b8','border'=>'rgba(255,255,255,0.1)'],
         };
     @endphp
-    <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }} booking-card"
+    <div class="glass-bright rounded-2xl mb-3 border fade-in fade-in-{{ min($index+3,5) }} booking-card overflow-hidden"
          data-status="{{ $booking->status }}"
          style="border-color:rgba(0,245,255,0.1);">
+
+        {{-- Garage photo banner --}}
+        @if($booking->garage?->photo)
+        <img src="{{ asset('storage/' . $booking->garage->photo) }}"
+             alt="{{ $booking->garage->name }}"
+             class="w-full object-cover" style="max-height:100px;">
+        @else
+        <div class="flex items-center justify-center" style="height:44px;background:rgba(0,245,255,0.02);border-bottom:1px solid rgba(0,245,255,0.06);">
+            <x-heroicon-o-building-storefront class="w-5 h-5" style="color:rgba(0,245,255,0.1);" />
+        </div>
+        @endif
+
+        <div class="p-4">
 
         <div class="flex items-start justify-between mb-3">
             <div>
@@ -119,12 +132,18 @@
             </div>
         </div>
 
-        <div class="rounded-xl p-2.5 mb-3" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);">
-            <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.vehicle_label') }}</p>
-            <p class="text-sm text-white font-semibold">
-                {{ $booking->vehicle->make }} {{ $booking->vehicle->model }}
-                · {{ $booking->vehicle->license_plate }}
-            </p>
+        <div class="rounded-xl p-2.5 mb-3 flex items-center gap-2.5" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                 style="background:rgba(0,102,255,0.08);border:1px solid rgba(0,102,255,0.15);">
+                <x-heroicon-o-truck class="w-4 h-4" style="color:#6699ff;" />
+            </div>
+            <div>
+                <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.vehicle_label') }}</p>
+                <p class="text-sm text-white font-semibold">
+                    {{ $booking->vehicle->make }} {{ $booking->vehicle->model }}
+                    · {{ $booking->vehicle->license_plate }}
+                </p>
+            </div>
         </div>
 
         {{-- Garage note / reply --}}
@@ -258,6 +277,8 @@
             <p class="text-sm leading-relaxed" style="color:#94a3b8;">{{ $booking->cancel_reason }}</p>
         </div>
         @endif
+
+        </div>{{-- /p-4 --}}
     </div>
         @empty
             <div class="rounded-2xl p-8 text-center border mb-4" style="background:rgba(0,245,255,0.03);border-color:rgba(0,245,255,0.1);">
@@ -284,7 +305,18 @@
                 };
             @endphp
             {{-- Reuse same card structure --}}
-            <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in" style="border-color:rgba(255,255,255,0.08);">
+            <div class="glass-bright rounded-2xl mb-3 border fade-in overflow-hidden" style="border-color:rgba(255,255,255,0.08);">
+                {{-- Garage photo banner --}}
+                @if($booking->garage?->photo)
+                <img src="{{ asset('storage/' . $booking->garage->photo) }}"
+                     alt="{{ $booking->garage->name }}"
+                     class="w-full object-cover" style="max-height:80px;">
+                @else
+                <div class="flex items-center justify-center" style="height:36px;background:rgba(255,255,255,0.01);border-bottom:1px solid rgba(255,255,255,0.04);">
+                    <x-heroicon-o-building-storefront class="w-4 h-4" style="color:rgba(255,255,255,0.06);" />
+                </div>
+                @endif
+                <div class="p-4">
                 <div class="flex items-start justify-between mb-3">
                     <div>
                         <h3 class="heading font-bold text-white text-base">{{ $booking->service_type }}</h3>
@@ -299,9 +331,12 @@
                         <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.date_label') }}</p>
                         <p class="mono text-sm font-bold text-white">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}</p>
                     </div>
-                    <div class="rounded-xl p-2.5" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
-                        <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.vehicle_label') }}</p>
-                        <p class="text-sm font-semibold text-white">{{ $booking->vehicle->make }} {{ $booking->vehicle->model }}</p>
+                    <div class="rounded-xl p-2.5 flex items-center gap-2" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
+                        <x-heroicon-o-truck class="w-4 h-4 flex-shrink-0" style="color:#6699ff;" />
+                        <div>
+                            <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.vehicle_label') }}</p>
+                            <p class="text-sm font-semibold text-white">{{ $booking->vehicle->make }} {{ $booking->vehicle->model }}</p>
+                        </div>
                     </div>
                 </div>
                 {{-- View Details (past) --}}
@@ -362,6 +397,7 @@
                     <p class="text-sm" style="color:#94a3b8;">{{ $booking->cancel_reason }}</p>
                 </div>
                 @endif
+                </div>{{-- /p-4 --}}
             </div>
         @empty
             <div class="rounded-2xl p-8 text-center border" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.06);">

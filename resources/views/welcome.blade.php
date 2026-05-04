@@ -331,6 +331,16 @@
                     <a href="{{ route('login') }}" class="hero-btn-sec">{{ __('app.sign_in') }}</a>
                 @endauth
             </div>
+
+            {{-- Hero image --}}
+            @if(file_exists(public_path('images/hero.jpg')) || file_exists(public_path('images/hero.png')) || file_exists(public_path('images/hero.webp')))
+            <div style="margin-top:28px;border-radius:20px;overflow:hidden;border:1px solid rgba(0,245,255,0.2);box-shadow:0 0 40px rgba(0,245,255,0.1);">
+                <img src="{{ file_exists(public_path('images/hero.jpg')) ? asset('images/hero.jpg') : (file_exists(public_path('images/hero.png')) ? asset('images/hero.png') : asset('images/hero.webp')) }}"
+                     alt="AutoMateX"
+                     style="width:100%;height:220px;object-fit:cover;display:block;">
+            </div>
+            @endif
+
         </div>
 
         {{-- Stats --}}

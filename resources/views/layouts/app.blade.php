@@ -276,6 +276,18 @@
                     @endif
                 </a>
 
+                <!-- Invoices -->
+                <a href="{{ route('garage.invoices') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('garage.invoices') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('garage.invoices') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-document-text class="w-5 h-5" style="color:{{ request()->routeIs('garage.invoices') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('garage.invoices') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.garage_nav_invoices') }}</span>
+                    @if(request()->routeIs('garage.invoices'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
                 <!-- Parts (center) -->
                 <a href="{{ route('parts.index') }}" class="flex flex-col items-center -mt-5">
                     <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-95"
@@ -283,6 +295,86 @@
                         <x-heroicon-o-wrench-screwdriver class="w-6 h-6" style="color:white;" />
                     </div>
                     <span class="text-xs font-semibold heading tracking-wide mt-1.5 text-cyan">{{ __('app.parts') }}</span>
+                </a>
+
+                <!-- Bookings -->
+                <a href="{{ route('garage.bookings') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('garage.bookings') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('garage.bookings') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <div class="relative">
+                        <x-heroicon-o-calendar-days class="w-5 h-5" style="color:{{ request()->routeIs('garage.bookings') ? 'var(--cyan)' : '#64748b' }};" />
+                        @if($garagePending > 0)
+                            <span class="absolute -top-1 -right-1.5 flex items-center justify-center rounded-full text-white font-bold"
+                                  style="background:#f87171;font-size:9px;min-width:15px;height:15px;padding:0 3px;font-family:'Share Tech Mono',monospace;">
+                                {{ $garagePending > 9 ? '9+' : $garagePending }}
+                            </span>
+                        @endif
+                    </div>
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('garage.bookings') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.garage_nav_bookings') }}</span>
+                    @if(request()->routeIs('garage.bookings'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+                <!-- Profile -->
+                <a href="{{ route('profile.edit') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('profile.*') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('profile.*') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-user-circle class="w-5 h-5" style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('profile.*') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.profile') }}</span>
+                    @if(request()->routeIs('profile.*'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+            @elseif($role === 'admin')
+                {{-- ── ADMIN: Home · Users · Parts · Garages · Profile ── --}}
+
+                <!-- Home → admin dashboard -->
+                <a href="{{ route('admin.dashboard') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('admin.dashboard') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('admin.dashboard') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-home class="w-5 h-5" style="color:{{ request()->routeIs('admin.dashboard') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('admin.dashboard') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
+                    @if(request()->routeIs('admin.dashboard'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+                <!-- Users -->
+                <a href="{{ route('admin.users') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('admin.users') || request()->routeIs('admin.bookings') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('admin.users') || request()->routeIs('admin.bookings') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-users class="w-5 h-5" style="color:{{ request()->routeIs('admin.users') || request()->routeIs('admin.bookings') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('admin.users') || request()->routeIs('admin.bookings') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.admin_nav_users') }}</span>
+                    @if(request()->routeIs('admin.users') || request()->routeIs('admin.bookings'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
+                </a>
+
+                <!-- Parts (center) -->
+                <a href="{{ route('parts.index') }}" class="flex flex-col items-center -mt-5">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all active:scale-95"
+                         style="background:linear-gradient(135deg,#0066ff,#00f5ff);box-shadow:0 0 20px rgba(0,245,255,0.4),0 4px 16px rgba(0,102,255,0.5);">
+                        <x-heroicon-o-wrench-screwdriver class="w-6 h-6" style="color:white;" />
+                    </div>
+                    <span class="text-xs font-semibold heading tracking-wide mt-1.5 text-cyan">{{ __('app.parts') }}</span>
+                </a>
+
+                <!-- Garages -->
+                <a href="{{ route('admin.garages') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('admin.garages') || request()->routeIs('admin.schedules') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('admin.garages') || request()->routeIs('admin.schedules') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-building-office-2 class="w-5 h-5" style="color:{{ request()->routeIs('admin.garages') || request()->routeIs('admin.schedules') ? 'var(--cyan)' : '#64748b' }};" />
+                    <span class="text-xs font-semibold heading tracking-wide mt-0.5"
+                          style="color:{{ request()->routeIs('admin.garages') || request()->routeIs('admin.schedules') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.admin_nav_garages') }}</span>
+                    @if(request()->routeIs('admin.garages') || request()->routeIs('admin.schedules'))
+                        <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
+                    @endif
                 </a>
 
                 <!-- Profile -->
@@ -298,20 +390,16 @@
                 </a>
 
             @else
-                {{-- ── VEHICLE OWNER & ADMIN: Home · Vehicles · Parts · Bookings · Profile ── --}}
+                {{-- ── VEHICLE OWNER: Home · Vehicles · Parts · Bookings · Profile ── --}}
 
                 <!-- Home -->
-                @php
-                    $homeRoute = $role === 'admin' ? route('admin.dashboard') : route('dashboard');
-                    $homeActive = $role === 'admin' ? request()->routeIs('admin.dashboard') : request()->routeIs('dashboard');
-                @endphp
-                <a href="{{ $homeRoute }}"
-                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ $homeActive ? '' : 'hover:bg-white/5' }}"
-                   style="{{ $homeActive ? 'background:rgba(0,245,255,0.08);' : '' }}">
-                    <x-heroicon-o-home class="w-5 h-5" style="color:{{ $homeActive ? 'var(--cyan)' : '#64748b' }};" />
+                <a href="{{ route('dashboard') }}"
+                   class="flex flex-col items-center py-2 px-4 rounded-xl transition-all {{ request()->routeIs('dashboard') ? '' : 'hover:bg-white/5' }}"
+                   style="{{ request()->routeIs('dashboard') ? 'background:rgba(0,245,255,0.08);' : '' }}">
+                    <x-heroicon-o-home class="w-5 h-5" style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }};" />
                     <span class="text-xs font-semibold heading tracking-wide mt-0.5"
-                          style="color:{{ $homeActive ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
-                    @if($homeActive)
+                          style="color:{{ request()->routeIs('dashboard') ? 'var(--cyan)' : '#64748b' }}">{{ __('app.home') }}</span>
+                    @if(request()->routeIs('dashboard'))
                         <div style="width:20px;height:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan);border-radius:1px;margin-top:2px;"></div>
                     @endif
                 </a>

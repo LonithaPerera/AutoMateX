@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Garage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class GarageController extends Controller
 {
@@ -34,7 +35,13 @@ class GarageController extends Controller
             'phone'          => 'required|string|max:20',
             'description'    => 'nullable|string|max:500',
             'specialization' => 'nullable|string|max:150',
+            'photo'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('garages', 'public');
+        }
 
         Garage::create([
             'user_id'        => Auth::id(),
@@ -44,6 +51,7 @@ class GarageController extends Controller
             'phone'          => $request->phone,
             'description'    => $request->description,
             'specialization' => $request->specialization,
+            'photo'          => $photoPath,
         ]);
 
         return redirect()->route('garage.dashboard')
@@ -74,16 +82,26 @@ class GarageController extends Controller
             'phone'          => 'required|string|max:20',
             'description'    => 'nullable|string|max:500',
             'specialization' => 'nullable|string|max:150',
+            'photo'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $garage->update([
+        $data = [
             'name'           => $request->name,
             'address'        => $request->address,
             'city'           => $request->city,
             'phone'          => $request->phone,
             'description'    => $request->description,
             'specialization' => $request->specialization,
-        ]);
+        ];
+
+        if ($request->hasFile('photo')) {
+            if ($garage->photo) {
+                Storage::disk('public')->delete($garage->photo);
+            }
+            $data['photo'] = $request->file('photo')->store('garages', 'public');
+        }
+
+        $garage->update($data);
 
         return redirect()->route('garage.dashboard')
                          ->with('success', __('app.garage_updated'));
@@ -126,6 +144,47 @@ class GarageController extends Controller
     }
 
     // Garage owner dashboard — see all bookings
+    public function bookingsList()
+    {
+        $garage = Auth::user()->garage;
+        if (!$garage) {
+            return redirect()->route('garages.create');
+        }
+
+        $upcomingRaw = $garage->bookings()->with('vehicle.user')
+                              ->whereIn('status', ['pending','confirmed'])
+                              ->orderBy('booking_date','asc')->get();
+        $overdueUp = $upcomingRaw->filter(fn($b) => $b->booking_date->lt(today()));
+        $futureUp  = $upcomingRaw->filter(fn($b) => !$b->booking_date->lt(today()));
+        $upcoming  = $overdueUp->concat($futureUp)->values();
+
+        $history  = $garage->bookings()->with('vehicle.user')
+                           ->whereIn('status', ['completed','cancelled'])
+                           ->orderBy('booking_date','desc')->get();
+
+        $bookings = $upcoming->concat($history);
+
+        $returningUserIds = $bookings
+            ->groupBy(fn($b) => optional($b->vehicle)->user_id)
+            ->filter(fn($g, $k) => $k !== null && $g->count() > 1)
+            ->keys()->toArray();
+
+        $customerHistory = $bookings
+            ->filter(fn($b) => optional($b->vehicle)->user_id !== null)
+            ->groupBy(fn($b) => $b->vehicle->user_id)
+            ->map(fn($group) => [
+                'count'    => $group->count(),
+                'services' => $group->sortByDesc('booking_date')->take(3)->pluck('service_type')->toArray(),
+            ]);
+
+        $calendarDates = $bookings->map(fn($b) => [
+            'date'   => $b->booking_date->format('Y-m-d'),
+            'status' => $b->status,
+        ])->values();
+
+        return view('garages.bookings', compact('garage', 'bookings', 'returningUserIds', 'customerHistory', 'calendarDates'));
+    }
+
     public function dashboard()
     {
         $garage = Auth::user()->garage;
@@ -221,11 +280,21 @@ class GarageController extends Controller
         $avgRating    = round($garage->ratings()->avg('rating') ?? 0, 1);
         $totalRatings = $garage->ratings()->count();
 
-        // All booking dates for the calendar widget
-        $calendarDates = $bookings->map(fn($b) => [
-            'date'   => $b->booking_date->format('Y-m-d'),
-            'status' => $b->status,
-        ])->values();
+        // Chart: bookings by status
+        $bookingsByStatus = [
+            'pending'   => $bookings->where('status', 'pending')->count(),
+            'confirmed' => $bookings->where('status', 'confirmed')->count(),
+            'completed' => $bookings->where('status', 'completed')->count(),
+            'cancelled' => $bookings->where('status', 'cancelled')->count(),
+        ];
+
+        // Chart: top 5 service types by booking count
+        $topServices = $garage->bookings()
+            ->selectRaw('service_type, COUNT(*) as cnt')
+            ->groupBy('service_type')
+            ->orderByDesc('cnt')
+            ->take(5)
+            ->get();
 
         return view('garages.dashboard', compact(
             'garage', 'bookings', 'todayBookings',
@@ -234,7 +303,7 @@ class GarageController extends Controller
             'chartData', 'avgInvoice', 'mostBookedService',
             'profileScore', 'returningUserIds',
             'customerHistory', 'avgRating', 'totalRatings',
-            'calendarDates'
+            'bookingsByStatus', 'topServices'
         ));
     }
 }

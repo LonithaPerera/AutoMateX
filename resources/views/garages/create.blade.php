@@ -14,7 +14,7 @@
     </div>
 
     <div class="glass-bright rounded-2xl p-5 fade-in fade-in-2 border animate-glow">
-        <form method="POST" action="{{ route('garages.store') }}">
+        <form method="POST" action="{{ route('garages.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-4">
@@ -58,12 +58,27 @@
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_description') }}</label>
                 <textarea name="description" rows="3"
                           placeholder="Brief description of your garage and services..."
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('description') }}</textarea>
+            </div>
+
+            {{-- Garage Photo --}}
+            <div class="mb-6">
+                <label class="section-label mb-2 block">{{ __('app.garage_photo_label') }}</label>
+                <label class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all"
+                       style="background:rgba(255,255,255,0.03);border:1px dashed rgba(0,245,255,0.2);">
+                    <x-heroicon-o-camera class="w-5 h-5 flex-shrink-0" style="color:#00f5ff;" />
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-white" id="garage-photo-name">{{ __('app.garage_photo_hint') }}</p>
+                        <p class="text-xs mt-0.5" style="color:#475569;">JPG, PNG or WebP · max 2 MB</p>
+                    </div>
+                    <input type="file" name="photo" accept="image/*" class="hidden"
+                           onchange="document.getElementById('garage-photo-name').textContent = this.files[0]?.name ?? '{{ __('app.garage_photo_hint') }}'">
+                </label>
             </div>
 
             <button type="submit"

@@ -105,6 +105,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/garage/edit', [GarageController::class, 'edit'])->name('garages.edit');
         Route::patch('/garage', [GarageController::class, 'update'])->name('garages.update');
         Route::get('/garage/dashboard', [GarageController::class, 'dashboard'])->name('garage.dashboard');
+        Route::get('/garage/bookings', [GarageController::class, 'bookingsList'])->name('garage.bookings');
         Route::get('/garage/invoices', [GarageController::class, 'invoices'])->name('garage.invoices');
         Route::patch('/bookings/{booking}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
         Route::patch('/bookings/{booking}/note', [BookingController::class, 'storeGarageNote'])->name('bookings.note');
@@ -116,6 +117,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+        Route::get('/admin/bookings', [AdminController::class, 'bookings'])->name('admin.bookings');
+        Route::get('/admin/garages', [AdminController::class, 'garages'])->name('admin.garages');
+        Route::patch('/admin/garages/{garage}/toggle', [AdminController::class, 'toggleGarage'])->name('admin.garages.toggle');
+        Route::get('/admin/schedules', [AdminController::class, 'schedules'])->name('admin.schedules');
+        Route::post('/admin/schedules', [AdminController::class, 'storeSchedule'])->name('admin.schedules.store');
+        Route::patch('/admin/schedules/{schedule}', [AdminController::class, 'updateSchedule'])->name('admin.schedules.update');
+        Route::delete('/admin/schedules/{schedule}', [AdminController::class, 'destroySchedule'])->name('admin.schedules.destroy');
+        Route::patch('/admin/bookings/{booking}/status', [AdminController::class, 'updateBookingStatus'])->name('admin.bookings.status');
         Route::post('/admin/users/{user}/make-admin', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
         Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
 

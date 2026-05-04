@@ -34,6 +34,66 @@
         </div>
     @endif
 
+    {{-- ── Document Expiry Notifications ──────────────────────────── --}}
+    @php
+        $docAlerts = [];
+        $docChecks = [
+            'insurance'    => ['label' => __('app.insurance_expiry_label'),    'date' => $vehicle->insurance_expiry],
+            'registration' => ['label' => __('app.registration_expiry_label'), 'date' => $vehicle->registration_expiry],
+            'emission'     => ['label' => __('app.emission_due_label'),         'date' => $vehicle->emission_due],
+        ];
+        foreach ($docChecks as $doc) {
+            if (!$doc['date']) continue;
+            $days = now()->startOfDay()->diffInDays($doc['date']->startOfDay(), false);
+            if ($days <= 30) {
+                $docAlerts[] = [
+                    'label'    => $doc['label'],
+                    'days'     => $days,
+                    'expired'  => $days < 0,
+                    'today'    => $days === 0,
+                ];
+            }
+        }
+        $hasExpired = collect($docAlerts)->where('expired', true)->isNotEmpty();
+    @endphp
+
+    @if(count($docAlerts) > 0)
+    <div class="rounded-2xl p-4 mb-4 border fade-in"
+         style="background:rgba({{ $hasExpired ? '248,113,113' : '255,107,0' }},0.07);border-color:rgba({{ $hasExpired ? '248,113,113' : '255,107,0' }},0.3);">
+        <div class="flex items-start gap-3">
+            <x-heroicon-o-exclamation-triangle class="w-5 h-5 flex-shrink-0 mt-0.5"
+                style="color:{{ $hasExpired ? '#f87171' : '#ff6b00' }};" />
+            <div class="flex-1 min-w-0">
+                <p class="heading text-xs font-bold tracking-wider mb-2"
+                   style="color:{{ $hasExpired ? '#f87171' : '#ff6b00' }};">
+                    {{ $hasExpired ? '// DOCUMENT EXPIRED' : '// DOCUMENT EXPIRY WARNING' }}
+                </p>
+                @foreach($docAlerts as $alert)
+                <div class="flex items-center justify-between py-1 border-b last:border-0"
+                     style="border-color:rgba(255,255,255,0.05);">
+                    <p class="text-xs text-white">{{ $alert['label'] }}</p>
+                    <span class="tag ml-2 flex-shrink-0" style="
+                        background:rgba({{ $alert['expired'] ? '248,113,113' : ($alert['today'] ? '248,113,113' : '255,107,0') }},0.15);
+                        color:{{ $alert['expired'] ? '#f87171' : ($alert['today'] ? '#f87171' : '#ff6b00') }};
+                        border:1px solid rgba({{ $alert['expired'] ? '248,113,113' : ($alert['today'] ? '248,113,113' : '255,107,0') }},0.3);">
+                        @if($alert['expired'])
+                            {{ __('app.doc_alert_expired') }}
+                        @elseif($alert['today'])
+                            {{ __('app.doc_alert_due_today') }}
+                        @else
+                            {{ __('app.doc_alert_days_left', ['days' => $alert['days']]) }}
+                        @endif
+                    </span>
+                </div>
+                @endforeach
+                <p class="text-xs mt-2" style="color:#64748b;">
+                    {{ __('app.doc_expiry_section') }} ↓
+                </p>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- ── Vehicle Photo ─────────────────────────────────────────── --}}
     <div class="glass-bright rounded-2xl mb-4 border overflow-hidden fade-in fade-in-1"
          style="border-color:rgba(0,245,255,0.12);">

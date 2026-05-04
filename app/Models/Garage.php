@@ -10,7 +10,7 @@ class Garage extends Model
     use HasFactory;
     protected $fillable = [
         'user_id', 'name', 'address', 'city',
-        'phone', 'description', 'specialization', 'is_active', 'monthly_target',
+        'phone', 'description', 'specialization', 'is_active', 'monthly_target', 'photo',
     ];
 
     public function user()

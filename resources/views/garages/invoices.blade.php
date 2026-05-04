@@ -1,6 +1,16 @@
 <x-app-layout>
 <div class="max-w-lg mx-auto px-4 pt-5 pb-24">
 
+    {{-- Garage photo banner --}}
+    @php $myGarage = auth()->user()->garage; @endphp
+    @if($myGarage?->photo)
+    <div class="rounded-2xl overflow-hidden mb-4 fade-in border" style="border-color:rgba(0,245,255,0.12);">
+        <img src="{{ asset('storage/' . $myGarage->photo) }}"
+             alt="{{ $myGarage->name }}"
+             class="w-full object-cover" style="max-height:130px;">
+    </div>
+    @endif
+
     {{-- Header --}}
     <div class="flex items-start justify-between mb-5 fade-in fade-in-1">
         <div>

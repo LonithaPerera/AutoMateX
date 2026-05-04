@@ -31,6 +31,15 @@
         </span>
     </div>
 
+    {{-- Garage photo banner --}}
+    @if($booking->garage?->photo)
+    <div class="rounded-2xl overflow-hidden mb-4 fade-in border" style="border-color:rgba(0,245,255,0.12);">
+        <img src="{{ asset('storage/' . $booking->garage->photo) }}"
+             alt="{{ $booking->garage->name }}"
+             class="w-full object-cover" style="max-height:140px;">
+    </div>
+    @endif
+
     {{-- Flash messages --}}
     @if(session('success'))
     <div class="rounded-2xl p-3 mb-4 border fade-in" style="background:rgba(0,245,255,0.06);border-color:rgba(0,245,255,0.2);">

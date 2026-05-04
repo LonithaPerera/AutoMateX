@@ -57,7 +57,20 @@
         @endphp
 
         {{-- Greeting --}}
-        <div class="fade-in fade-in-1 mb-5">
+        <div class="fade-in fade-in-1 mb-5 flex items-start gap-3">
+            {{-- User avatar --}}
+            @if(Auth::user()->avatar)
+            <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
+                 alt="{{ Auth::user()->name }}"
+                 class="w-14 h-14 rounded-2xl object-cover flex-shrink-0 mt-1"
+                 style="border:1px solid rgba(0,245,255,0.2);">
+            @else
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center font-bold heading text-2xl flex-shrink-0 mt-1"
+                 style="background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.15);color:#00f5ff;">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </div>
+            @endif
+            <div class="flex-1">
             <p class="section-label mb-1">{{ __('app.welcome_back') }}</p>
             <h1 class="heading text-3xl font-bold text-white">
                 {{ explode(' ', Auth::user()->name)[0] }}
@@ -81,6 +94,7 @@
                 @endif
             </p>
             @endif
+            </div>{{-- /flex-1 --}}
         </div>
 
         {{-- ⚠️ NEXT SERVICE DUE ALERT --}}
