@@ -11,13 +11,14 @@ class ServiceLogController extends Controller
     // Show all service logs for a vehicle
     public function index(Vehicle $vehicle)
     {
-        $serviceLogs = $vehicle->serviceLogs()
-                               ->orderBy('service_date', 'desc')
-                               ->get();
+        // Full collection for stats
+        $serviceLogs = $vehicle->serviceLogs()->orderBy('service_date', 'desc')->get();
+        // Paginated for list display
+        $serviceLogsPaged = $vehicle->serviceLogs()->orderBy('service_date', 'desc')->paginate(10)->withQueryString();
 
         $totalCost = $serviceLogs->sum('cost');
 
-        return view('service.index', compact('vehicle', 'serviceLogs', 'totalCost'));
+        return view('service.index', compact('vehicle', 'serviceLogs', 'serviceLogsPaged', 'totalCost'));
     }
 
     // Show form to add a service log
@@ -32,7 +33,7 @@ class ServiceLogController extends Controller
         $request->validate([
             'service_type'       => 'required|string|max:150',
             'service_date'       => 'required|date',
-            'mileage_at_service' => 'required|integer|min:0',
+            'mileage_at_service' => 'required|integer|min:' . $vehicle->mileage,
             'cost'               => 'required|numeric|min:0',
             'type'               => 'required|in:maintenance,repair,inspection',
             'garage_name'        => 'nullable|string|max:150',
@@ -44,7 +45,10 @@ class ServiceLogController extends Controller
             $vehicle->update(['mileage' => $request->mileage_at_service]);
         }
 
-        $vehicle->serviceLogs()->create($request->all());
+        $vehicle->serviceLogs()->create($request->only([
+            'service_type', 'service_date', 'mileage_at_service',
+            'cost', 'type', 'garage_name', 'notes',
+        ]));
 
         return redirect()->route('service.index', $vehicle)
                          ->with('success', 'Service log added successfully!');

@@ -25,7 +25,7 @@ class ServiceLogTest extends TestCase
     public function user_can_add_service_record()
     {
         $user    = User::factory()->create();
-        $vehicle = Vehicle::factory()->create(['user_id' => $user->id]);
+        $vehicle = Vehicle::factory()->create(['user_id' => $user->id, 'mileage' => 10000]);
 
         $response = $this->actingAs($user)->post("/vehicles/{$vehicle->id}/service", [
             'service_type'       => 'Oil Change',

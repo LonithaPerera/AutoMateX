@@ -31,7 +31,8 @@
                 <input type="text" name="service_type" value="{{ old('service_type') }}"
                        required placeholder="e.g. Engine Oil Change"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none transition-all"
-                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                       style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('service_type') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                @error('service_type')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
             </div>
 
             {{-- Category --}}
@@ -59,15 +60,17 @@
                     <input type="date" name="service_date" value="{{ old('service_date', date('Y-m-d')) }}"
                            required
                            class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('service_date') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};color-scheme:dark;">
+                    @error('service_date')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_mileage_km') }}</label>
                     <input type="number" name="mileage_at_service"
                            value="{{ old('mileage_at_service', $vehicle->mileage) }}"
-                           required placeholder="{{ $vehicle->mileage }}" min="0"
+                           required placeholder="{{ $vehicle->mileage }}" min="{{ $vehicle->mileage }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('mileage_at_service') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('mileage_at_service')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 
@@ -78,7 +81,8 @@
                     <input type="number" name="cost" value="{{ old('cost') }}"
                            required placeholder="12000" min="0" step="0.01"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('cost') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('cost')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_garage_name') }}</label>

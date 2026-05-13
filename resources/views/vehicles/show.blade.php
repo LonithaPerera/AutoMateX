@@ -100,7 +100,7 @@
         @if($vehicle->image)
             <img src="{{ asset('storage/' . $vehicle->image) }}"
                  alt="{{ $vehicle->make }} {{ $vehicle->model }}"
-                 class="w-full object-cover"
+                 loading="lazy" class="w-full object-cover"
                  style="max-height:220px;">
         @else
             <div class="flex flex-col items-center justify-center py-10 gap-2"

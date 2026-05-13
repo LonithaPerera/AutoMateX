@@ -28,7 +28,8 @@
                        value="{{ old('service_type', $serviceLog->service_type) }}"
                        required
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                       style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('service_type') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                @error('service_type')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
             </div>
 
             <div class="mb-4">
@@ -55,7 +56,8 @@
                            value="{{ old('service_date', $serviceLog->service_date->format('Y-m-d')) }}"
                            required
                            class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('service_date') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};color-scheme:dark;">
+                    @error('service_date')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_mileage_km') }}</label>
@@ -63,7 +65,8 @@
                            value="{{ old('mileage_at_service', $serviceLog->mileage_at_service) }}"
                            required min="0"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('mileage_at_service') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('mileage_at_service')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 
@@ -74,7 +77,8 @@
                            value="{{ old('cost', $serviceLog->cost) }}"
                            required min="0" step="0.01"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('cost') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('cost')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_garage_name') }}</label>

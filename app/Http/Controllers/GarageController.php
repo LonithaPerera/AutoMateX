@@ -9,14 +9,57 @@ use Illuminate\Support\Facades\Storage;
 
 class GarageController extends Controller
 {
+    // Public garage profile page
+    public function show(Garage $garage)
+    {
+        $garage->loadCount('ratings')
+               ->loadAvg('ratings', 'rating');
+
+        $reviews = $garage->ratings()
+                          ->whereNotNull('review')
+                          ->where('review', '!=', '')
+                          ->with('booking.vehicle.user')
+                          ->latest()
+                          ->get();
+
+        $completedJobs = $garage->bookings()->where('status', 'completed')->count();
+
+        $ratingBreakdown = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $ratingBreakdown[$i] = $garage->ratings()->where('rating', $i)->count();
+        }
+
+        return view('garages.show', compact('garage', 'reviews', 'completedJobs', 'ratingBreakdown'));
+    }
+
     // List all garages (for vehicle owners to browse)
     public function index()
     {
         $garages = Garage::where('is_active', true)
                          ->withCount('ratings')
                          ->withAvg('ratings', 'rating')
+                         ->with(['ratings' => fn($q) => $q->whereNotNull('review')
+                             ->where('review', '!=', '')->latest()->limit(2)])
                          ->get();
-        return view('garages.index', compact('garages'));
+
+        $cities = $garages->pluck('city')->unique()->sort()->values();
+
+        return view('garages.index', compact('garages', 'cities'));
+    }
+
+    // Process working hours from form input into array
+    private function processWorkingHours($request): ?array
+    {
+        $days = ['mon','tue','wed','thu','fri','sat','sun'];
+        $hours = [];
+        foreach ($days as $day) {
+            $hours[$day] = [
+                'closed' => $request->input("wh_{$day}_closed") === '1',
+                'open'   => $request->input("wh_{$day}_open", '08:00'),
+                'close'  => $request->input("wh_{$day}_close", '17:00'),
+            ];
+        }
+        return $hours;
     }
 
     // Show garage profile setup form
@@ -43,6 +86,8 @@ class GarageController extends Controller
             $photoPath = $request->file('photo')->store('garages', 'public');
         }
 
+        $workingHours = $this->processWorkingHours($request);
+
         Garage::create([
             'user_id'        => Auth::id(),
             'name'           => $request->name,
@@ -52,6 +97,7 @@ class GarageController extends Controller
             'description'    => $request->description,
             'specialization' => $request->specialization,
             'photo'          => $photoPath,
+            'working_hours'  => $workingHours,
         ]);
 
         return redirect()->route('garage.dashboard')
@@ -100,6 +146,8 @@ class GarageController extends Controller
             }
             $data['photo'] = $request->file('photo')->store('garages', 'public');
         }
+
+        $data['working_hours'] = $this->processWorkingHours($request);
 
         $garage->update($data);
 

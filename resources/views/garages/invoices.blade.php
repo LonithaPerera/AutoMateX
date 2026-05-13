@@ -7,7 +7,7 @@
     <div class="rounded-2xl overflow-hidden mb-4 fade-in border" style="border-color:rgba(0,245,255,0.12);">
         <img src="{{ asset('storage/' . $myGarage->photo) }}"
              alt="{{ $myGarage->name }}"
-             class="w-full object-cover" style="max-height:130px;">
+             loading="lazy" class="w-full object-cover" style="max-height:130px;">
     </div>
     @endif
 

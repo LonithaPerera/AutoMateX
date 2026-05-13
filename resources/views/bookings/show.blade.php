@@ -36,7 +36,23 @@
     <div class="rounded-2xl overflow-hidden mb-4 fade-in border" style="border-color:rgba(0,245,255,0.12);">
         <img src="{{ asset('storage/' . $booking->garage->photo) }}"
              alt="{{ $booking->garage->name }}"
-             class="w-full object-cover" style="max-height:140px;">
+             loading="lazy" class="w-full object-cover" style="max-height:140px;">
+    </div>
+    @endif
+
+    {{-- #9 Booking confirmed banner --}}
+    @if(session('just_booked'))
+    <div class="rounded-2xl p-4 mb-4 border fade-in" style="background:rgba(74,222,128,0.07);border-color:rgba(74,222,128,0.3);">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);">
+                <x-heroicon-o-check-circle class="w-5 h-5" style="color:#4ade80;" />
+            </div>
+            <div>
+                <p class="heading font-bold text-white text-base leading-tight">{{ __('app.booking_confirmed_msg') }}</p>
+                <p class="text-xs mt-0.5" style="color:#64748b;">{{ __('app.booking_confirmed_hint') }}</p>
+            </div>
+        </div>
     </div>
     @endif
 
@@ -174,6 +190,42 @@
             </button>
         </form>
         @endif
+    </div>
+    @endif
+
+    {{-- Reschedule booking --}}
+    @if(in_array($booking->status, ['pending', 'confirmed']))
+    <div class="glass-bright rounded-2xl p-4 mb-4 border fade-in fade-in-3" style="background:rgba(0,102,255,0.03);border-color:rgba(0,102,255,0.2);">
+        <p class="section-label mb-1" style="color:rgba(0,153,255,0.7);">{{ __('app.reschedule_booking_label') }}</p>
+        <p class="text-xs mb-3" style="color:#475569;">{{ __('app.reschedule_hint') }}</p>
+        <form method="POST" action="{{ route('bookings.reschedule', $booking) }}">
+            @csrf @method('PATCH')
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="section-label mb-1.5 block text-xs" style="color:#64748b;">{{ __('app.field_pref_date') }}</label>
+                    <input type="date" name="booking_date"
+                           value="{{ \Carbon\Carbon::parse($booking->booking_date)->format('Y-m-d') }}"
+                           min="{{ now()->addDay()->format('Y-m-d') }}"
+                           required
+                           class="w-full px-3 py-2.5 rounded-xl text-sm text-white outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,102,255,0.2);">
+                </div>
+                <div>
+                    <label class="section-label mb-1.5 block text-xs" style="color:#64748b;">{{ __('app.field_pref_time') }}</label>
+                    <input type="time" name="booking_time"
+                           value="{{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i') }}"
+                           required
+                           class="w-full px-3 py-2.5 rounded-xl text-sm text-white outline-none"
+                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,102,255,0.2);">
+                </div>
+            </div>
+            <button type="submit"
+                    class="w-full py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95 border"
+                    style="background:rgba(0,102,255,0.1);border-color:rgba(0,102,255,0.25);color:#60a5fa;">
+                <x-heroicon-o-arrow-path class="w-4 h-4 inline-block mr-1 align-middle" />
+                {{ __('app.reschedule_btn') }}
+            </button>
+        </form>
     </div>
     @endif
 

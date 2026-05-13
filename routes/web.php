@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VehicleController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\GarageController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,13 +25,8 @@ Route::get('/', function () {
 
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
-Route::get('/dashboard', function () {
-    $latestBooking = auth()->user()->bookings()
-        ->with('garage', 'vehicle')
-        ->latest('booking_date')
-        ->first();
-    return view('dashboard', compact('latestBooking'));
-})->middleware(['auth', 'verified', 'vehicle.owner'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'vehicle.owner'])->name('dashboard');
 
 // Offline fallback page
 Route::get('/offline', function () {
@@ -88,20 +85,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/garages/{garage}/book', [BookingController::class, 'create'])->name('bookings.create');
         Route::post('/garages/{garage}/book', [BookingController::class, 'store'])->name('bookings.store');
         Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+        Route::patch('/bookings/{booking}/reschedule', [BookingController::class, 'reschedule'])->name('bookings.reschedule');
         Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
     });
+
+    // Notifications — accessible by all authenticated users (vehicle owners + garage)
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
+    Route::get('/notifications/count', [NotificationController::class, 'unreadCount'])->name('notifications.count');
 
     // Accessible by all authenticated users
     Route::get('/parts', [PartsController::class, 'index'])->name('parts.index');
     Route::get('/garages', [GarageController::class, 'index'])->name('garages.index');
     Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
+    // garages/create must be registered BEFORE {garage} to prevent route capture
+    Route::get('/garages/create', [GarageController::class, 'create'])->middleware('garage')->name('garages.create');
+    Route::get('/garages/{garage}', [GarageController::class, 'show'])->name('garages.show');
 
     // Invoice view — vehicle owner or garage or admin (manual authz inside controller)
     Route::get('/bookings/{booking}/invoice', [BookingController::class, 'showInvoice'])->name('bookings.invoice.show');
 
     // Garage routes — restricted to garage role
     Route::middleware('garage')->group(function () {
-        Route::get('/garages/create', [GarageController::class, 'create'])->name('garages.create');
         Route::get('/garage/edit', [GarageController::class, 'edit'])->name('garages.edit');
         Route::patch('/garage', [GarageController::class, 'update'])->name('garages.update');
         Route::get('/garage/dashboard', [GarageController::class, 'dashboard'])->name('garage.dashboard');
@@ -127,6 +132,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/admin/bookings/{booking}/status', [AdminController::class, 'updateBookingStatus'])->name('admin.bookings.status');
         Route::post('/admin/users/{user}/make-admin', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin');
         Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.deleteUser');
+        Route::get('/admin/activity', [AdminController::class, 'activityLog'])->name('admin.activity');
 
         // Parts CRUD (admin only)
         Route::get('/parts/create',      [PartsController::class, 'create'])->name('parts.create');

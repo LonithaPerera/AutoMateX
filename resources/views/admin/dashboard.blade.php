@@ -74,6 +74,12 @@
             <x-heroicon-o-light-bulb class="w-6 h-6" style="color:#4ade80;" />
             <p class="heading text-xs font-bold tracking-wider" style="color:#4ade80;">{{ __('app.admin_nav_schedules') }}</p>
         </a>
+        <a href="{{ route('admin.activity') }}"
+           class="glass-bright rounded-2xl p-4 border flex flex-col items-center gap-2 transition-all active:scale-95 col-span-2"
+           style="border-color:rgba(148,163,184,0.15);">
+            <x-heroicon-o-clipboard-document-list class="w-6 h-6" style="color:#94a3b8;" />
+            <p class="heading text-xs font-bold tracking-wider" style="color:#94a3b8;">{{ __('app.admin_nav_activity') }}</p>
+        </a>
     </div>
 
     {{-- Analytics Charts --}}

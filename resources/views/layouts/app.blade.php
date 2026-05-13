@@ -213,6 +213,21 @@
                     <a href="{{ route('locale.switch', 'ta') }}" class="lang-btn-header {{ app()->getLocale() === 'ta' ? 'active' : '' }}">TA</a>
                 </div>
 
+                @if(Auth::user()->role !== 'admin')
+                @php $unreadCount = \App\Models\AppNotification::where('user_id', Auth::id())->whereNull('read_at')->count(); @endphp
+                <a href="{{ route('notifications.index') }}"
+                   id="notif-bell-link"
+                   class="relative w-9 h-9 rounded-xl glass flex items-center justify-center border transition-colors"
+                   style="border-color:{{ $unreadCount > 0 ? 'rgba(0,245,255,0.3)' : 'rgba(255,255,255,0.08)' }};">
+                    <x-heroicon-o-bell class="w-4 h-4" id="notif-bell-icon" style="color:{{ $unreadCount > 0 ? '#00f5ff' : '#64748b' }};" />
+                    <span id="notif-badge"
+                          class="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white font-bold"
+                          style="background:#f87171;font-size:9px;min-width:16px;height:16px;padding:0 3px;font-family:'Share Tech Mono',monospace;{{ $unreadCount > 0 ? '' : 'display:none;' }}">
+                        {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                    </span>
+                </a>
+                @endif
+
                 @if(Auth::user()->role === 'admin')
                     <a href="{{ route('admin.dashboard') }}"
                        class="relative w-9 h-9 rounded-xl glass flex items-center justify-center border border-purple-500/30 hover:border-purple-400/50 transition-colors">
@@ -486,6 +501,40 @@
             });
         })();
     </script>
+
+    <!-- Notification bell live count (#7) -->
+    @auth
+    @if(Auth::user()->role !== 'admin')
+    <script>
+    (function() {
+        function updateBell(count) {
+            var link  = document.getElementById('notif-bell-link');
+            var badge = document.getElementById('notif-badge');
+            var icon  = document.getElementById('notif-bell-icon');
+            if (!link || !badge || !icon) return;
+            if (count > 0) {
+                link.style.borderColor = 'rgba(0,245,255,0.3)';
+                icon.style.color = '#00f5ff';
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.style.display = 'flex';
+            } else {
+                link.style.borderColor = 'rgba(255,255,255,0.08)';
+                icon.style.color = '#64748b';
+                badge.style.display = 'none';
+            }
+        }
+        setInterval(function() {
+            fetch('{{ route("notifications.count") }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+            })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) { if (data) updateBell(data.count); })
+            .catch(function() {});
+        }, 30000);
+    })();
+    </script>
+    @endif
+    @endauth
 
     <!-- PWA Service Worker -->
     <script>

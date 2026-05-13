@@ -8,7 +8,7 @@
         <div class="rounded-2xl overflow-hidden mb-3 border" style="border-color:rgba(0,245,255,0.12);">
             <img src="{{ asset('storage/' . $garage->photo) }}"
                  alt="{{ $garage->name }}"
-                 class="w-full object-cover" style="max-height:160px;">
+                 loading="lazy" class="w-full object-cover" style="max-height:160px;">
         </div>
         @endif
         <div class="flex items-start justify-between">

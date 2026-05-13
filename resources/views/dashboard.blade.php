@@ -2,59 +2,7 @@
 
     <div class="max-w-lg mx-auto px-4 pt-5">
 
-        @php
-            $vehicles     = Auth::user()->vehicles;
-            $vehicleIds   = $vehicles->pluck('id');
-            $serviceCount = \App\Models\ServiceLog::whereIn('vehicle_id', $vehicleIds)->count();
-            $fuelCount    = \App\Models\FuelLog::whereIn('vehicle_id', $vehicleIds)->count();
-            $bookingCount = Auth::user()->bookings()->count();
-
-            // #2 Total spend this month
-            $monthlyFuel    = (float) \App\Models\FuelLog::whereIn('vehicle_id', $vehicleIds)
-                                ->whereYear('date', now()->year)->whereMonth('date', now()->month)->sum('cost');
-            $monthlySvc     = (float) \App\Models\ServiceLog::whereIn('vehicle_id', $vehicleIds)
-                                ->whereYear('service_date', now()->year)->whereMonth('service_date', now()->month)->sum('cost');
-            $monthlyTotal   = $monthlyFuel + $monthlySvc;
-
-            // #3 Last activity
-            $lastFuel = \App\Models\FuelLog::whereIn('vehicle_id', $vehicleIds)->orderBy('date','desc')->orderBy('id','desc')->first();
-            $lastSvcAll = \App\Models\ServiceLog::whereIn('vehicle_id', $vehicleIds)->orderBy('service_date','desc')->orderBy('id','desc')->first();
-            $lastActivity = null;
-            if ($lastFuel && $lastSvcAll) {
-                $lastActivity = $lastFuel->date >= $lastSvcAll->service_date
-                    ? ['type' => 'fuel',    'label' => __('app.activity_fuelled'), 'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastFuel->date)->startOfDay(), false)]
-                    : ['type' => 'service', 'label' => __('app.activity_serviced'),'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastSvcAll->service_date)->startOfDay(), false)];
-            } elseif ($lastFuel) {
-                $lastActivity = ['type' => 'fuel',    'label' => __('app.activity_fuelled'), 'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastFuel->date)->startOfDay(), false)];
-            } elseif ($lastSvcAll) {
-                $lastActivity = ['type' => 'service', 'label' => __('app.activity_serviced'),'days' => now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($lastSvcAll->service_date)->startOfDay(), false)];
-            }
-
-            // #1 Quick-log smart link — direct if single vehicle
-            $singleVehicle = $vehicles->count() === 1 ? $vehicles->first() : null;
-
-            // Latest booking for status card
-            $latestBooking = Auth::user()->bookings()->with(['garage','vehicle'])->latest()->first();
-
-            // Find overdue suggestions across all vehicles
-            $overdueVehicle = null;
-            $overdueService = null;
-            foreach ($vehicles as $v) {
-                $schedules = \App\Models\MaintenanceSchedule::all();
-                foreach ($schedules as $schedule) {
-                    $lastService = \App\Models\ServiceLog::where('vehicle_id', $v->id)
-                        ->where('service_type', 'like', '%' . explode(' ', $schedule->service_name)[0] . '%')
-                        ->orderBy('mileage_at_service', 'desc')->first();
-                    $lastKm  = $lastService ? $lastService->mileage_at_service : 0;
-                    $nextDue = $lastKm + $schedule->interval_km;
-                    if ($v->mileage >= $nextDue) {
-                        $overdueVehicle = $v;
-                        $overdueService = $schedule->service_name;
-                        break 2;
-                    }
-                }
-            }
-        @endphp
+        {{-- All stats pre-computed by DashboardController — no queries in view --}}
 
         {{-- Greeting --}}
         <div class="fade-in fade-in-1 mb-5 flex items-start gap-3">
@@ -220,65 +168,21 @@
 
         @forelse($vehicles as $index => $vehicle)
         @php
-            // ── Multi-factor health score ──────────────────────────────────────
-            // 1. Mileage wear (40 pts): 0 km = 40, 100 000 km = 0
-            $mileageScore = max(0, (int) round(40 - ($vehicle->mileage / 100000) * 40));
-
-            // 2. Service recency (40 pts): serviced this week = 40, never/1yr+ = 10
-            $lastSvc = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
-                ->orderBy('service_date', 'desc')->first();
-            if (!$lastSvc) {
-                $svcScore = 10;
-            } else {
-                $daysSince = \Carbon\Carbon::parse($lastSvc->service_date)->diffInDays(now());
-                $svcScore  = max(0, min(40, (int) round(40 - ($daysSince / 365) * 40)));
-            }
-
-            // 3. Overdue maintenance (20 pts): -10 per overdue item
-            $schedules = \App\Models\MaintenanceSchedule::all();
-            $overdueCount = 0;
-            $overdueServiceName = null;
-            $dueSoonServiceName = null;
-            foreach ($schedules as $sched) {
-                $lastMaint = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
-                    ->where('service_type', 'like', '%' . explode(' ', $sched->service_name)[0] . '%')
-                    ->orderBy('mileage_at_service', 'desc')->first();
-                $lastKm = $lastMaint ? $lastMaint->mileage_at_service : 0;
-                $kmLeft = ($lastKm + $sched->interval_km) - $vehicle->mileage;
-                if ($kmLeft <= 0) {
-                    $overdueCount++;
-                    if (!$overdueServiceName) $overdueServiceName = explode(' ', $sched->service_name)[0];
-                } elseif ($kmLeft <= 500 && !$dueSoonServiceName) {
-                    $dueSoonServiceName = explode(' ', $sched->service_name)[0];
-                }
-            }
-            $maintScore = max(0, 20 - ($overdueCount * 10));
-            $health     = $mileageScore + $svcScore + $maintScore;   // 0–100
-
-            // Colour zone
-            $ringColor = $health >= 70 ? '#00f5ff' : ($health >= 40 ? '#ff6b00' : '#f87171');
-            $ringGlow  = $health >= 70 ? 'rgba(0,245,255,0.3)' : ($health >= 40 ? 'rgba(255,107,0,0.3)' : 'rgba(248,113,113,0.3)');
-
-            // Pre-compute stats (reuse $lastSvc from above)
-            $avgEfficiency = \App\Models\FuelLog::where('vehicle_id', $vehicle->id)->whereNotNull('km_per_liter')->avg('km_per_liter');
-            $svcCount      = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)->count();
-            $totalSpend    = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)->sum('cost')
-                           + \App\Models\FuelLog::where('vehicle_id', $vehicle->id)->sum('cost');
-
-            // Document expiry alerts
-            $expiryAlerts = [];
-            foreach ([
-                __('app.insurance_expiry_label') => $vehicle->insurance_expiry,
-                __('app.registration_expiry_label') => $vehicle->registration_expiry,
-                __('app.emission_due_label') => $vehicle->emission_due,
-            ] as $docName => $docDate) {
-                if ($docDate) {
-                    $dLeft = now()->startOfDay()->diffInDays($docDate->copy()->startOfDay(), false);
-                    if ($dLeft < 0)       $expiryAlerts[] = ['name' => $docName, 'days' => abs((int)$dLeft), 'status' => 'expired'];
-                    elseif ($dLeft <= 30) $expiryAlerts[] = ['name' => $docName, 'days' => (int)$dLeft,      'status' => 'soon'];
-                }
-            }
-
+            // Pull pre-computed stats from controller — zero extra DB queries
+            $s                  = $vehicleStats[$vehicle->id];
+            $lastSvc            = $s['lastSvc'];
+            $avgEfficiency      = $s['avgEfficiency'];
+            $svcCount           = $s['svcCount'];
+            $totalSpend         = $s['totalSpend'];
+            $overdueServiceName = $s['overdueServiceName'];
+            $dueSoonServiceName = $s['dueSoonServiceName'];
+            $mileageScore       = $s['mileageScore'];
+            $svcScore           = $s['svcScore'];
+            $maintScore         = $s['maintScore'];
+            $health             = $s['health'];
+            $ringColor          = $s['ringColor'];
+            $ringGlow           = $s['ringGlow'];
+            $expiryAlerts       = $s['expiryAlerts'];
         @endphp
             <div class="glass-bright rounded-2xl overflow-hidden mb-3 vehicle-card fade-in fade-in-{{ $index + 3 }} animate-glow border">
                 {{-- Vehicle photo strip --}}
@@ -473,7 +377,7 @@
                                     <div class="mt-2 space-y-1">
                                         <div class="flex items-center gap-1.5">
                                             <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                                            <span class="text-xs text-slate-400">{{ \App\Models\ServiceLog::where('vehicle_id', $qrVehicle->id)->count() }} {{ __('app.service_records') }}</span>
+                                            <span class="text-xs text-slate-400">{{ $vehicleStats[$qrVehicle->id]['svcCount'] }} {{ __('app.service_records') }}</span>
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <div class="w-1.5 h-1.5 rounded-full" style="background:var(--cyan);"></div>

@@ -59,6 +59,16 @@
         $past     = $bookings->whereIn('status', ['completed','cancelled'])->values();
     @endphp
 
+    {{-- Search --}}
+    <div class="relative mb-4 fade-in fade-in-2">
+        <x-heroicon-o-magnifying-glass class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color:#64748b;" />
+        <input type="text" id="booking-search"
+               placeholder="{{ __('app.search_my_bookings_ph') }}"
+               oninput="filterBookings()"
+               class="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+               style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.12);">
+    </div>
+
     {{-- Tab switcher --}}
     <div class="flex gap-2 mb-5 fade-in fade-in-2">
         <button onclick="switchTab('upcoming')" id="tab-upcoming"
@@ -88,15 +98,16 @@
             default     => ['bg'=>'rgba(255,255,255,0.05)','color'=>'#94a3b8','border'=>'rgba(255,255,255,0.1)'],
         };
     @endphp
-    <div class="glass-bright rounded-2xl mb-3 border fade-in fade-in-{{ min($index+3,5) }} booking-card overflow-hidden"
+    <div class="glass-bright rounded-2xl mb-3 border fade-in fade-in-{{ min($index+3,5) }} booking-card booking-card-item overflow-hidden"
          data-status="{{ $booking->status }}"
+         data-search="{{ strtolower($booking->service_type . ' ' . ($booking->garage->name ?? '') . ' ' . ($booking->garage->city ?? '') . ' ' . $booking->vehicle->make . ' ' . $booking->vehicle->model . ' ' . $booking->vehicle->license_plate) }}"
          style="border-color:rgba(0,245,255,0.1);">
 
         {{-- Garage photo banner --}}
         @if($booking->garage?->photo)
         <img src="{{ asset('storage/' . $booking->garage->photo) }}"
              alt="{{ $booking->garage->name }}"
-             class="w-full object-cover" style="max-height:100px;">
+             loading="lazy" class="w-full object-cover" style="max-height:100px;">
         @else
         <div class="flex items-center justify-center" style="height:44px;background:rgba(0,245,255,0.02);border-bottom:1px solid rgba(0,245,255,0.06);">
             <x-heroicon-o-building-storefront class="w-5 h-5" style="color:rgba(0,245,255,0.1);" />
@@ -305,12 +316,14 @@
                 };
             @endphp
             {{-- Reuse same card structure --}}
-            <div class="glass-bright rounded-2xl mb-3 border fade-in overflow-hidden" style="border-color:rgba(255,255,255,0.08);">
+            <div class="glass-bright rounded-2xl mb-3 border fade-in overflow-hidden booking-card-item"
+                 data-search="{{ strtolower($booking->service_type . ' ' . ($booking->garage->name ?? '') . ' ' . ($booking->garage->city ?? '') . ' ' . $booking->vehicle->make . ' ' . $booking->vehicle->model . ' ' . $booking->vehicle->license_plate) }}"
+                 style="border-color:rgba(255,255,255,0.08);">
                 {{-- Garage photo banner --}}
                 @if($booking->garage?->photo)
                 <img src="{{ asset('storage/' . $booking->garage->photo) }}"
                      alt="{{ $booking->garage->name }}"
-                     class="w-full object-cover" style="max-height:80px;">
+                     loading="lazy" class="w-full object-cover" style="max-height:80px;">
                 @else
                 <div class="flex items-center justify-center" style="height:36px;background:rgba(255,255,255,0.01);border-bottom:1px solid rgba(255,255,255,0.04);">
                     <x-heroicon-o-building-storefront class="w-4 h-4" style="color:rgba(255,255,255,0.06);" />
@@ -423,6 +436,13 @@ function switchTab(tab) {
     pa.style.background  = isUpcoming ? 'rgba(255,255,255,0.05)' : 'rgba(0,245,255,0.12)';
     pa.style.borderColor = isUpcoming ? 'rgba(255,255,255,0.1)'  : 'rgba(0,245,255,0.3)';
     pa.style.color       = isUpcoming ? '#64748b' : '#00f5ff';
+}
+
+function filterBookings() {
+    const q = document.getElementById('booking-search').value.toLowerCase().trim();
+    document.querySelectorAll('.booking-card-item').forEach(c => {
+        c.style.display = (!q || c.dataset.search.includes(q)) ? '' : 'none';
+    });
 }
 
 function hoverStars(containerId, n) {

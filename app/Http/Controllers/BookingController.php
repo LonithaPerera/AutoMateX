@@ -6,6 +6,7 @@ use App\Mail\BookingCancelledNotification;
 use App\Mail\BookingReceivedNotification;
 use App\Mail\BookingStatusUpdated;
 use App\Mail\NewBookingNotification;
+use App\Models\AppNotification;
 use App\Models\Booking;
 use App\Models\Garage;
 use App\Models\Vehicle;
@@ -39,6 +40,34 @@ class BookingController extends Controller
             abort(403, 'This vehicle does not belong to you.');
         }
 
+        // #1 — Working hours validation
+        if ($garage->working_hours) {
+            $dayKeys  = ['sun','mon','tue','wed','thu','fri','sat'];
+            $dayKey   = $dayKeys[\Carbon\Carbon::parse($request->booking_date)->dayOfWeek];
+            $dayHours = $garage->working_hours[$dayKey] ?? null;
+            if ($dayHours) {
+                if ($dayHours['closed'] ?? false) {
+                    return back()->withInput()->with('error', __('app.garage_closed_that_day'));
+                }
+                $open  = \Carbon\Carbon::parse($request->booking_date . ' ' . ($dayHours['open']  ?? '00:00'));
+                $close = \Carbon\Carbon::parse($request->booking_date . ' ' . ($dayHours['close'] ?? '23:59'));
+                $time  = \Carbon\Carbon::parse($request->booking_date . ' ' . $request->booking_time);
+                if ($time->lt($open) || $time->gt($close)) {
+                    return back()->withInput()->with('error', __('app.booking_outside_hours'));
+                }
+            }
+        }
+
+        // #2 — Duplicate slot prevention
+        $duplicate = Booking::where('garage_id', $garage->id)
+            ->where('booking_date', $request->booking_date)
+            ->where('booking_time', $request->booking_time)
+            ->whereNotIn('status', ['cancelled'])
+            ->exists();
+        if ($duplicate) {
+            return back()->withInput()->with('error', __('app.booking_slot_taken'));
+        }
+
         $booking = Booking::create([
             'vehicle_id'   => $request->vehicle_id,
             'garage_id'    => $garage->id,
@@ -48,21 +77,32 @@ class BookingController extends Controller
             'notes'        => $request->notes,
         ]);
 
-        // Send emails: acknowledgment to customer + alert to garage owner
+        $booking->load('vehicle.user', 'garage.user');
+
+        // In-app notification to garage owner
+        if ($garage->user) {
+            AppNotification::create([
+                'user_id' => $garage->user->id,
+                'type'    => 'booking_new',
+                'title'   => 'New Booking Request',
+                'message' => $booking->vehicle->user->name . ' booked ' . $booking->service_type,
+                'url'     => route('garage.bookings'),
+            ]);
+        }
+
+        // Emails
         try {
-            $booking->load('vehicle.user', 'garage.user');
             Mail::to($booking->vehicle->user->email)
                 ->send(new BookingReceivedNotification($booking));
             if ($garage->user && $garage->user->email) {
                 Mail::to($garage->user->email)
                     ->send(new NewBookingNotification($booking));
             }
-        } catch (\Exception $e) {
-            // Mail not configured — continue silently
-        }
+        } catch (\Exception $e) {}
 
-        return redirect()->route('bookings.index')
-                         ->with('success', __('app.booking_submitted'));
+        // #9 — Redirect to confirmation view
+        return redirect()->route('bookings.show', $booking)
+                         ->with('just_booked', true);
     }
 
     // Garage owner — update booking status
@@ -79,16 +119,30 @@ class BookingController extends Controller
         ]);
 
         $booking->update(['status' => $request->status]);
+        $booking->load('vehicle.user', 'garage');
 
-        // Send email notification to customer on confirmed or completed
+        // In-app notification to vehicle owner
+        $notifMessages = [
+            'confirmed' => ['title' => 'Booking Confirmed', 'msg' => $booking->garage->name . ' confirmed your ' . $booking->service_type],
+            'completed' => ['title' => 'Service Completed', 'msg' => $booking->garage->name . ' marked your ' . $booking->service_type . ' as completed'],
+            'cancelled' => ['title' => 'Booking Cancelled', 'msg' => $booking->garage->name . ' cancelled your ' . $booking->service_type],
+        ];
+        if (isset($notifMessages[$request->status])) {
+            AppNotification::create([
+                'user_id' => $booking->vehicle->user->id,
+                'type'    => 'booking_' . $request->status,
+                'title'   => $notifMessages[$request->status]['title'],
+                'message' => $notifMessages[$request->status]['msg'],
+                'url'     => route('bookings.show', $booking),
+            ]);
+        }
+
+        // Email on confirmed or completed
         if (in_array($request->status, ['confirmed', 'completed'])) {
             try {
-                $booking->load('vehicle.user', 'garage');
                 Mail::to($booking->vehicle->user->email)
                     ->send(new BookingStatusUpdated($booking));
-            } catch (\Exception $e) {
-                // Mail not configured — continue silently
-            }
+            } catch (\Exception $e) {}
         }
 
         return redirect()->route('garage.dashboard')
@@ -193,18 +247,65 @@ class BookingController extends Controller
             'cancel_reason' => $request->cancel_reason,
         ]);
 
-        // Notify the garage owner about the cancellation
+        $booking->load('vehicle.user', 'garage.user');
+
+        // In-app notification to garage owner
+        if ($booking->garage->user) {
+            AppNotification::create([
+                'user_id' => $booking->garage->user->id,
+                'type'    => 'booking_cancelled',
+                'title'   => 'Booking Cancelled',
+                'message' => $booking->vehicle->user->name . ' cancelled their ' . $booking->service_type . ' booking',
+                'url'     => route('garage.bookings'),
+            ]);
+        }
+
         try {
-            $booking->load('vehicle.user', 'garage.user');
             if ($booking->garage->user && $booking->garage->user->email) {
                 Mail::to($booking->garage->user->email)
                     ->send(new BookingCancelledNotification($booking));
             }
-        } catch (\Exception $e) {
-            // Mail not configured — continue silently
-        }
+        } catch (\Exception $e) {}
 
         return back()->with('success', __('app.booking_cancelled'));
+    }
+
+    // Vehicle owner — reschedule a pending/confirmed booking
+    public function reschedule(Request $request, Booking $booking)
+    {
+        if ($booking->vehicle->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (!in_array($booking->status, ['pending', 'confirmed'])) {
+            return back()->with('error', __('app.booking_cannot_reschedule'));
+        }
+
+        $request->validate([
+            'booking_date' => 'required|date|after:today',
+            'booking_time' => 'required',
+        ]);
+
+        $booking->update([
+            'booking_date' => $request->booking_date,
+            'booking_time' => $request->booking_time,
+            'status'       => 'pending',
+        ]);
+
+        $booking->load('vehicle.user', 'garage.user');
+
+        // Notify garage owner
+        if ($booking->garage->user) {
+            AppNotification::create([
+                'user_id' => $booking->garage->user->id,
+                'type'    => 'booking_rescheduled',
+                'title'   => 'Booking Rescheduled',
+                'message' => $booking->vehicle->user->name . ' rescheduled their ' . $booking->service_type . ' to ' . \Carbon\Carbon::parse($request->booking_date)->format('d M Y'),
+                'url'     => route('garage.bookings'),
+            ]);
+        }
+
+        return back()->with('success', __('app.booking_rescheduled'));
     }
 
     // Vehicle owner — see detail for one booking

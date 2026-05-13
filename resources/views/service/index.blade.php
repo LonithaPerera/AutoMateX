@@ -56,11 +56,22 @@
         </div>
     @endif
 
+    {{-- Search --}}
+    <div class="relative mb-4 fade-in fade-in-2">
+        <x-heroicon-o-magnifying-glass class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color:#64748b;" />
+        <input type="text" id="service-search"
+               placeholder="{{ __('app.search_service_logs_ph') }}"
+               oninput="filterServiceLogs()"
+               class="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+               style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.12);">
+    </div>
+
     {{-- Service log list --}}
     <p class="section-label mb-3 fade-in fade-in-2">{{ __('app.log_entries_label') }}</p>
 
-    @forelse($serviceLogs as $index => $log)
-    <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }}"
+    @forelse($serviceLogsPaged as $index => $log)
+    <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }} service-log-card"
+         data-search="{{ strtolower($log->service_type . ' ' . $log->service_date->format('d M Y') . ' ' . ($log->garage_name ?? '') . ' ' . ($log->type ?? '')) }}"
          style="border-color:rgba(0,245,255,0.1);">
 
         {{-- Top row --}}
@@ -136,6 +147,23 @@
         </div>
     @endforelse
 
+    {{-- Pagination --}}
+    @if($serviceLogsPaged->hasPages())
+    <div class="mt-2 mb-4 flex items-center justify-center gap-2">
+        @if($serviceLogsPaged->onFirstPage())
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">← Prev</span>
+        @else
+            <a href="{{ $serviceLogsPaged->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">← Prev</a>
+        @endif
+        <span class="mono text-xs" style="color:#64748b;">{{ $serviceLogsPaged->currentPage() }} / {{ $serviceLogsPaged->lastPage() }}</span>
+        @if($serviceLogsPaged->hasMorePages())
+            <a href="{{ $serviceLogsPaged->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">Next →</a>
+        @else
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">Next →</span>
+        @endif
+    </div>
+    @endif
+
     {{-- Back --}}
     <div class="mt-2">
         <a href="{{ route('vehicles.show', $vehicle) }}"
@@ -146,4 +174,12 @@
     </div>
 
 </div>
+<script>
+function filterServiceLogs() {
+    const q = document.getElementById('service-search').value.toLowerCase().trim();
+    document.querySelectorAll('.service-log-card').forEach(c => {
+        c.style.display = (!q || c.dataset.search.includes(q)) ? '' : 'none';
+    });
+}
+</script>
 </x-app-layout>

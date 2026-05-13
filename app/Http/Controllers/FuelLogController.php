@@ -12,7 +12,10 @@ class FuelLogController extends Controller
     // Show all fuel logs for a vehicle
     public function index(Vehicle $vehicle)
     {
+        // Full collection for stats and chart
         $fuelLogs = $vehicle->fuelLogs()->orderBy('date', 'desc')->get();
+        // Paginated for the list display
+        $fuelLogsPaged = $vehicle->fuelLogs()->orderBy('date', 'desc')->paginate(10)->withQueryString();
 
         // Calculate average km per liter
         $avgKmPerLiter = $fuelLogs->avg('km_per_liter');
@@ -20,7 +23,7 @@ class FuelLogController extends Controller
         $totalLiters   = $fuelLogs->sum('liters');
 
         return view('fuel.index', compact(
-            'vehicle', 'fuelLogs', 'avgKmPerLiter', 'totalCost', 'totalLiters'
+            'vehicle', 'fuelLogs', 'fuelLogsPaged', 'avgKmPerLiter', 'totalCost', 'totalLiters'
         ));
     }
 
@@ -37,7 +40,7 @@ class FuelLogController extends Controller
             'date'         => 'required|date',
             'liters'       => 'required|numeric|min:0.1',
             'cost'         => 'required|numeric|min:0',
-            'km_reading'   => 'required|integer|min:0',
+            'km_reading'   => 'required|integer|min:' . $vehicle->mileage,
             'fuel_station' => 'nullable|string|max:100',
             'notes'        => 'nullable|string|max:255',
         ]);

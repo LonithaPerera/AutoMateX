@@ -718,4 +718,85 @@ return [
     'change_photo_btn'      => 'Change Photo',
 
     // #10 Language preference — saved automatically, no new keys needed
+
+    // ─── Garage filter ────────────────────────────────────────────────────────
+    'filter_all_cities'       => 'All Cities',
+    'filter_by_rating'        => 'By Rating',
+    'sort_label'              => 'Sort',
+    'search_garages_ph'       => 'Search garages...',
+    'sort_rating_high'        => 'Rating: High',
+    'sort_rating_low'         => 'Rating: Low',
+    'sort_name_az'            => 'Name A–Z',
+    'no_garages_found'        => 'No garages match your filters.',
+
+    // ─── Booking reschedule ───────────────────────────────────────────────────
+    'reschedule_booking_label'    => '// RESCHEDULE',
+    'reschedule_hint'             => 'Change the date or time. Status will reset to pending.',
+    'reschedule_btn'              => 'RESCHEDULE BOOKING',
+    'booking_rescheduled'         => 'Booking rescheduled successfully.',
+    'booking_cannot_reschedule'   => 'This booking cannot be rescheduled.',
+
+    // ─── Notifications ────────────────────────────────────────────────────────
+    'notifications_label'         => '// NOTIFICATIONS',
+    'notifications_title'         => 'Notifications',
+    'notifications_hint'          => 'Updates about your bookings and vehicles',
+    'no_notifications'            => 'No Notifications Yet',
+    'no_notifications_hint'       => 'Booking updates will appear here',
+    'mark_all_read_btn'           => 'MARK ALL READ',
+    'notifications_marked_read'   => 'All notifications marked as read.',
+    'unread_tag'                  => 'NEW',
+
+    // ─── Garage working hours ─────────────────────────────────────────────────
+    'working_hours_label'         => 'Working Hours',
+    'working_hours_section'       => '// WORKING HOURS',
+    'closed_label'                => 'Closed',
+    'day_mon'                     => 'Mon',
+    'day_tue'                     => 'Tue',
+    'day_wed'                     => 'Wed',
+    'day_thu'                     => 'Thu',
+    'day_fri'                     => 'Fri',
+    'day_sat'                     => 'Sat',
+    'day_sun'                     => 'Sun',
+    'open_time_label'             => 'Open',
+    'close_time_label'            => 'Close',
+
+    // ─── Admin activity log ───────────────────────────────────────────────────
+    'activity_log_label'          => '// ACTIVITY LOG',
+    'activity_log_title'          => 'Admin Activity Log',
+    'activity_log_desc'           => 'Audit trail of all admin actions',
+    'no_activity_yet'             => 'No activity recorded yet.',
+    'admin_nav_activity'          => 'ACTIVITY',
+    'activity_action_label'       => 'Action',
+    'activity_by_label'           => 'By',
+    'activity_time_label'         => 'Time',
+
+    // ─── Booking improvements ─────────────────────────────────────────────────
+    'garage_closed_that_day'      => 'The garage is closed on that day. Please select a different date.',
+    'booking_outside_hours'       => 'Booking time is outside this garage\'s working hours. Please select a time within opening hours.',
+    'booking_slot_taken'          => 'That date and time is already taken at this garage. Please choose a different slot.',
+    'booking_confirmed_msg'       => 'Booking Submitted!',
+    'booking_confirmed_hint'      => 'You\'ll be notified once the garage confirms your appointment.',
+    'search_my_bookings_ph'       => 'Search by garage or service...',
+
+    // ─── Fuel efficiency trend ────────────────────────────────────────────────
+    'efficiency_improving'        => '↑ Improving',
+    'efficiency_declining'        => '↓ Declining',
+    'efficiency_stable'           => '→ Stable',
+
+    // ─── Garage reviews ───────────────────────────────────────────────────────
+    'recent_reviews_label'        => '// RECENT REVIEWS',
+    'no_reviews_yet_garage'       => 'No written reviews yet',
+
+    // ─── New improvements ─────────────────────────────────────────────────────
+    'booking_no_hours_notice'     => 'Working hours not set for this garage. Please confirm your preferred time directly.',
+    'search_fuel_logs_ph'         => 'Search by station, date or km...',
+    'search_service_logs_ph'      => 'Search by service type, garage or date...',
+    'garage_profile_label'        => '// GARAGE PROFILE',
+    'all_reviews_label'           => '// ALL REVIEWS',
+    'view_garage_profile_btn'     => 'View Profile',
+    'booking_reminder_title'      => 'Appointment Reminder',
+    'booking_reminder_message'    => 'You have a booking tomorrow: :service at :garage at :time.',
+    'no_reviews_yet'              => 'No reviews yet for this garage.',
+    'garage_completed_jobs'       => 'Completed Jobs',
+    'garage_avg_rating'           => 'Avg Rating',
 ];

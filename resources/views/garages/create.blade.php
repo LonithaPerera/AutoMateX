@@ -66,6 +66,42 @@
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('description') }}</textarea>
             </div>
 
+            {{-- Working Hours --}}
+            <div class="mb-5">
+                <label class="section-label mb-3 block">{{ __('app.working_hours_section') }}</label>
+                @php
+                    $days = ['mon','tue','wed','thu','fri','sat','sun'];
+                    $dayLabels = ['mon' => __('app.day_mon'), 'tue' => __('app.day_tue'), 'wed' => __('app.day_wed'), 'thu' => __('app.day_thu'), 'fri' => __('app.day_fri'), 'sat' => __('app.day_sat'), 'sun' => __('app.day_sun')];
+                    $defaultClosed = ['sat', 'sun'];
+                @endphp
+                <div class="rounded-xl overflow-hidden border" style="border-color:rgba(0,245,255,0.12);">
+                    @foreach($days as $day)
+                    @php $isClosed = in_array($day, $defaultClosed); @endphp
+                    <div class="flex items-center gap-3 px-3 py-2.5 {{ !$loop->last ? 'border-b' : '' }}"
+                         style="background:rgba(255,255,255,0.02);{{ !$loop->last ? 'border-color:rgba(255,255,255,0.05);' : '' }}">
+                        <span class="w-8 text-xs font-bold heading flex-shrink-0" style="color:#94a3b8;">{{ $dayLabels[$day] }}</span>
+                        <label class="flex items-center gap-1.5 flex-shrink-0 cursor-pointer">
+                            <input type="hidden" name="wh_{{ $day }}_closed" value="0">
+                            <input type="checkbox" name="wh_{{ $day }}_closed" value="1"
+                                   {{ $isClosed ? 'checked' : '' }}
+                                   onchange="toggleDay('{{ $day }}', this.checked)"
+                                   class="w-3.5 h-3.5 rounded accent-cyan-400">
+                            <span class="text-xs" style="color:#64748b;">{{ __('app.closed_label') }}</span>
+                        </label>
+                        <div class="flex items-center gap-2 flex-1 {{ $isClosed ? 'opacity-30 pointer-events-none' : '' }}" id="times-{{ $day }}">
+                            <input type="time" name="wh_{{ $day }}_open" value="08:00"
+                                   class="flex-1 px-2 py-1.5 rounded-lg text-xs text-white outline-none"
+                                   style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.12);">
+                            <span class="text-xs" style="color:#475569;">–</span>
+                            <input type="time" name="wh_{{ $day }}_close" value="17:00"
+                                   class="flex-1 px-2 py-1.5 rounded-lg text-xs text-white outline-none"
+                                   style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.12);">
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
             {{-- Garage Photo --}}
             <div class="mb-6">
                 <label class="section-label mb-2 block">{{ __('app.garage_photo_label') }}</label>
@@ -93,4 +129,15 @@
     </div>
 
 </div>
+
+<script>
+function toggleDay(day, closed) {
+    const timesDiv = document.getElementById('times-' + day);
+    if (closed) {
+        timesDiv.classList.add('opacity-30', 'pointer-events-none');
+    } else {
+        timesDiv.classList.remove('opacity-30', 'pointer-events-none');
+    }
+}
+</script>
 </x-app-layout>

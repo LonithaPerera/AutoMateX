@@ -58,10 +58,35 @@
     {{-- Efficiency Trend Chart --}}
     @if($fuelLogs->where('km_per_liter', '!=', null)->count() >= 2)
     @php
-        $chartLogs = $fuelLogs->whereNotNull('km_per_liter')->sortBy('km_reading')->values();
+        $chartLogs  = $fuelLogs->whereNotNull('km_per_liter')->sortBy('km_reading')->values();
+        $trendLabel = '';
+        $trendColor = '#94a3b8';
+        if ($chartLogs->count() >= 2) {
+            $half       = (int) max(1, floor($chartLogs->count() / 2));
+            $olderAvg   = $chartLogs->take($half)->avg('km_per_liter');
+            $recentAvg  = $chartLogs->skip($half)->avg('km_per_liter');
+            if ($olderAvg > 0) {
+                $pct = round((($recentAvg - $olderAvg) / $olderAvg) * 100, 1);
+                if ($pct > 2) {
+                    $trendLabel = __('app.efficiency_improving') . ' (+' . $pct . '%)';
+                    $trendColor = '#4ade80';
+                } elseif ($pct < -2) {
+                    $trendLabel = __('app.efficiency_declining') . ' (' . $pct . '%)';
+                    $trendColor = '#f87171';
+                } else {
+                    $trendLabel = __('app.efficiency_stable');
+                    $trendColor = '#94a3b8';
+                }
+            }
+        }
     @endphp
     <div class="glass-bright rounded-2xl p-4 mb-5 border fade-in fade-in-2" style="border-color:rgba(74,222,128,0.15);">
-        <p class="section-label mb-3">{{ __('app.efficiency_trend_label') }}</p>
+        <div class="flex items-center justify-between mb-3">
+            <p class="section-label">{{ __('app.efficiency_trend_label') }}</p>
+            @if($trendLabel)
+            <span class="mono text-xs font-bold" style="color:{{ $trendColor }};">{{ $trendLabel }}</span>
+            @endif
+        </div>
         <canvas id="efficiencyChart" height="120"></canvas>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -112,11 +137,21 @@
         </div>
     @endif
 
+    {{-- Search --}}
+    <div class="relative mb-4 fade-in fade-in-2">
+        <x-heroicon-o-magnifying-glass class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style="color:#64748b;" />
+        <input type="text" id="fuel-search"
+               placeholder="{{ __('app.search_fuel_logs_ph') }}"
+               oninput="filterFuelLogs()"
+               class="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+               style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.12);">
+    </div>
+
     {{-- Fuel log list --}}
     <p class="section-label mb-3 fade-in fade-in-2">{{ __('app.fillup_history') }}</p>
 
     @php
-        // Build cost-per-km map: sort ascending by km_reading, compute per log
+        // Build cost-per-km map from full collection (not paginated)
         $sortedForCost = $fuelLogs->sortBy('km_reading')->values();
         $costPerKmMap  = [];
         foreach ($sortedForCost as $idx => $l) {
@@ -129,8 +164,9 @@
         }
     @endphp
 
-    @forelse($fuelLogs as $index => $log)
-    <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }}"
+    @forelse($fuelLogsPaged as $index => $log)
+    <div class="glass-bright rounded-2xl p-4 mb-3 border fade-in fade-in-{{ min($index+3,5) }} fuel-log-card"
+         data-search="{{ strtolower(\Carbon\Carbon::parse($log->date)->format('d M Y') . ' ' . ($log->fuel_station ?? '') . ' ' . $log->liters . ' ' . $log->km_reading) }}"
          style="border-color:rgba(0,245,255,0.1);">
 
         {{-- Top row --}}
@@ -215,6 +251,23 @@
         </div>
     @endforelse
 
+    {{-- Pagination --}}
+    @if($fuelLogsPaged->hasPages())
+    <div class="mt-2 mb-4 flex items-center justify-center gap-2">
+        @if($fuelLogsPaged->onFirstPage())
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">← Prev</span>
+        @else
+            <a href="{{ $fuelLogsPaged->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">← Prev</a>
+        @endif
+        <span class="mono text-xs" style="color:#64748b;">{{ $fuelLogsPaged->currentPage() }} / {{ $fuelLogsPaged->lastPage() }}</span>
+        @if($fuelLogsPaged->hasMorePages())
+            <a href="{{ $fuelLogsPaged->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">Next →</a>
+        @else
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">Next →</span>
+        @endif
+    </div>
+    @endif
+
     {{-- Back --}}
     <div class="mt-2">
         <a href="{{ route('vehicles.show', $vehicle) }}"
@@ -225,4 +278,12 @@
     </div>
 
 </div>
+<script>
+function filterFuelLogs() {
+    const q = document.getElementById('fuel-search').value.toLowerCase().trim();
+    document.querySelectorAll('.fuel-log-card').forEach(c => {
+        c.style.display = (!q || c.dataset.search.includes(q)) ? '' : 'none';
+    });
+}
+</script>
 </x-app-layout>

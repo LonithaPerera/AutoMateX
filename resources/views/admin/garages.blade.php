@@ -73,7 +73,7 @@
         @if($garage->photo)
         <img src="{{ asset('storage/' . $garage->photo) }}"
              alt="{{ $garage->name }}"
-             class="w-full object-cover" style="max-height:120px;">
+             loading="lazy" class="w-full object-cover" style="max-height:120px;">
         @else
         <div class="flex items-center justify-center" style="height:60px;background:rgba(168,85,247,0.03);">
             <x-heroicon-o-building-office-2 class="w-7 h-7" style="color:rgba(168,85,247,0.2);" />

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Booking;
 use App\Models\FuelLog;
 use App\Models\Garage;
@@ -84,6 +85,11 @@ class AdminController extends Controller
     public function makeAdmin(User $user)
     {
         $user->update(['role' => 'admin']);
+        ActivityLog::create([
+            'admin_id'    => auth()->id(),
+            'action'      => 'make_admin',
+            'description' => 'Promoted ' . $user->name . ' (' . $user->email . ') to admin',
+        ]);
         return redirect()->route('admin.users')
                          ->with('success', __('app.admin_make_admin_success', ['name' => $user->name]));
     }
@@ -94,6 +100,11 @@ class AdminController extends Controller
             return redirect()->route('admin.users')
                              ->with('error', __('app.admin_cannot_delete_self'));
         }
+        ActivityLog::create([
+            'admin_id'    => auth()->id(),
+            'action'      => 'delete_user',
+            'description' => 'Deleted user ' . $user->name . ' (' . $user->email . ') — role: ' . $user->role,
+        ]);
         $user->delete();
         return redirect()->route('admin.users')
                          ->with('success', __('app.admin_user_deleted'));
@@ -108,7 +119,20 @@ class AdminController extends Controller
     public function toggleGarage(Garage $garage)
     {
         $garage->update(['is_active' => !$garage->is_active]);
+        ActivityLog::create([
+            'admin_id'    => auth()->id(),
+            'action'      => 'toggle_garage',
+            'description' => ($garage->is_active ? 'Activated' : 'Deactivated') . ' garage: ' . $garage->name,
+        ]);
         return back()->with('success', __('app.admin_garage_toggled', ['name' => $garage->name]));
+    }
+
+    public function activityLog()
+    {
+        $logs = ActivityLog::with('admin')
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+        return view('admin.activity', compact('logs'));
     }
 
     public function schedules()

@@ -32,15 +32,17 @@
                     <input type="date" name="date"
                            value="{{ old('date', date('Y-m-d')) }}" required
                            class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('date') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};color-scheme:dark;">
+                    @error('date')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_odometer') }}</label>
                     <input type="number" name="km_reading"
                            value="{{ old('km_reading', $vehicle->mileage) }}"
-                           required placeholder="{{ $vehicle->mileage }}" min="0"
+                           required placeholder="{{ $vehicle->mileage }}" min="{{ $vehicle->mileage }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('km_reading') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('km_reading')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 
@@ -52,7 +54,8 @@
                            value="{{ old('liters') }}"
                            required placeholder="35.5" min="0" step="0.01"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('liters') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('liters')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_cost_lkr') }}</label>
@@ -60,7 +63,8 @@
                            value="{{ old('cost') }}"
                            required placeholder="8500" min="0" step="0.01"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('cost') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('cost')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 
