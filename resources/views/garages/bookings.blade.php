@@ -223,7 +223,7 @@
                 </div>
                 <div class="flex flex-col items-end gap-1 flex-shrink-0">
                     <span class="tag" style="background:{{ $statusColor['bg'] }};color:{{ $statusColor['color'] }};border:1px solid {{ $statusColor['border'] }};">
-                        {{ strtoupper($booking->status) }}
+                        {{ strtoupper(__('app.status_' . $booking->status)) }}
                     </span>
                     @if($isOverdue)
                     <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3);">
@@ -323,7 +323,7 @@
                                 style="background:{{ $booking->status === $status ? $statusColor['bg'] : 'rgba(255,255,255,0.03)' }};
                                        color:{{ $booking->status === $status ? $statusColor['color'] : '#64748b' }};
                                        border-color:{{ $booking->status === $status ? $statusColor['border'] : 'rgba(255,255,255,0.08)' }};">
-                            {{ strtoupper($status) }}
+                            {{ strtoupper(__('app.status_' . $status)) }}
                         </button>
                         @endforeach
                     </div>

@@ -206,7 +206,7 @@
     <div class="vehicle-card">
         <div class="vehicle-card-left">
             <div class="vehicle-name">{{ $vehicle->make }} {{ $vehicle->model }}</div>
-            <div class="vehicle-sub">{{ $vehicle->year }} &nbsp;·&nbsp; {{ strtoupper($vehicle->fuel_type) }}</div>
+            <div class="vehicle-sub">{{ $vehicle->year }} &nbsp;·&nbsp; {{ strtoupper(__('app.fuel_' . $vehicle->fuel_type)) }}</div>
             <div class="vehicle-meta">
                 @if($vehicle->license_plate)
                     <strong>Plate:</strong> {{ $vehicle->license_plate }}<br>

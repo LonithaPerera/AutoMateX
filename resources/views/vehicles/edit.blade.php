@@ -19,28 +19,21 @@
             @csrf
             @method('PUT')
 
-            {{-- Error Messages --}}
-            @if($errors->any())
-                <div class="mb-4 p-3 rounded-xl" style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);">
-                    @foreach($errors->all() as $error)
-                        <p class="text-xs flex items-center gap-1" style="color:#f87171;"><x-heroicon-o-exclamation-triangle class="w-3 h-3 flex-shrink-0" /> {{ $error }}</p>
-                    @endforeach
-                </div>
-            @endif
-
             {{-- Make & Model --}}
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_make') }}</label>
                     <input type="text" name="make" value="{{ old('make', $vehicle->make) }}" required placeholder="{{ __('app.ph_make') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none transition-all"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('make') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('make')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_model') }}</label>
                     <input type="text" name="model" value="{{ old('model', $vehicle->model) }}" required placeholder="{{ __('app.ph_model') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none transition-all"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('model') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('model')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 
@@ -50,13 +43,15 @@
                     <label class="section-label mb-2 block">{{ __('app.field_year') }}</label>
                     <input type="number" name="year" value="{{ old('year', $vehicle->year) }}" required placeholder="2018" min="1990" max="2026"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('year') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('year')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_mileage_km') }}</label>
                     <input type="number" name="mileage" value="{{ old('mileage', $vehicle->mileage) }}" required placeholder="44100" min="0"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('mileage') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('mileage')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 
@@ -109,6 +104,7 @@
                     </label>
                     @endforeach
                 </div>
+                @error('fuel_type')<p class="text-xs mt-2" style="color:#f87171;">{{ $message }}</p>@enderror
             </div>
 
             {{-- Submit --}}

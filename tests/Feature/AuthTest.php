@@ -4,20 +4,21 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function registration_page_loads()
     {
         $response = $this->get('/register');
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_register()
     {
         $response = $this->post('/register', [
@@ -31,14 +32,14 @@ class AuthTest extends TestCase
         $response->assertRedirect('/dashboard');
     }
 
-    /** @test */
+    #[Test]
     public function login_page_loads()
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_login()
     {
         $user = User::factory()->create([
@@ -55,7 +56,7 @@ class AuthTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
-    /** @test */
+    #[Test]
     public function guest_cannot_access_dashboard()
     {
         $response = $this->get('/dashboard');

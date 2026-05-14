@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session Expired — AutoMateX</title>
+    <title>404 — Page Not Found · AutoMateX</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -21,16 +21,16 @@
             border: 1px solid rgba(0,245,255,0.15);
             border-radius: 1.25rem;
             padding: 2.5rem 2rem;
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
             text-align: center;
         }
         .icon {
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             border-radius: 1rem;
-            background: rgba(251,191,36,0.1);
-            border: 1px solid rgba(251,191,36,0.25);
+            background: rgba(0,245,255,0.08);
+            border: 1px solid rgba(0,245,255,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -39,14 +39,16 @@
         .code {
             font-size: 0.7rem;
             letter-spacing: 0.15em;
-            color: #fbbf24;
+            color: #00f5ff;
             text-transform: uppercase;
             margin-bottom: 0.5rem;
+            font-family: 'Courier New', monospace;
         }
         h1 {
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
         }
         p {
             font-size: 0.875rem;
@@ -54,6 +56,7 @@
             line-height: 1.6;
             margin-bottom: 1.75rem;
         }
+        .actions { display: flex; flex-direction: column; gap: 0.75rem; }
         .btn {
             display: inline-block;
             padding: 0.75rem 2rem;
@@ -62,24 +65,43 @@
             font-weight: 600;
             letter-spacing: 0.05em;
             text-decoration: none;
-            background: linear-gradient(135deg, #0066ff, #00f5ff);
-            color: #080c14;
             transition: opacity 0.2s;
         }
-        .btn:hover { opacity: 0.9; }
+        .btn-primary {
+            background: linear-gradient(135deg, #0066ff, #00f5ff);
+            color: #080c14;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #64748b;
+        }
+        .btn:hover { opacity: 0.85; }
+        .brand {
+            font-size: 0.75rem;
+            color: #334155;
+            margin-top: 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+        }
     </style>
 </head>
 <body>
     <div class="card">
         <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fbbf24" aria-hidden="true" width="32" height="32">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#00f5ff" aria-hidden="true" width="32" height="32">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
             </svg>
         </div>
-        <p class="code">419 · Session Expired</p>
-        <h1>Your session timed out</h1>
-        <p>The page token has expired. This usually happens if the page was left open for too long. Go back and try submitting the form again.</p>
-        <a href="javascript:history.back()" class="btn">← Go Back</a>
+        <p class="code">404 · Not Found</p>
+        <h1>Page not found</h1>
+        <p>The page you're looking for doesn't exist or may have been moved. Check the URL and try again.</p>
+        <div class="actions">
+            <a href="javascript:history.back()" class="btn btn-primary">← Go Back</a>
+            <a href="/" class="btn btn-secondary">Go to Home</a>
+        </div>
+        <p class="brand">AutoMateX</p>
     </div>
 </body>
 </html>

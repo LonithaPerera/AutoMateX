@@ -21,11 +21,20 @@
                 {{ $vehicle->year }} · {{ number_format($vehicle->mileage) }} km
             </p>
         </div>
-        <a href="{{ route('fuel.create', $vehicle) }}"
-           class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
-           style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
-            {{ __('app.log_btn') }}
-        </a>
+        <div class="flex flex-col gap-2 items-end">
+            <a href="{{ route('fuel.create', $vehicle) }}"
+               class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
+                {{ __('app.log_btn') }}
+            </a>
+            @if($fuelLogs->isNotEmpty())
+            <a href="{{ route('fuel.pdf', $vehicle) }}"
+               class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);color:#4ade80;">
+                <x-heroicon-o-arrow-down-tray class="w-3.5 h-3.5" />{{ __('app.download_pdf_btn') }}
+            </a>
+            @endif
+        </div>
     </div>
 
     {{-- Summary cards --}}

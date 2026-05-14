@@ -116,7 +116,7 @@
                 </div>
                 <span class="text-xs font-semibold heading tracking-wider px-2 py-0.5 rounded-lg flex-shrink-0"
                       style="background:{{ $apptBg }};color:{{ $apptColor }};border:1px solid {{ $apptBdr }};">
-                    {{ strtoupper($appt->status) }}
+                    {{ strtoupper(__('app.status_' . $appt->status)) }}
                 </span>
             </div>
             @endforeach

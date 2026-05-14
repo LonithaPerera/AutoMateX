@@ -15,17 +15,6 @@
         <p class="text-xs mono mt-1" style="color:#64748b;">{{ $part->part_name }}</p>
     </div>
 
-    @if($errors->any())
-    <div class="rounded-2xl p-3 mb-4 border fade-in fade-in-1"
-         style="background:rgba(248,113,113,0.06);border-color:rgba(248,113,113,0.2);">
-        @foreach($errors->all() as $error)
-            <p class="text-xs flex items-center gap-1 mb-1 last:mb-0" style="color:#f87171;">
-                <x-heroicon-o-exclamation-triangle class="w-3 h-3 flex-shrink-0" /> {{ $error }}
-            </p>
-        @endforeach
-    </div>
-    @endif
-
     <div class="glass-bright rounded-2xl p-5 fade-in fade-in-2 border animate-glow"
          style="border-color:rgba(0,245,255,0.12);">
         <form method="POST" action="{{ route('parts.update', $part) }}">
@@ -39,7 +28,8 @@
                 <input type="text" name="part_name" value="{{ old('part_name', $part->part_name) }}" required
                        placeholder="{{ __('app.ph_part_name') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                       style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('part_name') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                @error('part_name')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -48,7 +38,8 @@
                     <input type="text" name="part_category" value="{{ old('part_category', $part->part_category) }}" required
                            placeholder="{{ __('app.ph_part_category') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('part_category') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('part_category')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_brand') }}</label>
@@ -65,7 +56,8 @@
                     <input type="text" name="oem_part_number" value="{{ old('oem_part_number', $part->oem_part_number) }}" required
                            placeholder="{{ __('app.ph_oem_number_eg') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('oem_part_number') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('oem_part_number')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_alt_number') }}</label>
@@ -93,14 +85,16 @@
                     <input type="text" name="vehicle_make" value="{{ old('vehicle_make', $part->vehicle_make) }}" required
                            placeholder="{{ __('app.ph_make') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('vehicle_make') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('vehicle_make')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_veh_model') }}</label>
                     <input type="text" name="vehicle_model" value="{{ old('vehicle_model', $part->vehicle_model) }}" required
                            placeholder="{{ __('app.ph_model') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('vehicle_model') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('vehicle_model')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 
@@ -110,14 +104,16 @@
                     <input type="number" name="vehicle_year_from" value="{{ old('vehicle_year_from', $part->vehicle_year_from) }}" required
                            placeholder="2010" min="1900" max="2099"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('vehicle_year_from') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('vehicle_year_from')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_year_to') }}</label>
                     <input type="number" name="vehicle_year_to" value="{{ old('vehicle_year_to', $part->vehicle_year_to) }}" required
                            placeholder="2018" min="1900" max="2099"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('vehicle_year_to') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('vehicle_year_to')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
             </div>
 

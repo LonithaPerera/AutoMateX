@@ -536,6 +536,29 @@
     @endif
     @endauth
 
+    <!-- Prevent double-submit on all forms -->
+    <script>
+    document.addEventListener('submit', function (e) {
+        if (e.defaultPrevented) return;
+        var btn = e.target.querySelector('button[type="submit"]');
+        if (btn) {
+            btn.disabled     = true;
+            btn.style.opacity = '0.55';
+            btn.style.cursor  = 'not-allowed';
+        }
+    });
+    // Re-enable on back/forward cache restore
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+            document.querySelectorAll('button[type="submit"]:disabled').forEach(function (btn) {
+                btn.disabled      = false;
+                btn.style.opacity = '';
+                btn.style.cursor  = '';
+            });
+        }
+    });
+    </script>
+
     <!-- PWA Service Worker + Push Notifications -->
     <script>
     const VAPID_PUBLIC_KEY = '{{ config('services.vapid.public_key') }}';

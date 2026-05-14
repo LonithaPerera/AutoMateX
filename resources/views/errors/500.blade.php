@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session Expired — AutoMateX</title>
+    <title>500 — Server Error · AutoMateX</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -18,19 +18,19 @@
         }
         .card {
             background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(0,245,255,0.15);
+            border: 1px solid rgba(248,113,113,0.2);
             border-radius: 1.25rem;
             padding: 2.5rem 2rem;
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
             text-align: center;
         }
         .icon {
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             border-radius: 1rem;
-            background: rgba(251,191,36,0.1);
-            border: 1px solid rgba(251,191,36,0.25);
+            background: rgba(248,113,113,0.08);
+            border: 1px solid rgba(248,113,113,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -39,14 +39,16 @@
         .code {
             font-size: 0.7rem;
             letter-spacing: 0.15em;
-            color: #fbbf24;
+            color: #f87171;
             text-transform: uppercase;
             margin-bottom: 0.5rem;
+            font-family: 'Courier New', monospace;
         }
         h1 {
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
         }
         p {
             font-size: 0.875rem;
@@ -54,6 +56,7 @@
             line-height: 1.6;
             margin-bottom: 1.75rem;
         }
+        .actions { display: flex; flex-direction: column; gap: 0.75rem; }
         .btn {
             display: inline-block;
             padding: 0.75rem 2rem;
@@ -62,24 +65,43 @@
             font-weight: 600;
             letter-spacing: 0.05em;
             text-decoration: none;
-            background: linear-gradient(135deg, #0066ff, #00f5ff);
-            color: #080c14;
             transition: opacity 0.2s;
         }
-        .btn:hover { opacity: 0.9; }
+        .btn-primary {
+            background: linear-gradient(135deg, #0066ff, #00f5ff);
+            color: #080c14;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #64748b;
+        }
+        .btn:hover { opacity: 0.85; }
+        .brand {
+            font-size: 0.75rem;
+            color: #334155;
+            margin-top: 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+        }
     </style>
 </head>
 <body>
     <div class="card">
         <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fbbf24" aria-hidden="true" width="32" height="32">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#f87171" aria-hidden="true" width="32" height="32">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
             </svg>
         </div>
-        <p class="code">419 · Session Expired</p>
-        <h1>Your session timed out</h1>
-        <p>The page token has expired. This usually happens if the page was left open for too long. Go back and try submitting the form again.</p>
-        <a href="javascript:history.back()" class="btn">← Go Back</a>
+        <p class="code">500 · Server Error</p>
+        <h1>Something went wrong</h1>
+        <p>An unexpected error occurred on our end. Please try again in a moment. If the problem persists, contact support.</p>
+        <div class="actions">
+            <a href="javascript:location.reload()" class="btn btn-primary">↺ Try Again</a>
+            <a href="/" class="btn btn-secondary">Go to Home</a>
+        </div>
+        <p class="brand">AutoMateX</p>
     </div>
 </body>
 </html>

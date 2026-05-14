@@ -22,7 +22,8 @@
                 <input type="text" name="name" value="{{ old('name') }}" required
                        placeholder="{{ __('app.ph_garage_name') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                       style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('name') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                @error('name')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -31,7 +32,8 @@
                     <input type="text" name="city" value="{{ old('city') }}" required
                            placeholder="{{ __('app.ph_city') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('city') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('city')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_phone') }}</label>

@@ -32,50 +32,38 @@
         </div>
     @endif
 
+    {{-- Live search (only shown when there are vehicles) --}}
+    @if($vehicles->count() > 1)
+    <div class="mb-4 fade-in fade-in-1">
+        <div class="relative">
+            <x-heroicon-o-magnifying-glass class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style="color:#475569;" />
+            <input type="text" id="vehicle-search"
+                   placeholder="{{ __('app.search_vehicles_ph') }}"
+                   oninput="filterVehicles(this.value)"
+                   class="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                   style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.12);">
+        </div>
+    </div>
+    @endif
+
     @forelse($vehicles as $index => $vehicle)
     @php
-        // ── Multi-factor health score ──────────────────────────────────────
-        $mileageScore = max(0, (int) round(40 - ($vehicle->mileage / 100000) * 40));
-
-        $lastSvc = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
-            ->orderBy('service_date', 'desc')->first();
-        if (!$lastSvc) {
-            $svcScore = 10;
-        } else {
-            $daysSince = \Carbon\Carbon::parse($lastSvc->service_date)->diffInDays(now());
-            $svcScore  = max(0, min(40, (int) round(40 - ($daysSince / 365) * 40)));
-        }
-
-        $schedules = \App\Models\MaintenanceSchedule::all();
-        $overdueCount = 0;
-        $overdueServiceName = null;
-        $dueSoonServiceName = null;
-        foreach ($schedules as $sched) {
-            $lastMaint = \App\Models\ServiceLog::where('vehicle_id', $vehicle->id)
-                ->where('service_type', 'like', '%' . explode(' ', $sched->service_name)[0] . '%')
-                ->orderBy('mileage_at_service', 'desc')->first();
-            $lastKm = $lastMaint ? $lastMaint->mileage_at_service : 0;
-            $kmLeft = ($lastKm + $sched->interval_km) - $vehicle->mileage;
-            if ($kmLeft <= 0) {
-                $overdueCount++;
-                if (!$overdueServiceName) $overdueServiceName = explode(' ', $sched->service_name)[0];
-            } elseif ($kmLeft <= 500 && !$dueSoonServiceName) {
-                $dueSoonServiceName = explode(' ', $sched->service_name)[0];
-            }
-        }
-        $maintScore = max(0, 20 - ($overdueCount * 10));
-        $health     = $mileageScore + $svcScore + $maintScore;
-
-        $ringColor = $health >= 70 ? '#00f5ff' : ($health >= 40 ? '#ff6b00' : '#f87171');
-        $ringGlow  = $health >= 70 ? 'rgba(0,245,255,0.3)' : ($health >= 40 ? 'rgba(255,107,0,0.3)' : 'rgba(248,113,113,0.3)');
-
-        // Pre-compute stats
-        $avg        = \App\Models\FuelLog::where('vehicle_id',$vehicle->id)->whereNotNull('km_per_liter')->avg('km_per_liter');
-        $svc        = \App\Models\ServiceLog::where('vehicle_id',$vehicle->id)->count();
-        $totalSpend = \App\Models\ServiceLog::where('vehicle_id',$vehicle->id)->sum('cost')
-                    + \App\Models\FuelLog::where('vehicle_id',$vehicle->id)->sum('cost');
+        $s                  = $vehicleStats[$vehicle->id];
+        $lastSvc            = $s['lastSvc'];
+        $avg                = $s['avg'];
+        $svc                = $s['svc'];
+        $totalSpend         = $s['totalSpend'];
+        $overdueServiceName = $s['overdueServiceName'];
+        $dueSoonServiceName = $s['dueSoonServiceName'];
+        $mileageScore       = $s['mileageScore'];
+        $svcScore           = $s['svcScore'];
+        $maintScore         = $s['maintScore'];
+        $health             = $s['health'];
+        $ringColor          = $s['ringColor'];
+        $ringGlow           = $s['ringGlow'];
     @endphp
-    <div class="glass-bright rounded-2xl overflow-hidden mb-4 vehicle-card fade-in fade-in-{{ $index + 2 }} animate-glow border">
+    <div class="glass-bright rounded-2xl overflow-hidden mb-4 vehicle-card fade-in fade-in-{{ $index + 2 }} animate-glow border"
+         data-make="{{ strtolower($vehicle->make) }}" data-model="{{ strtolower($vehicle->model) }}" data-year="{{ $vehicle->year }}">
 
         {{-- Vehicle photo strip --}}
         @if($vehicle->image)
@@ -92,7 +80,7 @@
             <div>
                 <div class="flex items-center gap-2 mb-1">
                     <span class="tag" style="background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.25);">{{ __('app.active_tag') }}</span>
-                    <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper($vehicle->fuel_type) }}</span>
+                    <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper(__('app.fuel_' . $vehicle->fuel_type)) }}</span>
                     @if($overdueServiceName)
                     <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3);">{{ strtoupper($overdueServiceName) }} {{ strtoupper(__('app.overdue_status')) }}</span>
                     @elseif($dueSoonServiceName)
@@ -221,6 +209,12 @@
         </div>
     @endforelse
 
+    {{-- Search no-results message --}}
+    <div id="search-empty" class="hidden text-center py-8">
+        <x-heroicon-o-magnifying-glass class="w-8 h-8 mx-auto mb-2" style="color:#334155;" />
+        <p class="text-sm" style="color:#64748b;">{{ __('app.search_vehicles_empty') }}</p>
+    </div>
+
 </div>
 </x-app-layout>
 <style>
@@ -228,6 +222,20 @@
 .ring-tip { opacity: 0; transition: opacity 0.2s ease; }
 </style>
 <script>
+function filterVehicles(q) {
+    q = q.toLowerCase().trim();
+    var cards = document.querySelectorAll('.vehicle-card');
+    var visible = 0;
+    cards.forEach(function (card) {
+        var text = (card.dataset.make || '') + ' ' + (card.dataset.model || '') + ' ' + (card.dataset.year || '');
+        var show = !q || text.includes(q);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    var empty = document.getElementById('search-empty');
+    if (empty) empty.style.display = (q && visible === 0) ? '' : 'none';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.health-ring').forEach(function (ring) {
         var target = parseInt(ring.dataset.health, 10);

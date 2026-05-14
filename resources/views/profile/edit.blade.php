@@ -42,7 +42,7 @@
                 <p class="heading font-bold text-white text-base">{{ $user->name }}</p>
                 <p class="text-xs mt-0.5" style="color:#64748b;">{{ $user->email }}</p>
                 <span class="tag mt-1 inline-block" style="background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.25);">
-                    {{ strtoupper($user->role ?? 'USER') }}
+                    {{ $user->role ? strtoupper(__('app.role_' . $user->role)) : 'USER' }}
                 </span>
             </div>
         </div>

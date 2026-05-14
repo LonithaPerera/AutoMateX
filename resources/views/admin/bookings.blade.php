@@ -64,7 +64,7 @@
             <button onclick="setStatusFilter('{{ $st }}')" id="bfilter-{{ $st }}"
                     class="flex-1 py-1.5 rounded-xl text-xs font-semibold heading tracking-wider transition-all"
                     style="background:{{ $st === 'all' ? 'rgba(168,85,247,0.12)' : 'rgba(255,255,255,0.04)' }};border:1px solid {{ $st === 'all' ? 'rgba(168,85,247,0.3)' : 'rgba(255,255,255,0.08)' }};color:{{ $st === 'all' ? '#a855f7' : '#64748b' }};">
-                {{ strtoupper($st === 'all' ? __('app.admin_filter_all') : $st) }}
+                {{ strtoupper($st === 'all' ? __('app.admin_filter_all') : __('app.status_' . $st)) }}
             </button>
             @endforeach
         </div>
@@ -94,7 +94,7 @@
                 </p>
             </div>
             <span class="tag flex-shrink-0 ml-2" style="background:{{ $sc['bg'] }};color:{{ $sc['color'] }};border:1px solid {{ $sc['border'] }};">
-                {{ strtoupper($booking->status) }}
+                {{ strtoupper(__('app.status_' . $booking->status)) }}
             </span>
         </div>
 
@@ -170,6 +170,23 @@
         <p class="heading font-bold text-white">{{ __('app.no_bookings_admin') }}</p>
     </div>
     @endforelse
+
+    {{-- Pagination --}}
+    @if($bookings->hasPages())
+    <div class="mt-4 mb-2 flex items-center justify-center gap-2">
+        @if($bookings->onFirstPage())
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">{{ __('app.pagination_prev') }}</span>
+        @else
+            <a href="{{ $bookings->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(168,85,247,0.08);color:#a855f7;border:1px solid rgba(168,85,247,0.2);">{{ __('app.pagination_prev') }}</a>
+        @endif
+        <span class="mono text-xs" style="color:#64748b;">{{ $bookings->currentPage() }} / {{ $bookings->lastPage() }}</span>
+        @if($bookings->hasMorePages())
+            <a href="{{ $bookings->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(168,85,247,0.08);color:#a855f7;border:1px solid rgba(168,85,247,0.2);">{{ __('app.pagination_next') }}</a>
+        @else
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">{{ __('app.pagination_next') }}</span>
+        @endif
+    </div>
+    @endif
 
 </div>
 

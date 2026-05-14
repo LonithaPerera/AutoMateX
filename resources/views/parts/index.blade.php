@@ -143,7 +143,7 @@
                     </p>
                 </div>
                 <span class="tag" style="background:rgba(0,245,255,0.08);color:rgba(0,245,255,0.7);border:1px solid rgba(0,245,255,0.15);">
-                    {{ strtoupper($part->part_category ?? 'PART') }}
+                    {{ strtoupper($part->part_category ?? __('app.part_fallback_label')) }}
                 </span>
             </div>
 

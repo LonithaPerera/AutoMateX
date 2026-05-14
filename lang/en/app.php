@@ -911,4 +911,40 @@ return [
     'purpose_personal'     => 'Personal',
     'purpose_other'        => 'Other',
     'download_pdf_btn'     => 'Download PDF',
+
+    // ─── Admin activity log action labels ────────────────────────────────────
+    'action_make_admin'    => 'Make Admin',
+    'action_delete_user'   => 'Delete User',
+    'action_toggle_garage' => 'Toggle Garage',
+
+    // ─── Status / type / role badge translations ──────────────────────────────
+    'status_pending'       => 'Pending',
+    'status_confirmed'     => 'Confirmed',
+    'status_completed'     => 'Completed',
+    'status_cancelled'     => 'Cancelled',
+    'log_type_maintenance' => 'Maintenance',
+    'log_type_repair'      => 'Repair',
+    'log_type_inspection'  => 'Inspection',
+    'role_admin'           => 'Admin',
+    'role_garage'          => 'Garage',
+    'role_vehicle_owner'   => 'Vehicle Owner',
+    'part_fallback_label'  => 'Part',
+    'last_signed_in'       => 'Last signed in',
+    'print_qr_btn'         => 'Print QR',
+
+    // ─── Document expiry notifications ───────────────────────────────────────
+    'doc_expiry_notif_title_expired' => 'Document Expired',
+    'doc_expiry_notif_title_soon'    => 'Document Expiring Soon',
+    'doc_expiry_notif_msg_expired'   => ':doc for your :vehicle has expired. Please renew immediately.',
+    'doc_expiry_notif_msg_soon'      => ':doc for your :vehicle expires in :days day(s). Renew before it lapses.',
+
+    // ─── Dashboard expiry banner ──────────────────────────────────────────────
+    'doc_expiry_banner_label'   => 'DOCUMENT ALERT',
+    'doc_expiry_banner_expired' => ':doc has expired',
+    'doc_expiry_banner_soon'    => ':doc expires in :days day(s)',
+    'view_vehicle_btn'          => 'View Vehicle',
+
+    // ─── Vehicle index search ─────────────────────────────────────────────────
+    'search_vehicles_ph'    => 'Search by make, model or year…',
+    'search_vehicles_empty' => 'No vehicles match your search.',
 ];

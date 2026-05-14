@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FuelLog;
 use App\Models\Vehicle;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -130,5 +131,25 @@ class FuelLogController extends Controller
         $fuelLog->delete();
         return redirect()->route('fuel.index', $vehicle)
                          ->with('success', __('app.fuel_log_deleted'));
+    }
+
+    // Export fuel history as PDF
+    public function exportPdf(Vehicle $vehicle)
+    {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $fuelLogs      = $vehicle->fuelLogs()->orderBy('date', 'desc')->get();
+        $totalCost     = $fuelLogs->sum('cost');
+        $totalLiters   = $fuelLogs->sum('liters');
+        $avgKmPerLiter = $fuelLogs->whereNotNull('km_per_liter')->avg('km_per_liter');
+
+        $pdf = Pdf::loadView('fuel.pdf', compact('vehicle', 'fuelLogs', 'totalCost', 'totalLiters', 'avgKmPerLiter'))
+                  ->setPaper('a4', 'portrait');
+
+        $filename = 'fuel-history-' . strtolower($vehicle->make) . '-' . strtolower($vehicle->model) . '-' . $vehicle->year . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

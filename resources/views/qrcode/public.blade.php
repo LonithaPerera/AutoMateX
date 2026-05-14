@@ -204,7 +204,7 @@
                     $fuelColors = ['petrol'=>'#6699ff','diesel'=>'#fb923c','hybrid'=>'#4ade80','electric'=>'#a78bfa'];
                     $fuelColor  = $fuelColors[strtolower($vehicle->fuel_type ?? 'petrol')] ?? '#94a3b8';
                 @endphp
-                <div class="stat-val" style="color:{{ $fuelColor }};font-size:15px;">{{ strtoupper($vehicle->fuel_type ?? '—') }}</div>
+                <div class="stat-val" style="color:{{ $fuelColor }};font-size:15px;">{{ $vehicle->fuel_type ? strtoupper(__('app.fuel_' . $vehicle->fuel_type)) : '—' }}</div>
                 <div class="stat-lbl">{{ __('app.pub_fuel_type') }}</div>
             </div>
         </div>
@@ -248,7 +248,7 @@
                 </div>
                 @if($log->type)
                 <span class="type-tag" style="background:rgba(0,245,255,0.08);color:rgba(0,245,255,0.7);border:1px solid rgba(0,245,255,0.15);">
-                    {{ strtoupper($log->type) }}
+                    {{ strtoupper(__('app.log_type_' . $log->type)) }}
                 </span>
                 @endif
             </div>

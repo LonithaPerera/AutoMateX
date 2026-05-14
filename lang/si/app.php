@@ -860,4 +860,40 @@ return [
     'purpose_personal'     => 'පෞද්ගලික',
     'purpose_other'        => 'වෙනත්',
     'download_pdf_btn'     => 'PDF බාගන්න',
+
+    // ─── Admin activity log action labels ────────────────────────────────────
+    'action_make_admin'    => 'පරිපාලක කිරීම',
+    'action_delete_user'   => 'පරිශීලකයා මකා දැමීම',
+    'action_toggle_garage' => 'ගරාජ් තත්ත්වය වෙනස් කිරීම',
+
+    // ─── Status / type / role badge translations ──────────────────────────────
+    'status_pending'       => 'අපේක්ෂිත',
+    'status_confirmed'     => 'තහවුරු',
+    'status_completed'     => 'සම්පූර්ණ',
+    'status_cancelled'     => 'අවලංගු',
+    'log_type_maintenance' => 'නඩත්තු',
+    'log_type_repair'      => 'අලුත්වැඩියාව',
+    'log_type_inspection'  => 'පරීක්ෂාව',
+    'role_admin'           => 'පරිපාලක',
+    'role_garage'          => 'ගරාජ්',
+    'role_vehicle_owner'   => 'වාහන හිමිකරු',
+    'part_fallback_label'  => 'කොටස',
+    'last_signed_in'       => 'අවසන් ලොගින්',
+    'print_qr_btn'         => 'QR මුද්‍රණය',
+
+    // ─── Document expiry notifications ───────────────────────────────────────
+    'doc_expiry_notif_title_expired' => 'ලේඛනය කල් ඉකුත් විය',
+    'doc_expiry_notif_title_soon'    => 'ලේඛනය ඉක්මනින් කල් ඉකුත් වේ',
+    'doc_expiry_notif_msg_expired'   => ':vehicle සඳහා :doc කල් ඉකුත් වී ඇත. වහාම අලුත් කරන්න.',
+    'doc_expiry_notif_msg_soon'      => ':vehicle සඳහා :doc දින :days කින් කල් ඉකුත් වේ. කලින් අලුත් කරන්න.',
+
+    // ─── Dashboard expiry banner ──────────────────────────────────────────────
+    'doc_expiry_banner_label'   => 'ලේඛන අනතුරු ඇඟවීම',
+    'doc_expiry_banner_expired' => ':doc කල් ඉකුත් විය',
+    'doc_expiry_banner_soon'    => ':doc දින :days කින් කල් ඉකුත් වේ',
+    'view_vehicle_btn'          => 'වාහනය බලන්න',
+
+    // ─── Vehicle index search ─────────────────────────────────────────────────
+    'search_vehicles_ph'    => 'සෙවීම: නිෂ්පාදකය, ආකෘතිය හෝ වර්ෂය…',
+    'search_vehicles_empty' => 'ඔබගේ සෙවුමට ගැලපෙන වාහන නොමැත.',
 ];

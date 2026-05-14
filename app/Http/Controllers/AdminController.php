@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\FuelLog;
 use App\Models\Garage;
 use App\Models\MaintenanceSchedule;
+use App\Models\AppNotification;
 use App\Models\ServiceLog;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -44,20 +45,19 @@ class AdminController extends Controller
             'cancelled' => Booking::where('status', 'cancelled')->count(),
         ];
 
-        // Chart 2 — Monthly bookings (last 6 months)
-        $monthlyRaw = Booking::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count')
-            ->where('created_at', '>=', now()->subMonths(5)->startOfMonth())
-            ->groupByRaw('YEAR(created_at), MONTH(created_at)')
-            ->get()
-            ->keyBy(fn($r) => $r->year . '-' . $r->month);
+        // Chart 2 — Monthly bookings (last 6 months, database-agnostic)
+        $recentBookings = Booking::where('created_at', '>=', now()->subMonths(5)->startOfMonth())
+            ->get(['created_at'])
+            ->groupBy(fn($b) => $b->created_at->format('Y-n'))
+            ->map(fn($g) => $g->count());
 
         $monthlyBookings = [];
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $key  = $date->year . '-' . $date->month;
+            $key  = $date->format('Y-n');
             $monthlyBookings[] = [
                 'label' => $date->format('M Y'),
-                'count' => (int) ($monthlyRaw->get($key)?->count ?? 0),
+                'count' => (int) ($recentBookings->get($key) ?? 0),
             ];
         }
 
@@ -175,22 +175,41 @@ class AdminController extends Controller
     {
         $request->validate(['status' => 'required|in:pending,confirmed,completed,cancelled']);
         $booking->update(['status' => $request->status]);
+
+        // Notify vehicle owner
+        $booking->load('vehicle.user', 'garage');
+        $notifMessages = [
+            'confirmed' => ['title' => 'Booking Confirmed',  'msg' => 'Admin confirmed your ' . $booking->service_type . ' at ' . ($booking->garage->name ?? 'garage')],
+            'completed' => ['title' => 'Service Completed',  'msg' => 'Admin marked your ' . $booking->service_type . ' as completed'],
+            'cancelled' => ['title' => 'Booking Cancelled',  'msg' => 'Admin cancelled your booking for ' . $booking->service_type],
+        ];
+        if (isset($notifMessages[$request->status]) && optional($booking->vehicle)->user) {
+            AppNotification::create([
+                'user_id' => $booking->vehicle->user->id,
+                'type'    => 'booking_' . $request->status,
+                'title'   => $notifMessages[$request->status]['title'],
+                'message' => $notifMessages[$request->status]['msg'],
+                'url'     => route('bookings.show', $booking),
+            ]);
+        }
+
         return back()->with('success', __('app.admin_booking_status_updated'));
     }
 
     public function bookings()
     {
+        // Stats always from full DB, not paginated collection
+        $stats = [
+            'total'     => Booking::count(),
+            'pending'   => Booking::where('status', 'pending')->count(),
+            'confirmed' => Booking::where('status', 'confirmed')->count(),
+            'completed' => Booking::where('status', 'completed')->count(),
+            'cancelled' => Booking::where('status', 'cancelled')->count(),
+        ];
+
         $bookings = Booking::with(['vehicle.user', 'garage'])
                            ->orderBy('created_at', 'desc')
-                           ->get();
-
-        $stats = [
-            'total'     => $bookings->count(),
-            'pending'   => $bookings->where('status', 'pending')->count(),
-            'confirmed' => $bookings->where('status', 'confirmed')->count(),
-            'completed' => $bookings->where('status', 'completed')->count(),
-            'cancelled' => $bookings->where('status', 'cancelled')->count(),
-        ];
+                           ->paginate(20);
 
         return view('admin.bookings', compact('bookings', 'stats'));
     }

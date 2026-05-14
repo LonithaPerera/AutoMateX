@@ -6,13 +6,14 @@ use App\Models\MaintenanceSchedule;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SuggestionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function suggestion_page_loads_for_vehicle()
     {
         $user    = User::factory()->create();
@@ -30,7 +31,7 @@ class SuggestionTest extends TestCase
         $response->assertSee('Oil Change');
     }
 
-    /** @test */
+    #[Test]
     public function suggestion_shows_overdue_when_past_interval()
     {
         $user    = User::factory()->create();

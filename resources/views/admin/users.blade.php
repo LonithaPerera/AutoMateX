@@ -30,7 +30,7 @@
             <button onclick="setFilter('{{ $role }}')" id="filter-{{ $role }}"
                     class="filter-btn flex-1 py-1.5 rounded-xl text-xs font-semibold heading tracking-wider transition-all"
                     style="background:{{ $role === 'all' ? 'rgba(0,245,255,0.12)' : 'rgba(255,255,255,0.04)' }};border:1px solid {{ $role === 'all' ? 'rgba(0,245,255,0.3)' : 'rgba(255,255,255,0.08)' }};color:{{ $role === 'all' ? '#00f5ff' : '#64748b' }};">
-                {{ $role === 'all' ? __('app.admin_filter_all') : strtoupper(str_replace('_',' ',$role)) }}
+                {{ $role === 'all' ? __('app.admin_filter_all') : strtoupper(__('app.role_' . $role)) }}
             </button>
             @endforeach
         </div>
@@ -96,7 +96,7 @@
                 </div>
             </div>
             <span class="tag flex-shrink-0" style="background:{{ $roleColor['bg'] }};color:{{ $roleColor['color'] }};border:1px solid {{ $roleColor['border'] }};">
-                {{ strtoupper(str_replace('_',' ',$user->role)) }}
+                {{ strtoupper(__('app.role_' . $user->role)) }}
             </span>
         </div>
 

@@ -5,13 +5,14 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PartsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function parts_page_loads()
     {
         $user     = User::factory()->create();
@@ -19,7 +20,7 @@ class PartsTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_search_parts_by_make()
     {
         $user = User::factory()->create();
@@ -43,12 +44,19 @@ class PartsTest extends TestCase
         $response->assertSee('90915-03003');
     }
 
-    /** @test */
+    #[Test]
     public function search_returns_no_results_for_unknown_make()
     {
         $user     = User::factory()->create();
         $response = $this->actingAs($user)->get('/parts?make=UnknownBrand');
         $response->assertStatus(200);
         $response->assertSee('0');
+    }
+
+    #[Test]
+    public function guest_cannot_access_parts()
+    {
+        $response = $this->get('/parts');
+        $response->assertRedirect('/login');
     }
 }

@@ -52,7 +52,13 @@
                     <div class="flex items-center justify-between gap-2 mb-0.5">
                         <span class="tag text-xs"
                               style="background:rgba(255,255,255,0.04);color:{{ $c['icon'] }};border:1px solid {{ $c['border'] }};">
-                            {{ strtoupper(str_replace('_', ' ', $log->action)) }}
+                            @php
+                                $actionKey = 'app.action_' . $log->action;
+                                $actionLabel = \Illuminate\Support\Facades\Lang::has($actionKey)
+                                    ? __($actionKey)
+                                    : str_replace('_', ' ', $log->action);
+                            @endphp
+                            {{ strtoupper($actionLabel) }}
                         </span>
                         <p class="mono text-xs flex-shrink-0" style="color:#475569;">
                             {{ $log->created_at->format('d M Y · H:i') }}

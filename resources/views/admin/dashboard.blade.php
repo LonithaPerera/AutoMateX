@@ -142,7 +142,7 @@
                 </div>
             </div>
             <span class="tag" style="background:{{ $roleColor['bg'] }};color:{{ $roleColor['color'] }};border:1px solid {{ $roleColor['border'] }};">
-                {{ strtoupper(str_replace('_',' ',$user->role)) }}
+                {{ strtoupper(__('app.role_' . $user->role)) }}
             </span>
         </div>
         @endforeach
@@ -180,7 +180,7 @@
                 </p>
             </div>
             <span class="tag" style="background:{{ $sc['bg'] }};color:{{ $sc['color'] }};border:1px solid {{ $sc['border'] }};">
-                {{ strtoupper($booking->status) }}
+                {{ strtoupper(__('app.status_' . $booking->status)) }}
             </span>
         </div>
         @empty

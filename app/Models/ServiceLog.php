@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceLog extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'vehicle_id',
         'service_type',
@@ -21,7 +24,6 @@ class ServiceLog extends Model
         'service_date' => 'date',
     ];
 
-    // A service log belongs to a vehicle
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);

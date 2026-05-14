@@ -1,6 +1,9 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\MaintenanceSchedule;
+use App\Models\ServiceLog;
 use App\Models\Vehicle;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -9,8 +12,60 @@ class VehicleController extends Controller
 {
     public function index()
     {
-        $vehicles = Auth::user()->vehicles;
-        return view('vehicles.index', compact('vehicles'));
+        $vehicles = Auth::user()->vehicles()
+            ->with([
+                'serviceLogs' => fn($q) => $q->orderBy('service_date', 'desc'),
+                'fuelLogs'    => fn($q) => $q->orderBy('km_reading', 'desc'),
+            ])
+            ->get();
+
+        $schedules      = MaintenanceSchedule::all();
+        $allServiceLogs = ServiceLog::whereIn('vehicle_id', $vehicles->pluck('id'))->get();
+
+        $vehicleStats = $vehicles->map(function ($vehicle) use ($schedules, $allServiceLogs) {
+            $vehicleLogs = $allServiceLogs->where('vehicle_id', $vehicle->id);
+
+            $lastSvc    = $vehicleLogs->sortByDesc('service_date')->first();
+            $avg        = $vehicle->fuelLogs->whereNotNull('km_per_liter')->avg('km_per_liter');
+            $svc        = $vehicleLogs->count();
+            $totalSpend = $vehicleLogs->sum('cost') + $vehicle->fuelLogs->sum('cost');
+
+            $overdueCount       = 0;
+            $overdueServiceName = null;
+            $dueSoonServiceName = null;
+
+            foreach ($schedules as $sched) {
+                $keyword   = explode(' ', $sched->service_name)[0];
+                $lastMaint = $vehicleLogs
+                    ->filter(fn($l) => stripos($l->service_type, $keyword) !== false)
+                    ->sortByDesc('mileage_at_service')
+                    ->first();
+                $lastKm = $lastMaint ? $lastMaint->mileage_at_service : 0;
+                $kmLeft = ($lastKm + $sched->interval_km) - $vehicle->mileage;
+                if ($kmLeft <= 0) {
+                    $overdueCount++;
+                    if (!$overdueServiceName) $overdueServiceName = $keyword;
+                } elseif ($kmLeft <= 500 && !$dueSoonServiceName) {
+                    $dueSoonServiceName = $keyword;
+                }
+            }
+
+            $mileageScore = max(0, (int) round(40 - ($vehicle->mileage / 100000) * 40));
+            $svcScore     = !$lastSvc ? 10 : max(0, min(40, (int) round(40 - (Carbon::parse($lastSvc->service_date)->diffInDays(now()) / 365) * 40)));
+            $maintScore   = max(0, 20 - ($overdueCount * 10));
+            $health       = $mileageScore + $svcScore + $maintScore;
+            $ringColor    = $health >= 70 ? '#00f5ff' : ($health >= 40 ? '#ff6b00' : '#f87171');
+            $ringGlow     = $health >= 70 ? 'rgba(0,245,255,0.3)' : ($health >= 40 ? 'rgba(255,107,0,0.3)' : 'rgba(248,113,113,0.3)');
+
+            return compact(
+                'lastSvc', 'avg', 'svc', 'totalSpend',
+                'overdueServiceName', 'dueSoonServiceName',
+                'mileageScore', 'svcScore', 'maintScore',
+                'health', 'ringColor', 'ringGlow'
+            );
+        })->keyBy(fn($_, $i) => $vehicles[$i]->id);
+
+        return view('vehicles.index', compact('vehicles', 'vehicleStats'));
     }
 
     public function create()
@@ -80,6 +135,10 @@ class VehicleController extends Controller
 
     public function show(Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
         $schedules   = \App\Models\MaintenanceSchedule::all();
         $nextService = null;
         $minKmLeft   = PHP_INT_MAX;

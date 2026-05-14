@@ -860,4 +860,40 @@ return [
     'purpose_personal'     => 'தனிப்பட்டது',
     'purpose_other'        => 'பிற',
     'download_pdf_btn'     => 'PDF பதிவிறக்கு',
+
+    // ─── Admin activity log action labels ────────────────────────────────────
+    'action_make_admin'    => 'நிர்வாகியாக்கு',
+    'action_delete_user'   => 'பயனரை நீக்கு',
+    'action_toggle_garage' => 'கேரேஜ் நிலை மாற்று',
+
+    // ─── Status / type / role badge translations ──────────────────────────────
+    'status_pending'       => 'நிலுவையில்',
+    'status_confirmed'     => 'உறுதிப்படுத்தப்பட்டது',
+    'status_completed'     => 'முடிந்தது',
+    'status_cancelled'     => 'ரத்து செய்யப்பட்டது',
+    'log_type_maintenance' => 'பராமரிப்பு',
+    'log_type_repair'      => 'பழுதுபார்ப்பு',
+    'log_type_inspection'  => 'ஆய்வு',
+    'role_admin'           => 'நிர்வாகி',
+    'role_garage'          => 'கேரேஜ்',
+    'role_vehicle_owner'   => 'வாகன உரிமையாளர்',
+    'part_fallback_label'  => 'பாகம்',
+    'last_signed_in'       => 'கடைசியாக உள்நுழைந்தது',
+    'print_qr_btn'         => 'QR அச்சிடு',
+
+    // ─── Document expiry notifications ───────────────────────────────────────
+    'doc_expiry_notif_title_expired' => 'ஆவணம் காலாவதியானது',
+    'doc_expiry_notif_title_soon'    => 'ஆவணம் விரைவில் காலாவதியாகும்',
+    'doc_expiry_notif_msg_expired'   => ':vehicle-க்கான :doc காலாவதியானது. உடனடியாக புதுப்பிக்கவும்.',
+    'doc_expiry_notif_msg_soon'      => ':vehicle-க்கான :doc :days நாட்களில் காலாவதியாகும். முன்னதாக புதுப்பிக்கவும்.',
+
+    // ─── Dashboard expiry banner ──────────────────────────────────────────────
+    'doc_expiry_banner_label'   => 'ஆவண எச்சரிக்கை',
+    'doc_expiry_banner_expired' => ':doc காலாவதியானது',
+    'doc_expiry_banner_soon'    => ':doc :days நாட்களில் காலாவதியாகும்',
+    'view_vehicle_btn'          => 'வாகனத்தை பார்',
+
+    // ─── Vehicle index search ─────────────────────────────────────────────────
+    'search_vehicles_ph'    => 'தயாரிப்பு, மாடல் அல்லது ஆண்டு தேடுங்கள்…',
+    'search_vehicles_empty' => 'உங்கள் தேடலுக்கு பொருந்தும் வாகனங்கள் இல்லை.',
 ];

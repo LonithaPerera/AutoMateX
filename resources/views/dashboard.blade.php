@@ -27,6 +27,13 @@
             <p class="text-slate-400 text-sm mt-0.5">
                 {{ $vehicles->count() }} {{ __('app.vehicles_active') }}
             </p>
+            @php $prevLogin = session('prev_login_at'); @endphp
+            @if($prevLogin)
+            <p class="text-xs mt-0.5" style="color:#334155;">
+                <x-heroicon-o-clock class="w-3 h-3 inline-block mr-0.5 align-middle" style="color:#334155;" />
+                {{ __('app.last_signed_in') }} {{ \Carbon\Carbon::parse($prevLogin)->diffForHumans() }}
+            </p>
+            @endif
             {{-- #3 Last activity --}}
             @if($lastActivity)
             <p class="text-xs mt-1" style="color:#475569;">
@@ -89,6 +96,43 @@
             </div>
         @endif
 
+        {{-- DOCUMENT EXPIRY ALERT --}}
+        @if($expiringDocVehicle)
+        @php
+            $isExpired = $expiringDocAlert['status'] === 'expired';
+            $alertBg     = $isExpired ? 'rgba(248,113,113,0.1)'  : 'rgba(255,107,0,0.1)';
+            $alertBorder = $isExpired ? 'rgba(248,113,113,0.35)' : 'rgba(255,107,0,0.35)';
+            $alertColor  = $isExpired ? '#f87171'                : '#ff6b00';
+        @endphp
+        <div class="fade-in fade-in-2 rounded-2xl p-4 mb-4 border"
+             style="background:{{ $alertBg }};border-color:{{ $alertBorder }};">
+            <div class="flex items-start gap-3">
+                <div class="w-11 h-11 rounded-xl flex-shrink-0 flex items-center justify-center"
+                     style="background:rgba(255,255,255,0.05);border:1px solid {{ $alertBorder }};">
+                    <x-heroicon-o-shield-exclamation class="w-5 h-5" style="color:{{ $alertColor }};" />
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="tag" style="background:rgba(255,255,255,0.07);color:{{ $alertColor }};border:1px solid {{ $alertBorder }};">{{ __('app.doc_expiry_banner_label') }}</span>
+                        <span class="tag" style="background:rgba(255,255,255,0.05);color:#94a3b8;">{{ $expiringDocVehicle->make }} {{ $expiringDocVehicle->model }}</span>
+                    </div>
+                    <h3 class="heading text-base font-bold text-white leading-tight">
+                        @if($isExpired)
+                            {{ __('app.doc_expiry_banner_expired', ['doc' => $expiringDocAlert['name']]) }}
+                        @else
+                            {{ __('app.doc_expiry_banner_soon', ['doc' => $expiringDocAlert['name'], 'days' => $expiringDocAlert['days']]) }}
+                        @endif
+                    </h3>
+                    <a href="{{ route('vehicles.show', $expiringDocVehicle) }}"
+                       class="mt-3 w-full block text-center py-2 rounded-xl text-sm font-semibold heading tracking-wide transition-all active:scale-95"
+                       style="background:rgba(255,255,255,0.07);border:1px solid {{ $alertBorder }};color:{{ $alertColor }};">
+                        {{ __('app.view_vehicle_btn') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- LATEST BOOKING STATUS --}}
         @if(isset($latestBooking) && $latestBooking)
         @php
@@ -105,7 +149,7 @@
             <div class="flex items-center justify-between mb-1">
                 <p class="section-label">{{ __('app.recent_booking_label') }}</p>
                 <span class="tag" style="background:{{ $bsc['bg'] }};color:{{ $bsc['color'] }};border:1px solid {{ $bsc['border'] }};">
-                    {{ strtoupper($latestBooking->status) }}
+                    {{ strtoupper(__('app.status_' . $latestBooking->status)) }}
                 </span>
             </div>
             <p class="font-semibold heading text-white text-sm">{{ $latestBooking->service_type }}</p>
@@ -198,7 +242,7 @@
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <span class="tag" style="background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.25);">{{ __('app.active_badge') }}</span>
-                            <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper($vehicle->fuel_type) }}</span>
+                            <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper(__('app.fuel_' . $vehicle->fuel_type)) }}</span>
                             @if($overdueServiceName)
                             <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3);">{{ __('app.badge_overdue', ['service' => strtoupper($overdueServiceName)]) }}</span>
                             @elseif($dueSoonServiceName)

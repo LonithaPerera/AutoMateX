@@ -124,7 +124,7 @@
                 </p>
             </div>
             <span class="tag" style="background:{{ $statusColor['bg'] }};color:{{ $statusColor['color'] }};border:1px solid {{ $statusColor['border'] }};">
-                {{ strtoupper($booking->status) }}
+                {{ strtoupper(__('app.status_' . $booking->status)) }}
             </span>
         </div>
 
@@ -336,7 +336,7 @@
                         <p class="text-xs mt-0.5" style="color:#64748b;">{{ $booking->garage->name ?? 'N/A' }} · {{ $booking->garage->city ?? '' }}</p>
                     </div>
                     <span class="tag" style="background:{{ $statusColor['bg'] }};color:{{ $statusColor['color'] }};border:1px solid {{ $statusColor['border'] }};">
-                        {{ strtoupper($booking->status) }}
+                        {{ strtoupper(__('app.status_' . $booking->status)) }}
                     </span>
                 </div>
                 <div class="grid grid-cols-2 gap-2 mb-3">

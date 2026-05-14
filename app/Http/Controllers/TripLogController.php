@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TripLog;
 use App\Models\Vehicle;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class TripLogController extends Controller
@@ -73,5 +74,24 @@ class TripLogController extends Controller
         $tripLog->delete();
         return redirect()->route('trips.index', $vehicle)
                          ->with('success', __('app.trip_deleted'));
+    }
+
+    public function exportPdf(Vehicle $vehicle)
+    {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $tripLogs   = $vehicle->tripLogs()->orderBy('trip_date', 'desc')->get();
+        $totalKm    = $tripLogs->sum(fn($t) => $t->distance);
+        $businessKm = $tripLogs->where('purpose', 'business')->sum(fn($t) => $t->distance);
+        $personalKm = $tripLogs->where('purpose', 'personal')->sum(fn($t) => $t->distance);
+
+        $pdf = Pdf::loadView('trips.pdf', compact('vehicle', 'tripLogs', 'totalKm', 'businessKm', 'personalKm'))
+                  ->setPaper('a4', 'portrait');
+
+        $filename = 'trip-log-' . strtolower($vehicle->make) . '-' . strtolower($vehicle->model) . '-' . $vehicle->year . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

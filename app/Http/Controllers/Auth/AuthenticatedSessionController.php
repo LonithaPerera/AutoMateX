@@ -28,6 +28,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Track last login time — store previous value in session before updating
+        $user = Auth::user();
+        if ($user->last_login_at) {
+            session(['prev_login_at' => $user->last_login_at]);
+        }
+        $user->update(['last_login_at' => now()]);
+
         $role = Auth::user()->role;
 
         if ($role === 'admin') {

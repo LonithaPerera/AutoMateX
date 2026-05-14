@@ -50,12 +50,19 @@
             {{ __('app.qr_scan_desc') }}
         </p>
 
-        {{-- Download QR button --}}
-        <button onclick="downloadQR()"
-                class="mt-4 flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold heading tracking-wider text-sm transition-all active:scale-95"
-                style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#64748b;">
-            <x-heroicon-o-arrow-down-tray class="w-4 h-4" />{{ __('app.download_qr_btn') }}
-        </button>
+        {{-- Download + Print buttons --}}
+        <div class="grid grid-cols-2 gap-2 mt-4">
+            <button onclick="downloadQR()"
+                    class="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold heading tracking-wider text-sm transition-all active:scale-95"
+                    style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#64748b;">
+                <x-heroicon-o-arrow-down-tray class="w-4 h-4" />{{ __('app.download_qr_btn') }}
+            </button>
+            <button onclick="printQR()"
+                    class="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold heading tracking-wider text-sm transition-all active:scale-95"
+                    style="background:rgba(0,245,255,0.06);border:1px solid rgba(0,245,255,0.2);color:var(--cyan);">
+                <x-heroicon-o-printer class="w-4 h-4" />{{ __('app.print_qr_btn') }}
+            </button>
+        </div>
     </div>
 
     {{-- Public link --}}
@@ -200,6 +207,37 @@ function copyLink() {
             btn.style.color = 'var(--cyan)';
         }, 2000);
     }
+}
+
+function printQR() {
+    const container = document.getElementById('qr-container');
+    const svg = container ? container.querySelector('svg') : null;
+    const vehicle = '{{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->year }}';
+    const url = '{{ $publicUrl }}';
+
+    if (!svg) { window.print(); return; }
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    canvas.width = 600; canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = function () {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, 600, 600);
+        ctx.drawImage(img, 10, 10, 580, 580);
+        const printWin = window.open('', '_blank', 'width=600,height=700');
+        printWin.document.write('<html><head><title>AutoMateX QR — ' + vehicle + '</title><style>body{font-family:sans-serif;text-align:center;padding:20px;} p{color:#333;margin:6px 0;font-size:13px;} small{color:#888;font-size:11px;} @media print{button{display:none!important;}}</style></head><body>');
+        printWin.document.write('<img src="' + canvas.toDataURL('image/png') + '" style="width:260px;height:260px;border:2px solid #eee;border-radius:12px;margin-bottom:12px;" /><br>');
+        printWin.document.write('<p style="font-weight:bold;font-size:16px;">AutoMateX — Vehicle History Pass</p>');
+        printWin.document.write('<p>' + vehicle + '</p>');
+        printWin.document.write('<small>' + url + '</small><br><br>');
+        printWin.document.write('<button onclick="window.print()" style="padding:8px 20px;background:#0066ff;color:white;border:none;border-radius:8px;cursor:pointer;">Print</button>');
+        printWin.document.write('</body></html>');
+        printWin.document.close();
+        printWin.focus();
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
 }
 
 function downloadQR() {

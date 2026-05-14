@@ -101,7 +101,7 @@
             </div>
             @if($log->type)
             <span class="tag" style="background:rgba(0,245,255,0.08);color:rgba(0,245,255,0.7);border:1px solid rgba(0,245,255,0.15);">
-                {{ strtoupper($log->type) }}
+                {{ strtoupper(__('app.log_type_' . $log->type)) }}
             </span>
             @endif
         </div>

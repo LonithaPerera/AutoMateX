@@ -15,12 +15,21 @@
             <h1 class="heading text-3xl font-bold text-white">{{ __('app.trip_history_title') }}</h1>
             <p class="text-xs mono mt-1" style="color:#64748b;">{{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->year }}</p>
         </div>
-        <a href="{{ route('trips.create', $vehicle) }}"
-           class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 mt-1 flex-shrink-0"
-           style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 16px rgba(0,245,255,0.25);">
-            <x-heroicon-o-plus class="w-3.5 h-3.5" />
-            {{ __('app.log_trip_btn') }}
-        </a>
+        <div class="flex flex-col gap-2 items-end mt-1">
+            <a href="{{ route('trips.create', $vehicle) }}"
+               class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95 flex-shrink-0"
+               style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 16px rgba(0,245,255,0.25);">
+                <x-heroicon-o-plus class="w-3.5 h-3.5" />
+                {{ __('app.log_trip_btn') }}
+            </a>
+            @if($tripCount > 0)
+            <a href="{{ route('trips.pdf', $vehicle) }}"
+               class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);color:#4ade80;">
+                <x-heroicon-o-arrow-down-tray class="w-3.5 h-3.5" />{{ __('app.download_pdf_btn') }}
+            </a>
+            @endif
+        </div>
     </div>
 
     {{-- Flash --}}

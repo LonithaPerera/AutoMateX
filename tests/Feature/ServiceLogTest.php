@@ -2,16 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Models\ServiceLog;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ServiceLogTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function user_can_view_service_history()
     {
         $user    = User::factory()->create();
@@ -21,7 +23,7 @@ class ServiceLogTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_add_service_record()
     {
         $user    = User::factory()->create();
@@ -41,5 +43,29 @@ class ServiceLogTest extends TestCase
             'service_type' => 'Oil Change',
             'vehicle_id'   => $vehicle->id,
         ]);
+    }
+
+    #[Test]
+    public function user_can_delete_service_record()
+    {
+        $user    = User::factory()->create();
+        $vehicle = Vehicle::factory()->create(['user_id' => $user->id]);
+        $log     = ServiceLog::factory()->create(['vehicle_id' => $vehicle->id]);
+
+        $response = $this->actingAs($user)->delete("/vehicles/{$vehicle->id}/service/{$log->id}");
+
+        $this->assertDatabaseMissing('service_logs', ['id' => $log->id]);
+        $response->assertRedirect();
+    }
+
+    #[Test]
+    public function user_can_download_service_pdf()
+    {
+        $user    = User::factory()->create();
+        $vehicle = Vehicle::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->get("/vehicles/{$vehicle->id}/service/pdf");
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/pdf');
     }
 }

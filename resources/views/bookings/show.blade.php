@@ -27,7 +27,7 @@
             </p>
         </div>
         <span class="tag mt-1 flex-shrink-0" style="background:{{ $statusColor['bg'] }};color:{{ $statusColor['color'] }};border:1px solid {{ $statusColor['border'] }};">
-            {{ strtoupper($booking->status) }}
+            {{ strtoupper(__('app.status_' . $booking->status)) }}
         </span>
     </div>
 

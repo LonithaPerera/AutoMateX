@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
 
         // Fuel Log routes
         Route::get('vehicles/{vehicle}/fuel', [FuelLogController::class, 'index'])->name('fuel.index');
+        Route::get('vehicles/{vehicle}/fuel/pdf', [FuelLogController::class, 'exportPdf'])->name('fuel.pdf');
         Route::get('vehicles/{vehicle}/fuel/create', [FuelLogController::class, 'create'])->name('fuel.create');
         Route::post('vehicles/{vehicle}/fuel', [FuelLogController::class, 'store'])->name('fuel.store');
         Route::get('vehicles/{vehicle}/fuel/{fuelLog}/edit', [FuelLogController::class, 'edit'])->name('fuel.edit');
@@ -78,6 +79,7 @@ Route::middleware('auth')->group(function () {
 
         // Trip Log routes
         Route::get('vehicles/{vehicle}/trips', [TripLogController::class, 'index'])->name('trips.index');
+        Route::get('vehicles/{vehicle}/trips/pdf', [TripLogController::class, 'exportPdf'])->name('trips.pdf');
         Route::get('vehicles/{vehicle}/trips/create', [TripLogController::class, 'create'])->name('trips.create');
         Route::post('vehicles/{vehicle}/trips', [TripLogController::class, 'store'])->name('trips.store');
         Route::get('vehicles/{vehicle}/trips/{tripLog}/edit', [TripLogController::class, 'edit'])->name('trips.edit');

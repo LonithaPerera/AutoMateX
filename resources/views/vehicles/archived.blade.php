@@ -42,7 +42,7 @@
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-0.5">
                     <span class="tag" style="background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.2);">ARCHIVED</span>
-                    <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper($vehicle->fuel_type) }}</span>
+                    <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper(__('app.fuel_' . $vehicle->fuel_type)) }}</span>
                 </div>
                 <h3 class="heading font-bold text-white">{{ $vehicle->make }} {{ $vehicle->model }}</h3>
                 <p class="mono text-xs mt-0.5" style="color:#64748b;">

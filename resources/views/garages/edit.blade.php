@@ -17,19 +17,12 @@
         <form method="POST" action="{{ route('garages.update') }}" enctype="multipart/form-data">
             @csrf @method('PATCH')
 
-            @if($errors->any())
-                <div class="rounded-xl p-3 mb-4 border" style="background:rgba(248,113,113,0.08);border-color:rgba(248,113,113,0.2);">
-                    @foreach($errors->all() as $error)
-                        <p class="text-xs" style="color:#f87171;">{{ $error }}</p>
-                    @endforeach
-                </div>
-            @endif
-
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_garage_name') }}</label>
                 <input type="text" name="name" value="{{ old('name', $garage->name) }}" required
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                       style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('name') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                @error('name')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -37,7 +30,8 @@
                     <label class="section-label mb-2 block">{{ __('app.field_city') }}</label>
                     <input type="text" name="city" value="{{ old('city', $garage->city) }}" required
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
+                           style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('city') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
+                    @error('city')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_phone') }}</label>

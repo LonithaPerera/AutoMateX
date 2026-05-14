@@ -6,13 +6,14 @@ use App\Models\Garage;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GarageBookingTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function garages_page_loads()
     {
         $user     = User::factory()->create();
@@ -20,7 +21,7 @@ class GarageBookingTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_register_a_garage()
     {
         $user = User::factory()->create();
@@ -37,7 +38,7 @@ class GarageBookingTest extends TestCase
         $this->assertDatabaseHas('garages', ['name' => 'AutoHub Lanka']);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_book_appointment()
     {
         $owner   = User::factory()->create();
@@ -59,11 +60,28 @@ class GarageBookingTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_view_their_bookings()
     {
         $user     = User::factory()->create();
         $response = $this->actingAs($user)->get('/bookings');
+        $response->assertStatus(200);
+    }
+
+    #[Test]
+    public function guest_cannot_access_bookings()
+    {
+        $response = $this->get('/bookings');
+        $response->assertRedirect('/login');
+    }
+
+    #[Test]
+    public function garage_page_shows_details()
+    {
+        $user   = User::factory()->create();
+        $garage = Garage::factory()->create(['is_active' => true]);
+
+        $response = $this->actingAs($user)->get("/garages/{$garage->id}");
         $response->assertStatus(200);
     }
 }

@@ -131,6 +131,18 @@ class DashboardController extends Controller
             }
         }
 
+        // ── First vehicle with an expiring/expired document ───────────────────
+        $expiringDocVehicle = null;
+        $expiringDocAlert   = null;
+        foreach ($vehicles as $vehicle) {
+            $alerts = $vehicleStats[$vehicle->id]['expiryAlerts'];
+            if (!empty($alerts)) {
+                $expiringDocVehicle = $vehicle;
+                $expiringDocAlert   = $alerts[0];
+                break;
+            }
+        }
+
         $singleVehicle = $vehicles->count() === 1 ? $vehicles->first() : null;
         $latestBooking = $user->bookings()->with(['garage', 'vehicle'])->latest()->first();
 
@@ -138,7 +150,8 @@ class DashboardController extends Controller
             'vehicles', 'vehicleStats', 'singleVehicle', 'latestBooking',
             'serviceCount', 'fuelCount', 'bookingCount',
             'monthlyTotal', 'lastActivity',
-            'overdueVehicle', 'overdueService'
+            'overdueVehicle', 'overdueService',
+            'expiringDocVehicle', 'expiringDocAlert'
         ));
     }
 }
