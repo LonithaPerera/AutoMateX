@@ -173,7 +173,7 @@
             <div>
                 <p class="text-sm font-semibold text-white">{{ $booking->service_type }}</p>
                 <p class="text-xs mt-0.5" style="color:#64748b;">
-                    {{ $booking->vehicle->user->name }} → {{ $booking->garage->name }}
+                    {{ optional($booking->vehicle)->user->name ?? '—' }} → {{ optional($booking->garage)->name ?? '—' }}
                 </p>
                 <p class="text-xs" style="color:#475569;">
                     {{ $booking->booking_date->format('d M Y') }}

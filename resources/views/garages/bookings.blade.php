@@ -209,7 +209,7 @@
                 <div class="flex-1 min-w-0 pr-2">
                     <h3 class="heading font-bold text-white text-base leading-tight">{{ $booking->service_type }}</h3>
                     <div class="flex items-center gap-2 mt-0.5 flex-wrap">
-                        <p class="text-xs font-semibold" style="color:#94a3b8;">{{ $booking->vehicle->user->name }}</p>
+                        <p class="text-xs font-semibold" style="color:#94a3b8;">{{ optional($booking->vehicle)->user->name ?? '—' }}</p>
                         @if($isReturning)
                         <span class="text-xs font-bold heading tracking-wider px-1.5 py-0.5 rounded-md"
                               style="background:rgba(168,85,247,0.12);color:#c084fc;border:1px solid rgba(168,85,247,0.25);font-size:0.6rem;">
@@ -238,7 +238,7 @@
                  style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);">
                 <x-heroicon-o-envelope class="w-3.5 h-3.5 flex-shrink-0" style="color:#64748b;" />
                 <span class="text-xs" style="color:#64748b;">{{ __('app.contact_label') }}:</span>
-                <span class="text-xs font-semibold" style="color:#94a3b8;">{{ $booking->vehicle->user->email }}</span>
+                <span class="text-xs font-semibold" style="color:#94a3b8;">{{ optional($booking->vehicle)->user->email ?? '—' }}</span>
             </div>
 
             {{-- Customer history panel --}}

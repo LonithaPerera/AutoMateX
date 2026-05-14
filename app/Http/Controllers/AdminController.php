@@ -46,7 +46,7 @@ class AdminController extends Controller
         ];
 
         // Chart 2 — Monthly bookings (last 6 months, database-agnostic)
-        $recentBookings = Booking::where('created_at', '>=', now()->subMonths(5)->startOfMonth())
+        $monthlyBookingData = Booking::where('created_at', '>=', now()->subMonths(5)->startOfMonth())
             ->get(['created_at'])
             ->groupBy(fn($b) => $b->created_at->format('Y-n'))
             ->map(fn($g) => $g->count());
@@ -57,7 +57,7 @@ class AdminController extends Controller
             $key  = $date->format('Y-n');
             $monthlyBookings[] = [
                 'label' => $date->format('M Y'),
-                'count' => (int) ($recentBookings->get($key) ?? 0),
+                'count' => (int) ($monthlyBookingData->get($key) ?? 0),
             ];
         }
 

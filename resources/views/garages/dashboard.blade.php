@@ -111,7 +111,7 @@
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-semibold text-white truncate">{{ $appt->service_type }}</p>
                     <p class="text-xs truncate" style="color:#64748b;">
-                        {{ $appt->vehicle->user->name }} · {{ $appt->vehicle->license_plate }}
+                        {{ optional($appt->vehicle)->user->name ?? '—' }} · {{ optional($appt->vehicle)->license_plate ?? '' }}
                     </p>
                 </div>
                 <span class="text-xs font-semibold heading tracking-wider px-2 py-0.5 rounded-lg flex-shrink-0"

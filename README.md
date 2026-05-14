@@ -1,87 +1,124 @@
-# AutoMateX — Smart Vehicle Management System
+# AutoMateX 🚗
+### Web-Based Vehicle Service & Maintenance Management System
 
-> Final Year Project · PUSL3190 · Plymouth University (Sri Lanka) · 2026
-
-AutoMateX is a full-stack web application that helps vehicle owners track fuel usage, service history, maintenance schedules, document expiry, and garage bookings — all in a single, mobile-first dashboard.
-
----
-
-## Features
-
-### Vehicle Owners
-- **My Garage** — manage multiple vehicles with health score ring (mileage, service recency, maintenance status)
-- **Fuel Logs** — track fill-ups, cost per litre, and km/L efficiency with trend analysis
-- **Service Logs** — full service history with cost tracking and PDF export
-- **Trip Logs** — record trips by purpose (personal, business, etc.) with km tracking
-- **Maintenance Insights** — AI-style suggestions based on km intervals (oil, tyres, brakes, filters, plugs)
-- **Document Expiry Tracker** — insurance, registration, and emission test alerts at 30 / 14 / 7 / 1 days
-- **QR Vehicle Pass** — scannable QR code for quick vehicle info sharing
-- **Garage Finder and Booking** — search garages by city, view ratings, book appointments
-- **Vehicle Export** — print-friendly HTML export of full vehicle history
-
-### Garages
-- **Booking Dashboard** — view pending, confirmed, completed, and cancelled appointments
-- **Invoice Management** — issue invoices with amount, number, and notes on completed jobs
-- **Rating Summary** — see average rating and recent customer reviews
-- **Garage Profile** — manage name, address, specialization, working hours, and photo
-
-### Admin
-- **User Management** — view all users by role, see last-login timestamps
-- **Booking Overview** — full cross-user booking list with status filtering
-- **Garage Directory** — view all registered garages
-- **Activity Log** — system-wide action audit trail
-
-### Platform
-- **Multi-language** — English, Sinhala, Tamil
-- **PWA-ready** — installable on mobile with service worker and web manifest
-- **In-app Notifications** — real-time bell counter with mark-all-read
-- **Double-submit Prevention** — global JS guard on all forms
-- **Per-field Inline Validation** — red-border and error text on every form field
+**Student:** Bethmage Lonitha Perera  
+**Index Number:** 10952829  
+**Supervisor:** Ms. Thilini Bakmeedeniya  
+**Module:** PUSL3190 — Computing Project  
+**University:** Plymouth University (Administered by NSBM Green University)
 
 ---
 
-## Tech Stack
+## 📋 Project Overview
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Laravel 12 (PHP 8.2) |
-| Frontend | Blade + Tailwind CSS (CDN) |
-| Icons | Blade Heroicons (blade-ui-kit/blade-heroicons) |
-| QR Codes | chillerlan/php-qrcode |
-| Charts | Chart.js (CDN) |
-| Database | MySQL (via XAMPP) |
-| Auth | Laravel Breeze |
-| Testing | PHPUnit 11 — 74 tests, 145 assertions |
-| Scheduler | Laravel Task Scheduling (vehicles:check-expiry, bookings:remind) |
+AutoMateX is a Progressive Web Application (PWA) built with Laravel that helps
+vehicle owners in Sri Lanka manage their vehicle maintenance, track service
+history, verify spare parts, and book garage appointments — all in one place.
+
+### 🎯 Problem Statement
+Sri Lankan vehicle owners struggle with:
+- No centralised system to track vehicle maintenance history
+- Difficulty predicting when next service is due
+- Counterfeit spare parts with no way to verify OEM numbers
+- No easy way to book garage appointments online
+
+### ✅ Solution
+AutoMateX addresses all four problems with a unified web platform accessible
+on any device.
 
 ---
 
-## Local Setup
+## 🚀 Features
 
-### Requirements
+| Module | Description |
+|---|---|
+| 🔐 Authentication | Register, login, logout with role-based access |
+| 🚗 Vehicle Management | Add, view, archive and manage multiple vehicles with health score |
+| ⛽ Fuel Tracking | Log fuel purchases, calculate km/L efficiency with trend analysis |
+| 🔧 Service History | Track all maintenance and repair records with PDF export |
+| 🧭 Trip Log | Record trips by purpose (personal/business) with km tracking and PDF export |
+| 🧠 Suggestion Engine | Rule-based engine predicts next service due by mileage |
+| 📄 Document Expiry Tracker | Alerts for insurance, registration and emission test expiry at 30/14/7/1/0 days |
+| 📱 QR Code Generation | Unique QR per vehicle — scan to view service history publicly |
+| 🔩 Parts Verification DB | OEM part numbers for 5 vehicle models to fight counterfeits |
+| 🏪 Garage Booking | Browse garages, book appointments, receive invoices, leave ratings |
+| 🔔 In-App Notifications | Real-time bell counter with notification history and mark-all-read |
+| 👨‍💼 Admin Dashboard | System-wide stats, user management, and activity log |
+| 📲 PWA Support | Installable on mobile, works offline with service worker |
+| 🌐 Multi-Language | Full support for English, Sinhala and Tamil |
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Laravel 12 (PHP 8.2) | Backend framework |
+| MySQL | Database |
+| Tailwind CSS | Frontend styling |
+| Laravel Breeze | Authentication scaffolding |
+| Blade Heroicons | Icon library |
+| chillerlan/php-qrcode | QR code generation |
+| Chart.js | Spending and mileage charts |
+| Mailtrap (SMTP) | Email notifications for bookings |
+| PHPUnit | Automated testing |
+| Service Worker + Web Manifest | PWA functionality |
+
+---
+
+## 👥 User Roles
+
+| Role | Access |
+|---|---|
+| `vehicle_owner` | Manage vehicles, fuel logs, service history, trip logs, bookings, document expiry |
+| `garage` | Register garage, manage bookings, issue invoices, view ratings |
+| `admin` | View system stats, manage all users, view activity log |
+
+---
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
 - PHP 8.2+
 - Composer
-- MySQL (XAMPP recommended)
+- MySQL
+- Node.js & npm
+- XAMPP (or any local server)
 
-### Installation
+### Steps
+
+**1. Clone the repository**
 
 ```bash
-git clone https://github.com/<your-username>/AutoMateX.git
+git clone https://github.com/LonithaPerera/AutoMateX.git
 cd AutoMateX
+```
 
-# Install PHP dependencies
+**2. Install PHP dependencies**
+
+```bash
 composer install
+```
 
-# Copy environment file
+**3. Install Node dependencies**
+
+```bash
+npm install
+npm run build
+```
+
+**4. Configure environment**
+
+```bash
 cp .env.example .env
-
-# Generate application key
 php artisan key:generate
 ```
 
-### Environment
-Edit `.env` and set your database credentials:
-```env
+**5. Set up database**
+
+Edit `.env` file:
+
+```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -90,99 +127,163 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-### Database and Demo Data
+**6. Run migrations and seeders**
+
 ```bash
-# Create the database in MySQL first, then:
 php artisan migrate:fresh --seed
 ```
 
-This seeds the database with realistic demo data — see Demo Accounts below.
+**7. Create storage link**
 
-### Run
-```bash
-php artisan serve
-# Visit: http://localhost:8000
-```
-
-### Storage Link (for uploaded images)
 ```bash
 php artisan storage:link
 ```
 
+**8. Start the server**
+
+```bash
+php artisan serve
+```
+
+Visit: `http://127.0.0.1:8000`
+
 ---
 
-## Demo Accounts
-
-All passwords are ready to use immediately after seeding.
+## 🔑 Demo Accounts
 
 | Role | Name | Email | Password |
-|------|------|-------|----------|
+|---|---|---|---|
 | Admin | Ashan Perera | admin@automatex.lk | Admin@1234 |
 | Vehicle Owner | Kavindu Rajapaksa | kavindu@gmail.com | Owner@1234 |
 | Vehicle Owner | Dilani Wickramasinghe | dilani@gmail.com | Owner@1234 |
 | Garage | Speedy Motors Auto Service | speedy@garage.lk | Garage@1234 |
 | Garage | AutoCare Service Centre | autocare@garage.lk | Garage@1234 |
 
-**Kavindu** has 4 vehicles (Toyota Aqua, Honda Vezel, Toyota Prius, Mazda Demio) with full fuel logs, service histories, and realistic overdue/due-soon maintenance alerts.
-
-**Dilani** has 4 vehicles (Suzuki Swift, Nissan Leaf, Honda Fit, Toyota Vitz) with similar depth.
-
-Both garages have bookings at various statuses (pending, confirmed, completed, cancelled). Completed bookings include invoices.
-
 ---
 
-## Running Tests
+## 🧪 Running Tests
 
 ```bash
 php artisan test
 ```
 
-Expected: **74 tests, 145 assertions, 0 failures**
+Expected output:
 
-Test coverage includes: authentication, vehicle CRUD, fuel logs, service logs, trip logs, garage bookings, notifications, parts search, admin access, and the suggestion engine.
+```
+Tests: 74 passed (145 assertions)
+```
+
+### Test Coverage
+
+| Test Suite | Tests |
+|---|---|
+| AdminTest | 7 tests |
+| AuthTest | 5 tests |
+| VehicleTest | 8 tests |
+| FuelLogTest | 4 tests |
+| ServiceLogTest | 4 tests |
+| TripLogTest | 5 tests |
+| SuggestionTest | 2 tests |
+| PartsTest | 4 tests |
+| GarageBookingTest | 6 tests |
+| NotificationTest | 4 tests |
+| ProfileTest | 5 tests |
+| Auth Suite (login/register/reset/verify) | 18 tests |
 
 ---
 
-## Scheduled Commands
+## 🗄️ Database Schema
 
-| Command | Schedule | Purpose |
-|---------|----------|---------|
-| `php artisan vehicles:check-expiry` | Daily 09:00 | In-app notifications for document expiry (insurance, registration, emission) at 30/14/7/1/0 days |
-| `php artisan bookings:remind` | Daily 08:00 | Booking reminder notifications to vehicle owners |
+| Table | Purpose |
+|---|---|
+| `users` | User accounts with roles |
+| `vehicles` | Vehicle records per user |
+| `fuel_logs` | Fuel purchase and efficiency logs |
+| `service_logs` | Service and repair history |
+| `trip_logs` | Trip records with purpose and km |
+| `maintenance_schedules` | Rule-based suggestion engine data |
+| `parts` | OEM spare parts database |
+| `garages` | Registered garage profiles |
+| `bookings` | Service appointment bookings |
+| `ratings` | Garage ratings submitted by vehicle owners |
+| `app_notifications` | In-app notification records |
+| `push_subscriptions` | PWA push notification subscriptions |
+| `activity_logs` | System-wide admin audit trail |
 
-To run the scheduler locally:
-```bash
-php artisan schedule:run
+---
+
+## 📱 PWA Features
+
+- ✅ Installable on Android and iOS home screen
+- ✅ Service Worker caches key pages for offline access
+- ✅ Web App Manifest with custom icons and theme
+- ✅ Offline fallback page when no connection available
+
+---
+
+## 🔩 Parts Verification Database
+
+Covers **5 vehicle models** with OEM part numbers:
+
+| Make | Model | Parts Covered |
+|---|---|---|
+| Toyota | Vitz | Oil Filter, Air Filter, Spark Plug, Brake Pads, Drive Belt |
+| Toyota | Premio | Oil Filter, Air Filter, Spark Plug, Brake Pads, Cabin Filter |
+| Toyota | Aqua | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+| Suzuki | Alto | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+| Honda | Fit | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+
+---
+
+## 📂 Project Structure
+
+```
+AutoMateX/
+├── app/
+│   ├── Console/Commands/     # Scheduled Artisan commands
+│   ├── Http/Controllers/     # All controllers
+│   ├── Models/               # Eloquent models
+│   └── Http/Middleware/      # AdminMiddleware
+├── database/
+│   ├── migrations/           # All table migrations
+│   ├── seeders/              # DatabaseSeeder, MaintenanceSchedule & Parts seeders
+│   └── factories/            # FuelLog & ServiceLog factories
+├── lang/
+│   ├── en/                   # English translations
+│   ├── si/                   # Sinhala translations
+│   └── ta/                   # Tamil translations
+├── public/
+│   ├── manifest.json         # PWA manifest
+│   ├── sw.js                 # Service Worker
+│   └── icons/                # PWA icons
+├── resources/views/
+│   ├── vehicles/             # Vehicle views
+│   ├── fuel/                 # Fuel log views
+│   ├── service/              # Service history views
+│   ├── trips/                # Trip log views
+│   ├── suggestions/          # Suggestion engine views
+│   ├── qrcode/               # QR code views
+│   ├── parts/                # Parts DB views
+│   ├── garages/              # Garage views
+│   ├── bookings/             # Booking views
+│   ├── errors/               # Custom error pages (404, 419, 500)
+│   └── admin/                # Admin dashboard views
+├── routes/
+│   ├── web.php               # All application routes
+│   └── console.php           # Scheduled command registration
+└── tests/
+    └── Feature/              # 74 automated feature tests
 ```
 
 ---
 
-## Project Structure
+## 🔗 GitHub Repository
 
-```
-app/
-  Console/Commands/       Artisan scheduled commands
-  Http/Controllers/       All feature controllers
-  Models/                 Eloquent models
-database/
-  migrations/             All table migrations
-  seeders/                DatabaseSeeder with full demo data
-lang/
-  en/ si/ ta/             English, Sinhala, Tamil translations
-resources/views/
-  vehicles/               My Garage, vehicle show/edit/archived
-  service/ fuel/ trips/   Log views
-  garages/                Garage finder, detail, booking
-  dashboard.blade.php     Role-aware dashboard
-  layouts/app.blade.php   Main authenticated layout
-routes/
-  web.php                 All named routes
-  console.php             Scheduler registration
-tests/Feature/            74 PHPUnit feature tests
-```
+[https://github.com/LonithaPerera/AutoMateX](https://github.com/LonithaPerera/AutoMateX)
 
 ---
 
-## License
+## 📄 License
 
-Developed as an academic final year project for PUSL3190 at the University of Plymouth (Sri Lanka Institute of Information Technology). Not intended for commercial use.
+This project is developed for academic purposes as part of PUSL3190 Computing Project
+at Plymouth University (NSBM Green University, Sri Lanka).

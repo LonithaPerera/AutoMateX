@@ -127,7 +127,7 @@ class BookingController extends Controller
             'completed' => ['title' => 'Service Completed', 'msg' => $booking->garage->name . ' marked your ' . $booking->service_type . ' as completed'],
             'cancelled' => ['title' => 'Booking Cancelled', 'msg' => $booking->garage->name . ' cancelled your ' . $booking->service_type],
         ];
-        if (isset($notifMessages[$request->status])) {
+        if (isset($notifMessages[$request->status]) && optional($booking->vehicle)->user) {
             AppNotification::create([
                 'user_id' => $booking->vehicle->user->id,
                 'type'    => 'booking_' . $request->status,
@@ -138,7 +138,7 @@ class BookingController extends Controller
         }
 
         // Email on confirmed or completed
-        if (in_array($request->status, ['confirmed', 'completed'])) {
+        if (in_array($request->status, ['confirmed', 'completed']) && optional($booking->vehicle)->user) {
             try {
                 Mail::to($booking->vehicle->user->email)
                     ->send(new BookingStatusUpdated($booking));
@@ -191,7 +191,8 @@ class BookingController extends Controller
     {
         $user = Auth::user();
 
-        $isOwner  = $booking->vehicle->user_id === $user->id;
+        $vehicle  = $booking->vehicle()->withTrashed()->first();
+        $isOwner  = optional($vehicle)->user_id === $user->id;
         $isGarage = $user->garage && $booking->garage_id === $user->garage->id;
         $isAdmin  = $user->role === 'admin';
 

@@ -123,10 +123,10 @@ class DashboardController extends Controller
         $overdueVehicle = null;
         $overdueService = null;
         foreach ($vehicles as $vehicle) {
-            $stats = $vehicleStats[$vehicle->id];
-            if ($stats['overdueServiceName']) {
+            $vStats = $vehicleStats[$vehicle->id];
+            if ($vStats['overdueServiceName']) {
                 $overdueVehicle = $vehicle;
-                $overdueService = $stats['overdueServiceName'];
+                $overdueService = $vStats['overdueServiceName'];
                 break;
             }
         }
