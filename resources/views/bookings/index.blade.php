@@ -100,7 +100,7 @@
     @endphp
     <div class="glass-bright rounded-2xl mb-3 border fade-in fade-in-{{ min($index+3,5) }} booking-card booking-card-item overflow-hidden"
          data-status="{{ $booking->status }}"
-         data-search="{{ strtolower($booking->service_type . ' ' . ($booking->garage->name ?? '') . ' ' . ($booking->garage->city ?? '') . ' ' . $booking->vehicle->make . ' ' . $booking->vehicle->model . ' ' . $booking->vehicle->license_plate) }}"
+         data-search="{{ strtolower($booking->service_type . ' ' . ($booking->garage->name ?? '') . ' ' . ($booking->garage->city ?? '') . ' ' . (optional($booking->vehicle)->make ?? '') . ' ' . (optional($booking->vehicle)->model ?? '') . ' ' . (optional($booking->vehicle)->license_plate ?? '')) }}"
          style="border-color:rgba(0,245,255,0.1);">
 
         {{-- Garage photo banner --}}
@@ -151,8 +151,8 @@
             <div>
                 <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.vehicle_label') }}</p>
                 <p class="text-sm text-white font-semibold">
-                    {{ $booking->vehicle->make }} {{ $booking->vehicle->model }}
-                    · {{ $booking->vehicle->license_plate }}
+                    {{ optional($booking->vehicle)->make }} {{ optional($booking->vehicle)->model }}
+                    · {{ optional($booking->vehicle)->license_plate }}
                 </p>
             </div>
         </div>
@@ -317,7 +317,7 @@
             @endphp
             {{-- Reuse same card structure --}}
             <div class="glass-bright rounded-2xl mb-3 border fade-in overflow-hidden booking-card-item"
-                 data-search="{{ strtolower($booking->service_type . ' ' . ($booking->garage->name ?? '') . ' ' . ($booking->garage->city ?? '') . ' ' . $booking->vehicle->make . ' ' . $booking->vehicle->model . ' ' . $booking->vehicle->license_plate) }}"
+                 data-search="{{ strtolower($booking->service_type . ' ' . ($booking->garage->name ?? '') . ' ' . ($booking->garage->city ?? '') . ' ' . (optional($booking->vehicle)->make ?? '') . ' ' . (optional($booking->vehicle)->model ?? '') . ' ' . (optional($booking->vehicle)->license_plate ?? '')) }}"
                  style="border-color:rgba(255,255,255,0.08);">
                 {{-- Garage photo banner --}}
                 @if($booking->garage?->photo)
@@ -348,7 +348,7 @@
                         <x-heroicon-o-truck class="w-4 h-4 flex-shrink-0" style="color:#6699ff;" />
                         <div>
                             <p class="text-xs mb-0.5" style="color:#64748b;">{{ __('app.vehicle_label') }}</p>
-                            <p class="text-sm font-semibold text-white">{{ $booking->vehicle->make }} {{ $booking->vehicle->model }}</p>
+                            <p class="text-sm font-semibold text-white">{{ optional($booking->vehicle)->make }} {{ optional($booking->vehicle)->model }}</p>
                         </div>
                     </div>
                 </div>

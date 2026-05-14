@@ -75,11 +75,13 @@ class VehicleController extends Controller
 
     public function edit(Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         return view('vehicles.edit', compact('vehicle'));
     }
 
     public function update(Request $request, Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         $request->validate([
             'make'          => 'required|string|max:100',
             'model'         => 'required|string|max:100',
@@ -222,6 +224,7 @@ class VehicleController extends Controller
 
     public function updateNotes(Request $request, Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         $request->validate(['notes' => 'nullable|string|max:500']);
         $vehicle->update(['notes' => $request->notes]);
         return redirect()->route('vehicles.show', $vehicle)
@@ -230,6 +233,7 @@ class VehicleController extends Controller
 
     public function updatePhoto(Request $request, Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         $request->validate(['photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072']);
 
         // Delete old photo if exists
@@ -246,6 +250,7 @@ class VehicleController extends Controller
 
     public function removePhoto(Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         if ($vehicle->image) {
             Storage::disk('public')->delete($vehicle->image);
             $vehicle->update(['image' => null]);
@@ -257,6 +262,7 @@ class VehicleController extends Controller
 
     public function updateDocuments(Request $request, Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         $request->validate([
             'insurance_expiry'    => 'nullable|date',
             'registration_expiry' => 'nullable|date',
@@ -285,6 +291,7 @@ class VehicleController extends Controller
 
     public function export(Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         $serviceLogs = $vehicle->serviceLogs()->orderBy('service_date', 'desc')->get();
         $fuelLogs    = $vehicle->fuelLogs()->orderBy('date', 'desc')->get();
         return view('vehicles.export', compact('vehicle', 'serviceLogs', 'fuelLogs'));
@@ -292,6 +299,7 @@ class VehicleController extends Controller
 
     public function updateMileage(Request $request, Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         $request->validate([
             'mileage' => 'required|integer|min:' . $vehicle->mileage,
         ]);
@@ -303,6 +311,7 @@ class VehicleController extends Controller
     // Soft-delete (archive)
     public function destroy(Vehicle $vehicle)
     {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') abort(403);
         $vehicle->delete();
         return redirect()->route('vehicles.index')
                          ->with('success', __('app.vehicle_archived'));

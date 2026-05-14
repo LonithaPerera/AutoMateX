@@ -47,13 +47,13 @@ class BookingController extends Controller
             $dayHours = $garage->working_hours[$dayKey] ?? null;
             if ($dayHours) {
                 if ($dayHours['closed'] ?? false) {
-                    return back()->withInput()->with('error', __('app.garage_closed_that_day'));
+                    return redirect()->route('bookings.create', $garage)->withInput()->with('error', __('app.garage_closed_that_day'));
                 }
                 $open  = \Carbon\Carbon::parse($request->booking_date . ' ' . ($dayHours['open']  ?? '00:00'));
                 $close = \Carbon\Carbon::parse($request->booking_date . ' ' . ($dayHours['close'] ?? '23:59'));
                 $time  = \Carbon\Carbon::parse($request->booking_date . ' ' . $request->booking_time);
                 if ($time->lt($open) || $time->gt($close)) {
-                    return back()->withInput()->with('error', __('app.booking_outside_hours'));
+                    return redirect()->route('bookings.create', $garage)->withInput()->with('error', __('app.booking_outside_hours'));
                 }
             }
         }
@@ -65,7 +65,7 @@ class BookingController extends Controller
             ->whereNotIn('status', ['cancelled'])
             ->exists();
         if ($duplicate) {
-            return back()->withInput()->with('error', __('app.booking_slot_taken'));
+            return redirect()->route('bookings.create', $garage)->withInput()->with('error', __('app.booking_slot_taken'));
         }
 
         $booking = Booking::create([
@@ -230,7 +230,7 @@ class BookingController extends Controller
     public function cancel(Request $request, Booking $booking)
     {
         // Ensure the booking belongs to the authenticated user's vehicle
-        if ($booking->vehicle->user_id !== Auth::id()) {
+        if (optional($booking->vehicle)->user_id !== Auth::id()) {
             abort(403, 'You are not authorized to cancel this booking.');
         }
 
@@ -274,7 +274,7 @@ class BookingController extends Controller
     // Vehicle owner — reschedule a pending/confirmed booking
     public function reschedule(Request $request, Booking $booking)
     {
-        if ($booking->vehicle->user_id !== Auth::id()) {
+        if (optional($booking->vehicle)->user_id !== Auth::id()) {
             abort(403);
         }
 
@@ -286,6 +286,36 @@ class BookingController extends Controller
             'booking_date' => 'required|date|after:today',
             'booking_time' => 'required',
         ]);
+
+        // Working hours validation
+        $garage = $booking->garage;
+        if ($garage->working_hours) {
+            $dayKeys  = ['sun','mon','tue','wed','thu','fri','sat'];
+            $dayKey   = $dayKeys[\Carbon\Carbon::parse($request->booking_date)->dayOfWeek];
+            $dayHours = $garage->working_hours[$dayKey] ?? null;
+            if ($dayHours) {
+                if ($dayHours['closed'] ?? false) {
+                    return back()->withInput()->with('error', __('app.garage_closed_that_day'));
+                }
+                $open  = \Carbon\Carbon::parse($request->booking_date . ' ' . ($dayHours['open']  ?? '00:00'));
+                $close = \Carbon\Carbon::parse($request->booking_date . ' ' . ($dayHours['close'] ?? '23:59'));
+                $time  = \Carbon\Carbon::parse($request->booking_date . ' ' . $request->booking_time);
+                if ($time->lt($open) || $time->gt($close)) {
+                    return back()->withInput()->with('error', __('app.booking_outside_hours'));
+                }
+            }
+        }
+
+        // Duplicate slot prevention
+        $duplicate = Booking::where('garage_id', $garage->id)
+            ->where('booking_date', $request->booking_date)
+            ->where('booking_time', $request->booking_time)
+            ->where('id', '!=', $booking->id)
+            ->whereNotIn('status', ['cancelled'])
+            ->exists();
+        if ($duplicate) {
+            return back()->withInput()->with('error', __('app.booking_slot_taken'));
+        }
 
         $booking->update([
             'booking_date' => $request->booking_date,
@@ -315,7 +345,7 @@ class BookingController extends Controller
         $user = Auth::user();
 
         // Must belong to the authenticated user's vehicle
-        if ($booking->vehicle->user_id !== $user->id) {
+        if (optional($booking->vehicle)->user_id !== $user->id) {
             abort(403, 'You are not authorized to view this booking.');
         }
 

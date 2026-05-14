@@ -218,7 +218,7 @@
                         @endif
                     </div>
                     <p class="text-xs mt-0.5" style="color:#64748b;">
-                        {{ $booking->vehicle->make }} {{ $booking->vehicle->model }} · {{ $booking->vehicle->license_plate }}
+                        {{ optional($booking->vehicle)->make }} {{ optional($booking->vehicle)->model }} · {{ optional($booking->vehicle)->license_plate }}
                     </p>
                 </div>
                 <div class="flex flex-col items-end gap-1 flex-shrink-0">

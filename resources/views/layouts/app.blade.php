@@ -199,7 +199,10 @@
     <header class="glass sticky top-0 z-50" style="border-left:none;border-right:none;border-top:none;">
         <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
             <!-- Logo -->
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+            @php
+                $homeUrl = Auth::user()->role === 'admin' ? route('admin.dashboard') : (Auth::user()->role === 'garage' ? route('garage.dashboard') : route('dashboard'));
+            @endphp
+            <a href="{{ $homeUrl }}" class="flex items-center gap-2">
                 <img src="/images/logo.png" alt="AutoMateX" style="height:64px;width:auto;">
                 <span class="heading font-bold text-white" style="display:inline-flex;align-items:center;font-size:26px;letter-spacing:1px;">Auto<span class="text-cyan">Mate</span><span style="color:#ff6b00;font-size:1.2em;line-height:1;">X</span></span>
             </a>

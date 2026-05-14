@@ -79,7 +79,7 @@
         <p class="code">419 · Session Expired</p>
         <h1>Your session timed out</h1>
         <p>The page token has expired. This usually happens if the page was left open for too long. Go back and try submitting the form again.</p>
-        <a href="javascript:history.back()" class="btn">← Go Back</a>
+        <a href="{{ url('/') }}" class="btn">← Go Back</a>
     </div>
 </body>
 </html>

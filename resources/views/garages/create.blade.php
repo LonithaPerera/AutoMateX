@@ -2,10 +2,10 @@
 <div class="max-w-lg mx-auto px-4 pt-5 pb-8">
 
     <div class="mb-5 fade-in fade-in-1">
-        <a href="{{ route('garages.index') }}"
+        <a href="{{ url('/') }}"
            class="inline-flex items-center gap-2 text-sm mb-3"
            style="color:#64748b;">
-            {{ __('app.back_to_garages') }}
+            ← {{ __('app.back') }}
         </a>
         <p class="section-label mb-1">{{ __('app.register_garage_label') }}</p>
         <h1 class="heading text-3xl font-bold text-white">
@@ -125,7 +125,7 @@
                 {{ __('app.register_garage_btn') }}
             </button>
 
-            <a href="{{ route('garages.index') }}"
+            <a href="{{ url('/') }}"
                class="block text-center mt-3 text-sm py-2" style="color:#64748b;">{{ __('app.cancel') }}</a>
         </form>
     </div>

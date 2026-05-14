@@ -616,7 +616,11 @@
 
 {{-- ── Action bar (screen only) ──────────────────────────── --}}
 <div class="action-bar">
-    <a href="{{ route('bookings.index') }}" class="btn btn-back">
+    @php
+        $role = Auth::user()->role ?? 'vehicle_owner';
+        $backUrl = $role === 'admin' ? route('admin.bookings') : ($role === 'garage' ? route('garage.invoices') : route('bookings.index'));
+    @endphp
+    <a href="{{ $backUrl }}" class="btn btn-back">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>

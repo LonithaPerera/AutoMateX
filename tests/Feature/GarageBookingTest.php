@@ -24,7 +24,7 @@ class GarageBookingTest extends TestCase
     #[Test]
     public function user_can_register_a_garage()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'garage']);
 
         $response = $this->actingAs($user)->post('/garages', [
             'name'           => 'AutoHub Lanka',

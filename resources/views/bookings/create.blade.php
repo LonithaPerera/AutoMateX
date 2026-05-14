@@ -231,7 +231,7 @@
                 {{ __('app.confirm_booking_btn') }}
             </button>
 
-            <a href="{{ route('garages.index') }}"
+            <a href="{{ route('garages.show', $garage) }}"
                class="block text-center mt-3 text-sm py-2" style="color:#64748b;">{{ __('app.cancel') }}</a>
         </form>
     </div>

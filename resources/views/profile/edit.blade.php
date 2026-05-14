@@ -110,7 +110,10 @@
 
     {{-- Back --}}
     <div class="mt-2 mb-6 fade-in fade-in-5">
-        <a href="{{ route('dashboard') }}"
+        @php
+            $backHome = Auth::user()->role === 'admin' ? route('admin.dashboard') : (Auth::user()->role === 'garage' ? route('garage.dashboard') : route('dashboard'));
+        @endphp
+        <a href="{{ $backHome }}"
            class="flex items-center gap-2 text-sm py-3 px-4 rounded-xl"
            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#64748b;">
             {{ __('app.back_to_dashboard') }}

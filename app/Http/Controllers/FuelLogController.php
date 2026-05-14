@@ -10,15 +10,21 @@ use Illuminate\Support\Facades\Auth;
 
 class FuelLogController extends Controller
 {
+    private function authorise(Vehicle $vehicle): void
+    {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+    }
+
     // Show all fuel logs for a vehicle
     public function index(Vehicle $vehicle)
     {
-        // Full collection for stats and chart
-        $fuelLogs = $vehicle->fuelLogs()->orderBy('date', 'desc')->get();
-        // Paginated for the list display
+        $this->authorise($vehicle);
+
+        $fuelLogs      = $vehicle->fuelLogs()->orderBy('date', 'desc')->get();
         $fuelLogsPaged = $vehicle->fuelLogs()->orderBy('date', 'desc')->paginate(10)->withQueryString();
 
-        // Calculate average km per liter
         $avgKmPerLiter = $fuelLogs->avg('km_per_liter');
         $totalCost     = $fuelLogs->sum('cost');
         $totalLiters   = $fuelLogs->sum('liters');
@@ -31,12 +37,15 @@ class FuelLogController extends Controller
     // Show the form to add a fuel log
     public function create(Vehicle $vehicle)
     {
+        $this->authorise($vehicle);
         return view('fuel.create', compact('vehicle'));
     }
 
     // Save new fuel log to database
     public function store(Request $request, Vehicle $vehicle)
     {
+        $this->authorise($vehicle);
+
         $request->validate([
             'date'         => 'required|date',
             'liters'       => 'required|numeric|min:0.1',
@@ -46,7 +55,6 @@ class FuelLogController extends Controller
             'notes'        => 'nullable|string|max:255',
         ]);
 
-        // Calculate km per liter from previous log
         $kmPerLiter = null;
         $lastLog = $vehicle->fuelLogs()
                            ->orderBy('km_reading', 'desc')
@@ -57,7 +65,6 @@ class FuelLogController extends Controller
             $kmPerLiter = round($kmDriven / $request->liters, 2);
         }
 
-        // Update vehicle mileage
         if ($request->km_reading > $vehicle->mileage) {
             $vehicle->update(['mileage' => $request->km_reading]);
         }
@@ -79,12 +86,15 @@ class FuelLogController extends Controller
     // Show edit form for a fuel log
     public function edit(Vehicle $vehicle, FuelLog $fuelLog)
     {
+        $this->authorise($vehicle);
         return view('fuel.edit', compact('vehicle', 'fuelLog'));
     }
 
     // Update a fuel log
     public function update(Request $request, Vehicle $vehicle, FuelLog $fuelLog)
     {
+        $this->authorise($vehicle);
+
         $request->validate([
             'date'         => 'required|date',
             'liters'       => 'required|numeric|min:0.1',
@@ -94,7 +104,6 @@ class FuelLogController extends Controller
             'notes'        => 'nullable|string|max:255',
         ]);
 
-        // Recalculate km/L from the previous log (excluding this one)
         $kmPerLiter = $fuelLog->km_per_liter;
         $prevLog = $vehicle->fuelLogs()
                            ->where('id', '!=', $fuelLog->id)
@@ -128,6 +137,7 @@ class FuelLogController extends Controller
     // Delete a fuel log
     public function destroy(Vehicle $vehicle, FuelLog $fuelLog)
     {
+        $this->authorise($vehicle);
         $fuelLog->delete();
         return redirect()->route('fuel.index', $vehicle)
                          ->with('success', __('app.fuel_log_deleted'));
@@ -136,9 +146,7 @@ class FuelLogController extends Controller
     // Export fuel history as PDF
     public function exportPdf(Vehicle $vehicle)
     {
-        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
-            abort(403);
-        }
+        $this->authorise($vehicle);
 
         $fuelLogs      = $vehicle->fuelLogs()->orderBy('date', 'desc')->get();
         $totalCost     = $fuelLogs->sum('cost');

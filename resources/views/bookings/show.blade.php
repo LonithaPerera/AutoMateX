@@ -84,8 +84,8 @@
             </div>
             <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-xs mb-1" style="color:#64748b;">{{ __('app.vehicle_label') }}</p>
-                <p class="text-sm font-bold text-white">{{ $booking->vehicle->make }} {{ $booking->vehicle->model }}</p>
-                <p class="mono text-xs mt-0.5" style="color:#64748b;">{{ $booking->vehicle->license_plate }}</p>
+                <p class="text-sm font-bold text-white">{{ optional($booking->vehicle)->make }} {{ optional($booking->vehicle)->model }}</p>
+                <p class="mono text-xs mt-0.5" style="color:#64748b;">{{ optional($booking->vehicle)->license_plate ?? '—' }}</p>
             </div>
             <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-xs mb-1" style="color:#64748b;">{{ __('app.garage_label') }}</p>

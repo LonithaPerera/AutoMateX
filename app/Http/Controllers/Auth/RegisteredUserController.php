@@ -51,6 +51,6 @@ class RegisteredUserController extends Controller
             return redirect(route('garages.create'));
         }
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 }

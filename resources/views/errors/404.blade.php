@@ -98,7 +98,7 @@
         <h1>Page not found</h1>
         <p>The page you're looking for doesn't exist or may have been moved. Check the URL and try again.</p>
         <div class="actions">
-            <a href="javascript:history.back()" class="btn btn-primary">← Go Back</a>
+            <a href="{{ url('/') }}" class="btn btn-primary">← Go Back</a>
             <a href="/" class="btn btn-secondary">Go to Home</a>
         </div>
         <p class="brand">AutoMateX</p>

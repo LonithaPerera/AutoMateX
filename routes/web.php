@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
+        $role = auth()->user()->role;
+        if ($role === 'admin')  return redirect()->route('admin.dashboard');
+        if ($role === 'garage') return redirect()->route('garage.dashboard');
         return redirect()->route('dashboard');
     }
     return view('welcome');
@@ -114,7 +117,7 @@ Route::middleware('auth')->group(function () {
     // Accessible by all authenticated users
     Route::get('/parts', [PartsController::class, 'index'])->name('parts.index');
     Route::get('/garages', [GarageController::class, 'index'])->name('garages.index');
-    Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
+    Route::post('/garages', [GarageController::class, 'store'])->middleware('garage')->name('garages.store');
     // garages/create must be registered BEFORE {garage} to prevent route capture
     Route::get('/garages/create', [GarageController::class, 'create'])->middleware('garage')->name('garages.create');
     Route::get('/garages/{garage}', [GarageController::class, 'show'])->name('garages.show');

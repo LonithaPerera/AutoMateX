@@ -47,6 +47,17 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
+     * Return the correct home route for the authenticated user's role.
+     */
+    public static function homeRoute(): string
+    {
+        $role = Auth::user()->role ?? 'vehicle_owner';
+        if ($role === 'admin')  return route('admin.dashboard');
+        if ($role === 'garage') return route('garage.dashboard');
+        return route('dashboard');
+    }
+
+    /**
      * Destroy an authenticated session.
      */
     public function destroy(Request $request): RedirectResponse

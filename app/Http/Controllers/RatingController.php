@@ -20,7 +20,7 @@ class RatingController extends Controller
         $booking = Booking::with('vehicle', 'rating')->findOrFail($request->booking_id);
 
         // Must belong to the authenticated user's vehicle
-        if ($booking->vehicle->user_id !== Auth::id()) abort(403);
+        if (optional($booking->vehicle)->user_id !== Auth::id()) abort(403);
 
         // Only completed bookings can be rated
         if ($booking->status !== 'completed') abort(403);

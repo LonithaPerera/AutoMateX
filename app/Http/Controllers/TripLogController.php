@@ -9,14 +9,23 @@ use Illuminate\Http\Request;
 
 class TripLogController extends Controller
 {
+    private function authorise(Vehicle $vehicle): void
+    {
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+    }
+
     public function index(Vehicle $vehicle)
     {
-        $allTrips    = $vehicle->tripLogs()->orderBy('trip_date', 'desc')->get();
-        $tripLogs    = $vehicle->tripLogs()->orderBy('trip_date', 'desc')->paginate(10)->withQueryString();
-        $totalKm     = $allTrips->sum(fn($t) => $t->distance);
-        $businessKm  = $allTrips->where('purpose', 'business')->sum(fn($t) => $t->distance);
-        $personalKm  = $allTrips->where('purpose', 'personal')->sum(fn($t) => $t->distance);
-        $tripCount   = $allTrips->count();
+        $this->authorise($vehicle);
+
+        $allTrips   = $vehicle->tripLogs()->orderBy('trip_date', 'desc')->get();
+        $tripLogs   = $vehicle->tripLogs()->orderBy('trip_date', 'desc')->paginate(10)->withQueryString();
+        $totalKm    = $allTrips->sum(fn($t) => $t->distance);
+        $businessKm = $allTrips->where('purpose', 'business')->sum(fn($t) => $t->distance);
+        $personalKm = $allTrips->where('purpose', 'personal')->sum(fn($t) => $t->distance);
+        $tripCount  = $allTrips->count();
 
         return view('trips.index', compact(
             'vehicle', 'tripLogs', 'totalKm', 'businessKm', 'personalKm', 'tripCount'
@@ -25,11 +34,14 @@ class TripLogController extends Controller
 
     public function create(Vehicle $vehicle)
     {
+        $this->authorise($vehicle);
         return view('trips.create', compact('vehicle'));
     }
 
     public function store(Request $request, Vehicle $vehicle)
     {
+        $this->authorise($vehicle);
+
         $request->validate([
             'trip_date' => 'required|date',
             'start_km'  => 'required|integer|min:0',
@@ -48,11 +60,14 @@ class TripLogController extends Controller
 
     public function edit(Vehicle $vehicle, TripLog $tripLog)
     {
+        $this->authorise($vehicle);
         return view('trips.edit', compact('vehicle', 'tripLog'));
     }
 
     public function update(Request $request, Vehicle $vehicle, TripLog $tripLog)
     {
+        $this->authorise($vehicle);
+
         $request->validate([
             'trip_date' => 'required|date',
             'start_km'  => 'required|integer|min:0',
@@ -71,6 +86,7 @@ class TripLogController extends Controller
 
     public function destroy(Vehicle $vehicle, TripLog $tripLog)
     {
+        $this->authorise($vehicle);
         $tripLog->delete();
         return redirect()->route('trips.index', $vehicle)
                          ->with('success', __('app.trip_deleted'));
@@ -78,9 +94,7 @@ class TripLogController extends Controller
 
     public function exportPdf(Vehicle $vehicle)
     {
-        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
-            abort(403);
-        }
+        $this->authorise($vehicle);
 
         $tripLogs   = $vehicle->tripLogs()->orderBy('trip_date', 'desc')->get();
         $totalKm    = $tripLogs->sum(fn($t) => $t->distance);
