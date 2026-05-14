@@ -202,9 +202,23 @@ class VehicleController extends Controller
             'insurance_expiry'    => 'nullable|date',
             'registration_expiry' => 'nullable|date',
             'emission_due'        => 'nullable|date',
+            'insurance_doc'       => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'registration_doc'    => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'emission_doc'        => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        $vehicle->update($request->only(['insurance_expiry', 'registration_expiry', 'emission_due']));
+        $data = $request->only(['insurance_expiry', 'registration_expiry', 'emission_due']);
+
+        foreach (['insurance_doc', 'registration_doc', 'emission_doc'] as $field) {
+            if ($request->hasFile($field)) {
+                if ($vehicle->$field) {
+                    Storage::disk('public')->delete($vehicle->$field);
+                }
+                $data[$field] = $request->file($field)->store('vehicle-docs', 'public');
+            }
+        }
+
+        $vehicle->update($data);
 
         return redirect()->route('vehicles.show', $vehicle)
                          ->with('success', __('app.documents_updated'));

@@ -72,7 +72,7 @@ class FuelLogController extends Controller
         ]);
 
         return redirect()->route('fuel.index', $vehicle)
-                         ->with('success', 'Fuel log added successfully!');
+                         ->with('success', __('app.fuel_log_added'));
     }
 
     // Show edit form for a fuel log
@@ -129,6 +129,6 @@ class FuelLogController extends Controller
     {
         $fuelLog->delete();
         return redirect()->route('fuel.index', $vehicle)
-                         ->with('success', 'Fuel log deleted.');
+                         ->with('success', __('app.fuel_log_deleted'));
     }
 }

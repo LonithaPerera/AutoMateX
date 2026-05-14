@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\FuelLogController;
 use App\Http\Controllers\ServiceLogController;
+use App\Http\Controllers\TripLogController;
 use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\PartsController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PushSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -68,10 +70,19 @@ Route::middleware('auth')->group(function () {
         // Service Log routes
         Route::get('vehicles/{vehicle}/service', [ServiceLogController::class, 'index'])->name('service.index');
         Route::get('vehicles/{vehicle}/service/create', [ServiceLogController::class, 'create'])->name('service.create');
+        Route::get('vehicles/{vehicle}/service/pdf', [ServiceLogController::class, 'exportPdf'])->name('service.pdf');
         Route::post('vehicles/{vehicle}/service', [ServiceLogController::class, 'store'])->name('service.store');
         Route::get('vehicles/{vehicle}/service/{serviceLog}/edit', [ServiceLogController::class, 'edit'])->name('service.edit');
         Route::patch('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'update'])->name('service.update');
         Route::delete('vehicles/{vehicle}/service/{serviceLog}', [ServiceLogController::class, 'destroy'])->name('service.destroy');
+
+        // Trip Log routes
+        Route::get('vehicles/{vehicle}/trips', [TripLogController::class, 'index'])->name('trips.index');
+        Route::get('vehicles/{vehicle}/trips/create', [TripLogController::class, 'create'])->name('trips.create');
+        Route::post('vehicles/{vehicle}/trips', [TripLogController::class, 'store'])->name('trips.store');
+        Route::get('vehicles/{vehicle}/trips/{tripLog}/edit', [TripLogController::class, 'edit'])->name('trips.edit');
+        Route::patch('vehicles/{vehicle}/trips/{tripLog}', [TripLogController::class, 'update'])->name('trips.update');
+        Route::delete('vehicles/{vehicle}/trips/{tripLog}', [TripLogController::class, 'destroy'])->name('trips.destroy');
 
         // Suggestion Engine
         Route::get('vehicles/{vehicle}/suggestions', [SuggestionController::class, 'index'])->name('suggestions.index');
@@ -88,6 +99,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('/bookings/{booking}/reschedule', [BookingController::class, 'reschedule'])->name('bookings.reschedule');
         Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
     });
+
+    // Push subscriptions
+    Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->name('push.subscribe');
+    Route::post('/push/unsubscribe', [PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
 
     // Notifications — accessible by all authenticated users (vehicle owners + garage)
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

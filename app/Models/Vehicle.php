@@ -26,6 +26,9 @@ class Vehicle extends Model
         'insurance_expiry',
         'registration_expiry',
         'emission_due',
+        'insurance_doc',
+        'registration_doc',
+        'emission_doc',
     ];
 
     protected $casts = [
@@ -60,5 +63,11 @@ class Vehicle extends Model
     public function serviceLogs()
     {
         return $this->hasMany(ServiceLog::class);
+    }
+
+    // A vehicle can have many trip logs
+    public function tripLogs()
+    {
+        return $this->hasMany(TripLog::class);
     }
 }

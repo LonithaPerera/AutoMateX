@@ -21,11 +21,20 @@
                 {{ $vehicle->year }} · {{ number_format($vehicle->mileage) }} km
             </p>
         </div>
-        <a href="{{ route('service.create', $vehicle) }}"
-           class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
-           style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
-            {{ __('app.log_btn') }}
-        </a>
+        <div class="flex flex-col gap-2 items-end">
+            <a href="{{ route('service.create', $vehicle) }}"
+               class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 20px rgba(0,245,255,0.3);">
+                {{ __('app.log_btn') }}
+            </a>
+            @if($serviceLogs->isNotEmpty())
+            <a href="{{ route('service.pdf', $vehicle) }}"
+               class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
+               style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);color:#4ade80;">
+                <x-heroicon-o-arrow-down-tray class="w-3.5 h-3.5" />{{ __('app.download_pdf_btn') }}
+            </a>
+            @endif
+        </div>
     </div>
 
     {{-- Summary cards --}}
@@ -151,15 +160,15 @@
     @if($serviceLogsPaged->hasPages())
     <div class="mt-2 mb-4 flex items-center justify-center gap-2">
         @if($serviceLogsPaged->onFirstPage())
-            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">← Prev</span>
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">{{ __('app.pagination_prev') }}</span>
         @else
-            <a href="{{ $serviceLogsPaged->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">← Prev</a>
+            <a href="{{ $serviceLogsPaged->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">{{ __('app.pagination_prev') }}</a>
         @endif
         <span class="mono text-xs" style="color:#64748b;">{{ $serviceLogsPaged->currentPage() }} / {{ $serviceLogsPaged->lastPage() }}</span>
         @if($serviceLogsPaged->hasMorePages())
-            <a href="{{ $serviceLogsPaged->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">Next →</a>
+            <a href="{{ $serviceLogsPaged->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">{{ __('app.pagination_next') }}</a>
         @else
-            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">Next →</span>
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">{{ __('app.pagination_next') }}</span>
         @endif
     </div>
     @endif

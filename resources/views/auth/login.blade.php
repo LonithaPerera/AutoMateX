@@ -217,7 +217,7 @@
                 <label class="form-label" for="email">{{ __('app.field_email') }}</label>
                 <input class="form-input" id="email" type="email" name="email"
                        value="{{ old('email') }}" required autofocus
-                       placeholder="your@email.com">
+                       placeholder="{{ __('app.ph_your_email') }}">
             </div>
 
             <div class="form-group">

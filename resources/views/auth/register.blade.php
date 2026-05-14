@@ -200,20 +200,20 @@
             <div class="form-group">
                 <label class="form-label" for="name">{{ __('app.field_full_name') }}</label>
                 <input class="form-input" id="name" type="text" name="name"
-                       value="{{ old('name') }}" required autofocus placeholder="Your full name">
+                       value="{{ old('name') }}" required autofocus placeholder="{{ __('app.ph_full_name') }}">
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="email">{{ __('app.field_email') }}</label>
                 <input class="form-input" id="email" type="email" name="email"
-                       value="{{ old('email') }}" required placeholder="your@email.com">
+                       value="{{ old('email') }}" required placeholder="{{ __('app.ph_your_email') }}">
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="password">{{ __('app.field_password') }}</label>
                 <div class="pw-wrap">
                     <input class="form-input" id="password" type="password" name="password"
-                           required placeholder="min. 8 characters">
+                           required placeholder="{{ __('app.ph_password_min') }}">
                     <button type="button" class="pw-toggle" onclick="togglePw('password',this)" tabindex="-1">
                         <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
                         <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
@@ -225,7 +225,7 @@
                 <label class="form-label" for="password_confirmation">{{ __('app.field_confirm_pass') }}</label>
                 <div class="pw-wrap">
                     <input class="form-input" id="password_confirmation" type="password"
-                           name="password_confirmation" required placeholder="repeat password">
+                           name="password_confirmation" required placeholder="{{ __('app.ph_repeat_password') }}">
                     <button type="button" class="pw-toggle" onclick="togglePw('password_confirmation',this)" tabindex="-1">
                         <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
                         <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>

@@ -146,7 +146,7 @@ class BookingController extends Controller
         }
 
         return redirect()->route('garage.dashboard')
-                         ->with('success', 'Booking status updated.');
+                         ->with('success', __('app.admin_booking_status_updated'));
     }
 
     // Garage owner — save invoice details

@@ -20,7 +20,7 @@
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_garage_name') }}</label>
                 <input type="text" name="name" value="{{ old('name') }}" required
-                       placeholder="AutoHub Lanka"
+                       placeholder="{{ __('app.ph_garage_name') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
@@ -29,14 +29,14 @@
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_city') }}</label>
                     <input type="text" name="city" value="{{ old('city') }}" required
-                           placeholder="Colombo"
+                           placeholder="{{ __('app.ph_city') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_phone') }}</label>
                     <input type="text" name="phone" value="{{ old('phone') }}"
-                           placeholder="0112345678"
+                           placeholder="{{ __('app.ph_phone_eg') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
@@ -45,7 +45,7 @@
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_address') }}</label>
                 <input type="text" name="address" value="{{ old('address') }}"
-                       placeholder="123 Main Street, Colombo 05"
+                       placeholder="{{ __('app.ph_address_eg') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
@@ -53,7 +53,7 @@
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_specialisation') }}</label>
                 <input type="text" name="specialization" value="{{ old('specialization') }}"
-                       placeholder="Toyota, Honda, Engine Repairs..."
+                       placeholder="{{ __('app.ph_specialisation_eg') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
@@ -61,7 +61,7 @@
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_description') }}</label>
                 <textarea name="description" rows="3"
-                          placeholder="Brief description of your garage and services..."
+                          placeholder="{{ __('app.ph_garage_description') }}"
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('description') }}</textarea>
             </div>

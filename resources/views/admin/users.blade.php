@@ -149,9 +149,9 @@
                     <p id="modal-username" class="text-xs" style="color:#64748b;"></p>
                 </div>
             </div>
-            <p class="text-sm mb-4" style="color:#94a3b8;">Type <span class="mono font-bold" style="color:#f87171;">DELETE</span> to confirm this action. This cannot be undone.</p>
+            <p class="text-sm mb-4" style="color:#94a3b8;">{{ __('app.type_delete_before') }}<span class="mono font-bold" style="color:#f87171;">DELETE</span>{{ __('app.type_delete_after') }}</p>
             <input type="text" id="delete-confirm-input"
-                   placeholder="Type DELETE to confirm"
+                   placeholder="{{ __('app.ph_type_delete') }}"
                    oninput="onDeleteInput()"
                    class="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-slate-600 outline-none mb-4 mono"
                    style="background:rgba(255,255,255,0.04);border:1px solid rgba(248,113,113,0.3);">

@@ -29,7 +29,7 @@
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_service_type') }}</label>
                 <input type="text" name="service_type" value="{{ old('service_type') }}"
-                       required placeholder="e.g. Engine Oil Change"
+                       required placeholder="{{ __('app.ph_service_type_eg') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none transition-all"
                        style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('service_type') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
                 @error('service_type')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
@@ -87,7 +87,7 @@
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_garage_name') }}</label>
                     <input type="text" name="garage_name" value="{{ old('garage_name') }}"
-                           placeholder="AutoHub Lanka"
+                           placeholder="{{ __('app.ph_garage_name_eg') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
@@ -96,7 +96,7 @@
             {{-- Notes --}}
             <div class="mb-6">
                 <label class="section-label mb-2 block">{{ __('app.field_notes') }}</label>
-                <textarea name="notes" rows="3" placeholder="Any additional notes..."
+                <textarea name="notes" rows="3" placeholder="{{ __('app.ph_service_notes') }}"
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('notes') }}</textarea>
             </div>

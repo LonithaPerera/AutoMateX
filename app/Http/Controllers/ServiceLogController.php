@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ServiceLog;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ServiceLogController extends Controller
 {
@@ -51,7 +52,7 @@ class ServiceLogController extends Controller
         ]));
 
         return redirect()->route('service.index', $vehicle)
-                         ->with('success', 'Service log added successfully!');
+                         ->with('success', __('app.service_log_added'));
     }
 
     // Show edit form for a service log
@@ -91,6 +92,26 @@ class ServiceLogController extends Controller
     {
         $serviceLog->delete();
         return redirect()->route('service.index', $vehicle)
-                         ->with('success', 'Service log deleted.');
+                         ->with('success', __('app.service_log_deleted'));
+    }
+
+    // Export service history as PDF
+    public function exportPdf(Vehicle $vehicle)
+    {
+        // Ensure the authenticated user owns this vehicle
+        if ($vehicle->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $serviceLogs = $vehicle->serviceLogs()
+                               ->orderBy('service_date', 'desc')
+                               ->get();
+
+        $pdf = Pdf::loadView('service.pdf', compact('vehicle', 'serviceLogs'))
+                  ->setPaper('a4', 'portrait');
+
+        $filename = 'service-history-' . strtolower($vehicle->make) . '-' . strtolower($vehicle->model) . '-' . $vehicle->year . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

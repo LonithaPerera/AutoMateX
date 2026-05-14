@@ -536,15 +536,61 @@
     @endif
     @endauth
 
-    <!-- PWA Service Worker -->
+    <!-- PWA Service Worker + Push Notifications -->
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('AutoMateX SW registered:', reg.scope))
-                    .catch(err => console.log('SW error:', err));
+    const VAPID_PUBLIC_KEY = '{{ config('services.vapid.public_key') }}';
+
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        const raw     = window.atob(base64);
+        return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+    }
+
+    async function subscribeToPush(reg) {
+        try {
+            const sub = await reg.pushManager.subscribe({
+                userVisibleOnly:      true,
+                applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
             });
+            const key  = sub.getKey('p256dh');
+            const auth = sub.getKey('auth');
+            await fetch('/push/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type':  'application/json',
+                    'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                },
+                body: JSON.stringify({
+                    endpoint:   sub.endpoint,
+                    public_key: key  ? btoa(String.fromCharCode(...new Uint8Array(key)))  : null,
+                    auth_token: auth ? btoa(String.fromCharCode(...new Uint8Array(auth))) : null,
+                }),
+            });
+        } catch (e) {
+            // User denied permission or push not supported — fail silently
         }
+    }
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                // Only subscribe if permission already granted or not yet asked
+                if (Notification.permission === 'granted') {
+                    subscribeToPush(reg);
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(perm => {
+                        if (perm === 'granted') subscribeToPush(reg);
+                    });
+                }
+            }).catch(() => {});
+        });
+    } else if ('serviceWorker' in navigator) {
+        // Fallback: register SW without push
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+    }
     </script>
 </body>
 </html>

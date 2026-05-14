@@ -41,6 +41,29 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
+// Push event — show notification when a push message is received
+self.addEventListener('push', (event) => {
+    let data = { title: 'AutoMateX', body: 'You have a new notification.', url: '/notifications' };
+    if (event.data) {
+        try { data = { ...data, ...JSON.parse(event.data.text()) }; } catch(e) {}
+    }
+    event.waitUntil(
+        self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: '/images/logo.png',
+            badge: '/images/logo.png',
+            data: { url: data.url },
+        })
+    );
+});
+
+// Notification click — open the relevant page
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = event.notification.data?.url ?? '/';
+    event.waitUntil(clients.openWindow(url));
+});
+
 // Fetch event — network first for HTML, cache first for assets
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;

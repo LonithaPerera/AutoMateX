@@ -73,7 +73,7 @@
                 <label class="section-label mb-2 block">{{ __('app.field_fuel_station') }}</label>
                 <input type="text" name="fuel_station"
                        value="{{ old('fuel_station') }}"
-                       placeholder="e.g. Ceylon Petroleum, Nugegoda"
+                       placeholder="{{ __('app.ph_fuel_station') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
@@ -81,7 +81,7 @@
             {{-- Notes --}}
             <div class="mb-6">
                 <label class="section-label mb-2 block">{{ __('app.field_notes') }}</label>
-                <textarea name="notes" rows="2" placeholder="Any notes..."
+                <textarea name="notes" rows="2" placeholder="{{ __('app.ph_notes_any') }}"
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('notes') }}</textarea>
             </div>

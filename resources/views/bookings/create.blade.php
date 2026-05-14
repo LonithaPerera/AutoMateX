@@ -48,36 +48,132 @@
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_service_type') }}</label>
                 <input type="text" name="service_type" value="{{ old('service_type') }}" required
-                       placeholder="e.g. Full Service, Oil Change..."
+                       placeholder="{{ __('app.ph_booking_service') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid {{ $errors->has('service_type') ? 'rgba(248,113,113,0.5)' : 'rgba(0,245,255,0.15)' }};">
                 @error('service_type')<p class="text-xs mt-1" style="color:#f87171;">{{ $message }}</p>@enderror
             </div>
 
-            {{-- Date & Time --}}
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                    <label class="section-label mb-2 block">{{ __('app.field_pref_date') }}</label>
-                    <input type="date" name="booking_date"
-                           value="{{ old('booking_date', date('Y-m-d', strtotime('+1 day'))) }}"
-                           min="{{ date('Y-m-d', strtotime('+1 day')) }}" required
-                           class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
-                </div>
-                <div>
-                    <label class="section-label mb-2 block">{{ __('app.field_pref_time') }}</label>
-                    <input type="time" name="booking_time"
-                           value="{{ old('booking_time', '09:00') }}" required
-                           class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
-                </div>
+            {{-- Date --}}
+            <div class="mb-4">
+                <label class="section-label mb-2 block">{{ __('app.field_pref_date') }}</label>
+                <input type="date" name="booking_date" id="booking-date"
+                       value="{{ old('booking_date', date('Y-m-d', strtotime('+1 day'))) }}"
+                       min="{{ date('Y-m-d', strtotime('+1 day')) }}" required
+                       oninput="generateSlots()"
+                       class="w-full px-4 py-3 rounded-xl text-sm text-white outline-none"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;">
             </div>
+
+            {{-- Time Slot Picker --}}
+            <div class="mb-4">
+                <label class="section-label mb-2 block">{{ __('app.field_pref_time') }}</label>
+                <input type="hidden" name="booking_time" id="booking-time-hidden" value="{{ old('booking_time', '') }}" required>
+                <div id="time-slot-grid" class="flex flex-wrap gap-2 min-h-[40px]"></div>
+                <p id="slot-closed-msg" class="text-xs hidden mt-1" style="color:#f87171;">{{ __('app.slot_closed_day') }}</p>
+                <p id="slot-no-hours-msg" class="text-xs hidden mt-1" style="color:#94a3b8;">{{ __('app.slot_no_hours') }}</p>
+            </div>
+
+            @php
+                $workingHoursJson = $garage->working_hours ? json_encode($garage->working_hours) : 'null';
+            @endphp
+            <script>
+            const garageHours = {!! $workingHoursJson !!};
+            const dayKeys = ['sun','mon','tue','wed','thu','fri','sat'];
+
+            function generateSlots() {
+                const dateVal = document.getElementById('booking-date').value;
+                const grid    = document.getElementById('time-slot-grid');
+                const closedMsg  = document.getElementById('slot-closed-msg');
+                const noHoursMsg = document.getElementById('slot-no-hours-msg');
+                grid.innerHTML = '';
+                closedMsg.classList.add('hidden');
+                noHoursMsg.classList.add('hidden');
+
+                if (!dateVal) return;
+
+                const dayKey = dayKeys[new Date(dateVal + 'T00:00:00').getDay()];
+
+                if (!garageHours) {
+                    noHoursMsg.classList.remove('hidden');
+                    // Fallback: show a plain time input
+                    const inp = document.createElement('input');
+                    inp.type = 'time'; inp.className = 'w-full px-4 py-2.5 rounded-xl text-sm text-white outline-none';
+                    inp.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);color-scheme:dark;';
+                    inp.value = document.getElementById('booking-time-hidden').value || '09:00';
+                    inp.oninput = () => { document.getElementById('booking-time-hidden').value = inp.value; };
+                    grid.appendChild(inp);
+                    return;
+                }
+
+                const dayData = garageHours[dayKey];
+                if (!dayData || dayData.closed) {
+                    closedMsg.classList.remove('hidden');
+                    return;
+                }
+
+                const [openH, openM]   = dayData.open.split(':').map(Number);
+                const [closeH, closeM] = dayData.close.split(':').map(Number);
+                const openMins  = openH * 60 + openM;
+                const closeMins = closeH * 60 + closeM;
+                const currentVal = document.getElementById('booking-time-hidden').value;
+
+                for (let m = openMins; m < closeMins; m += 30) {
+                    const hh  = String(Math.floor(m / 60)).padStart(2, '0');
+                    const mm  = String(m % 60).padStart(2, '0');
+                    const val = hh + ':' + mm;
+                    const lbl = (m % 720 < 60 && m % 720 >= 0 && Math.floor(m/60) === 12) ? '12:' + mm + ' PM'
+                              : (Math.floor(m / 60) >= 12 ? (Math.floor(m/60) === 12 ? '12' : String(Math.floor(m/60)-12)) + ':' + mm + ' PM'
+                                                           : String(Math.floor(m/60)) + ':' + mm + ' AM');
+
+                    const isSelected = val === currentVal;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = val;
+                    btn.dataset.val = val;
+                    btn.className = 'slot-btn px-3 py-1.5 rounded-lg text-xs font-semibold mono transition-all active:scale-95';
+                    btn.style.cssText = isSelected
+                        ? 'background:rgba(0,245,255,0.2);border:1px solid rgba(0,245,255,0.5);color:#00f5ff;'
+                        : 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;';
+                    btn.onclick = function() {
+                        document.querySelectorAll('.slot-btn').forEach(b => {
+                            b.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;';
+                        });
+                        this.style.cssText = 'background:rgba(0,245,255,0.2);border:1px solid rgba(0,245,255,0.5);color:#00f5ff;';
+                        document.getElementById('booking-time-hidden').value = this.dataset.val;
+                    };
+                    grid.appendChild(btn);
+                }
+
+                if (!grid.children.length) {
+                    noHoursMsg.classList.remove('hidden');
+                }
+            }
+            document.addEventListener('DOMContentLoaded', generateSlots);
+
+            // Prevent submission if no slot selected; enable loading state only on success
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const timeVal = document.getElementById('booking-time-hidden').value;
+                if (!timeVal) {
+                    e.preventDefault();
+                    const msg = document.getElementById('slot-no-hours-msg');
+                    msg.textContent = '{{ __('app.slot_required') }}';
+                    msg.classList.remove('hidden');
+                    msg.style.color = '#f87171';
+                    return;
+                }
+                // Validation passed — show loading state
+                const btn = document.getElementById('booking-submit-btn');
+                btn.disabled = true;
+                btn.innerHTML = '&bull;&bull;&bull;';
+            });
+            </script>
 
             {{-- Notes --}}
             <div class="mb-6">
                 <label class="section-label mb-2 block">{{ __('app.field_notes') }}</label>
                 <textarea name="notes" rows="3"
-                          placeholder="Describe the issue or any special requests..."
+                          placeholder="{{ __('app.ph_booking_notes') }}"
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">{{ old('notes') }}</textarea>
             </div>
@@ -130,7 +226,6 @@
 
             {{-- #6 Submit with loading state --}}
             <button type="submit" id="booking-submit-btn"
-                    onclick="this.disabled=true;this.innerHTML='&bull;&bull;&bull;';this.form.submit();"
                     class="w-full py-3 rounded-xl font-semibold heading tracking-widest text-sm transition-all active:scale-95"
                     style="background:linear-gradient(135deg,#0066ff,#00f5ff);color:#080c14;box-shadow:0 0 24px rgba(0,245,255,0.3);">
                 {{ __('app.confirm_booking_btn') }}

@@ -112,7 +112,7 @@
                     <span style="color:{{ $accentColor }};">{{ __('app.km_remaining_text', ['km' => number_format($item['km_remaining'])]) }}</span>
                 @endif
                 @if(!$isOverdue && isset($item['days_left']) && $item['days_left'] !== null)
-                    <span style="color:#475569;"> · ~{{ $item['days_left'] }} days</span>
+                    <span style="color:#475569;"> · {{ __('app.approx_days', ['days' => $item['days_left']]) }}</span>
                 @endif
             </p>
             <p class="mono text-xs" style="color:#475569;">

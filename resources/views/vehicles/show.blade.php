@@ -222,32 +222,53 @@
             </div>
             @endforeach
         </div>
-        {{-- Update document dates --}}
-        <form method="POST" action="{{ route('vehicles.updateDocuments', $vehicle) }}">
+        {{-- Update document dates + file uploads --}}
+        <form method="POST" action="{{ route('vehicles.updateDocuments', $vehicle) }}"
+              enctype="multipart/form-data">
             @csrf @method('PATCH')
-            <div class="grid grid-cols-3 gap-2 mb-2">
-                <div>
-                    <label class="section-label mb-1 block" style="font-size:9px;">{{ __('app.insurance_expiry_label') }}</label>
-                    <input type="date" name="insurance_expiry"
-                           value="{{ $vehicle->insurance_expiry?->format('Y-m-d') }}"
-                           class="w-full px-2 py-1.5 rounded-lg text-xs text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);color-scheme:dark;">
+
+            @php
+                $docFields = [
+                    ['key' => 'insurance',    'expiry' => 'insurance_expiry',    'doc' => 'insurance_doc',    'label' => __('app.insurance_expiry_label')],
+                    ['key' => 'registration', 'expiry' => 'registration_expiry', 'doc' => 'registration_doc', 'label' => __('app.registration_expiry_label')],
+                    ['key' => 'emission',     'expiry' => 'emission_due',        'doc' => 'emission_doc',     'label' => __('app.emission_due_label')],
+                ];
+            @endphp
+
+            <div class="space-y-3 mb-3">
+                @foreach($docFields as $df)
+                @php $docPath = $vehicle->{$df['doc']}; @endphp
+                <div class="rounded-xl p-3" style="background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.12);">
+                    <p class="section-label mb-2" style="font-size:9px;">{{ $df['label'] }}</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {{-- Expiry date --}}
+                        <input type="date" name="{{ $df['expiry'] }}"
+                               value="{{ $vehicle->{$df['expiry']}?->format('Y-m-d') }}"
+                               class="px-2 py-1.5 rounded-lg text-xs text-white outline-none"
+                               style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);color-scheme:dark;flex:1;min-width:120px;">
+                        {{-- File upload --}}
+                        <label class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer transition-all text-xs"
+                               style="background:rgba(168,85,247,0.08);border:1px dashed rgba(168,85,247,0.3);color:#a855f7;">
+                            <x-heroicon-o-paper-clip class="w-3 h-3 flex-shrink-0" />
+                            <span id="doc-name-{{ $df['key'] }}">{{ $docPath ? __('app.replace_doc_btn') : __('app.upload_doc_btn') }}</span>
+                            <input type="file" name="{{ $df['doc'] }}" accept=".pdf,.jpg,.jpeg,.png"
+                                   class="sr-only"
+                                   onchange="document.getElementById('doc-name-{{ $df['key'] }}').textContent = this.files[0]?.name ?? '{{ $docPath ? __('app.replace_doc_btn') : __('app.upload_doc_btn') }}';">
+                        </label>
+                        {{-- View existing doc --}}
+                        @if($docPath)
+                        <a href="{{ asset('storage/' . $docPath) }}" target="_blank"
+                           class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs transition-all"
+                           style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);color:#4ade80;">
+                            <x-heroicon-o-eye class="w-3 h-3" />
+                            {{ __('app.view_doc_btn') }}
+                        </a>
+                        @endif
+                    </div>
                 </div>
-                <div>
-                    <label class="section-label mb-1 block" style="font-size:9px;">{{ __('app.registration_expiry_label') }}</label>
-                    <input type="date" name="registration_expiry"
-                           value="{{ $vehicle->registration_expiry?->format('Y-m-d') }}"
-                           class="w-full px-2 py-1.5 rounded-lg text-xs text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);color-scheme:dark;">
-                </div>
-                <div>
-                    <label class="section-label mb-1 block" style="font-size:9px;">{{ __('app.emission_due_label') }}</label>
-                    <input type="date" name="emission_due"
-                           value="{{ $vehicle->emission_due?->format('Y-m-d') }}"
-                           class="w-full px-2 py-1.5 rounded-lg text-xs text-white outline-none"
-                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);color-scheme:dark;">
-                </div>
+                @endforeach
             </div>
+
             <button type="submit"
                     class="px-4 py-1.5 rounded-xl text-xs font-semibold heading tracking-wider transition-all active:scale-95"
                     style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);color:#a855f7;">
@@ -524,6 +545,12 @@
            style="border-color:rgba(0,102,255,0.2);">
             <x-heroicon-o-beaker class="w-6 h-6" style="color:#6699ff;" />
             <p class="heading text-xs font-bold tracking-wider" style="color:#6699ff;">{{ __('app.action_fuel_logs') }}</p>
+        </a>
+        <a href="{{ route('trips.index', $vehicle) }}"
+           class="col-span-2 glass-bright rounded-2xl p-4 border flex flex-col items-center gap-2 transition-all active:scale-95"
+           style="border-color:rgba(251,191,36,0.2);">
+            <x-heroicon-o-map class="w-6 h-6" style="color:#fbbf24;" />
+            <p class="heading text-xs font-bold tracking-wider" style="color:#fbbf24;">{{ __('app.action_trip_log') }}</p>
         </a>
     </div>
 

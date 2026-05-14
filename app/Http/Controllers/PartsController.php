@@ -8,7 +8,7 @@ class PartsController extends Controller
     {
         $parts = collect();
         $makes = Part::distinct()->pluck('vehicle_make');
-        if ($request->filled('make') || $request->filled('search')) {
+        if ($request->anyFilled(['make', 'model', 'category', 'search', 'year'])) {
             $query = Part::query();
             if ($request->filled('make')) {
                 $query->where('vehicle_make', $request->make);
@@ -18,6 +18,11 @@ class PartsController extends Controller
             }
             if ($request->filled('category')) {
                 $query->where('part_category', $request->category);
+            }
+            if ($request->filled('year')) {
+                $year = (int) $request->year;
+                $query->where('vehicle_year_from', '<=', $year)
+                      ->where('vehicle_year_to', '>=', $year);
             }
             if ($request->filled('search')) {
                 $query->where(function ($q) use ($request) {

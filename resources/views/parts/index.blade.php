@@ -60,7 +60,7 @@
             <div class="mb-3">
                 <label class="section-label mb-2 block">{{ __('app.field_keyword') }}</label>
                 <input type="text" name="search" value="{{ request('search') }}"
-                       placeholder="e.g. Oil Filter, Brake Pad..."
+                       placeholder="{{ __('app.ph_parts_keyword') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
@@ -70,24 +70,33 @@
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_veh_make') }}</label>
                     <input type="text" name="make" id="part-make" value="{{ request('make') }}"
-                           placeholder="Toyota"
+                           placeholder="{{ __('app.ph_make') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_veh_model') }}</label>
                     <input type="text" name="model" id="part-model" value="{{ request('model') }}"
-                           placeholder="Premio"
+                           placeholder="{{ __('app.ph_model') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
+            </div>
+
+            {{-- Year --}}
+            <div class="mb-3">
+                <label class="section-label mb-2 block">{{ __('app.field_year_filter') }}</label>
+                <input type="number" name="year" value="{{ request('year') }}"
+                       placeholder="{{ __('app.ph_year_eg') }}" min="1990" max="2030"
+                       class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
+                       style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
 
             {{-- Category --}}
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_category_p') }}</label>
                 <input type="text" name="category" value="{{ request('category') }}"
-                       placeholder="e.g. Filters, Brakes, Electrical..."
+                       placeholder="{{ __('app.ph_parts_category') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
@@ -98,7 +107,7 @@
                 <x-heroicon-o-magnifying-glass class="w-4 h-4 inline-block mr-1 align-middle" />{{ __('app.search_parts_btn') }}
             </button>
 
-            @if(request()->hasAny(['search','make','model','category']))
+            @if(request()->hasAny(['search','make','model','category','year']))
             <a href="{{ route('parts.index') }}"
                class="block text-center mt-2 text-sm py-2" style="color:#64748b;">
                 {{ __('app.clear_filters') }}

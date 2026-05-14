@@ -71,7 +71,7 @@
                             style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:#94a3b8;font-size:18px;">›</button>
                 </div>
                 <div class="grid grid-cols-7 gap-1 mb-2">
-                    @foreach(['S','M','T','W','T','F','S'] as $d)
+                    @foreach([__('app.cal_sun'),__('app.cal_mon'),__('app.cal_tue'),__('app.cal_wed'),__('app.cal_thu'),__('app.cal_fri'),__('app.cal_sat')] as $d)
                     <div class="text-center text-xs font-semibold mono py-1" style="color:#475569;">{{ $d }}</div>
                     @endforeach
                 </div>

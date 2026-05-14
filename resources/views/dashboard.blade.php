@@ -200,9 +200,9 @@
                             <span class="tag" style="background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.25);">{{ __('app.active_badge') }}</span>
                             <span class="tag" style="background:rgba(255,255,255,0.05);color:#64748b;">{{ strtoupper($vehicle->fuel_type) }}</span>
                             @if($overdueServiceName)
-                            <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3);">{{ strtoupper($overdueServiceName) }} OVERDUE</span>
+                            <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.3);">{{ __('app.badge_overdue', ['service' => strtoupper($overdueServiceName)]) }}</span>
                             @elseif($dueSoonServiceName)
-                            <span class="tag" style="background:rgba(255,107,0,0.1);color:#ff6b00;border:1px solid rgba(255,107,0,0.25);">{{ strtoupper($dueSoonServiceName) }} DUE SOON</span>
+                            <span class="tag" style="background:rgba(255,107,0,0.1);color:#ff6b00;border:1px solid rgba(255,107,0,0.25);">{{ __('app.badge_due_soon', ['service' => strtoupper($dueSoonServiceName)]) }}</span>
                             @endif
                         </div>
                         <h3 class="heading text-xl font-bold text-white">{{ $vehicle->make }} {{ $vehicle->model }}</h3>
@@ -228,11 +228,11 @@
                         {{-- Tooltip --}}
                         <div class="absolute right-0 bottom-full mb-2 w-44 rounded-xl p-2.5 ring-tip pointer-events-none z-50"
                              style="background:rgba(8,12,20,0.97);border:1px solid rgba(0,245,255,0.18);">
-                            <p class="mono text-xs font-bold mb-1.5" style="color:{{ $ringColor }};">HEALTH: {{ $health }}/100</p>
+                            <p class="mono text-xs font-bold mb-1.5" style="color:{{ $ringColor }};">{{ __('app.health_label') }}: {{ $health }}/100</p>
                             <div class="text-xs space-y-1" style="color:#64748b;">
-                                <div class="flex justify-between"><span>Mileage</span><span class="mono">{{ $mileageScore }}/40</span></div>
-                                <div class="flex justify-between"><span>Last Service</span><span class="mono">{{ $svcScore }}/40</span></div>
-                                <div class="flex justify-between"><span>Maintenance</span><span class="mono">{{ $maintScore }}/20</span></div>
+                                <div class="flex justify-between"><span>{{ __('app.score_mileage') }}</span><span class="mono">{{ $mileageScore }}/40</span></div>
+                                <div class="flex justify-between"><span>{{ __('app.score_last_service') }}</span><span class="mono">{{ $svcScore }}/40</span></div>
+                                <div class="flex justify-between"><span>{{ __('app.score_maintenance') }}</span><span class="mono">{{ $maintScore }}/20</span></div>
                             </div>
                         </div>
                     </div>

@@ -22,7 +22,7 @@
 
                 {{-- Step 1: type DELETE --}}
                 <div class="mb-3">
-                    <label class="section-label mb-2 block">TYPE <span style="color:#f87171;letter-spacing:0.15em;">DELETE</span> TO CONFIRM</label>
+                    <label class="section-label mb-2 block">{{ __('app.type_delete_before') }}<span style="color:#f87171;letter-spacing:0.15em;">DELETE</span>{{ __('app.type_delete_after') }}</label>
                     <input id="delete_confirm_text"
                            type="text"
                            autocomplete="off"
@@ -37,7 +37,7 @@
                     <label class="section-label mb-2 block">{{ __('app.field_confirm_password') }}</label>
                     <div class="relative">
                         <input id="delete_password" type="password" name="password" required
-                               placeholder="Enter password to confirm"
+                               placeholder="{{ __('app.ph_delete_password') }}"
                                class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                                style="background:rgba(255,255,255,0.04);border:1px solid rgba(248,113,113,0.3);padding-right:44px;">
                         <button type="button" onclick="toggleDeletePw(this)" tabindex="-1"

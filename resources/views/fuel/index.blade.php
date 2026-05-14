@@ -255,15 +255,15 @@
     @if($fuelLogsPaged->hasPages())
     <div class="mt-2 mb-4 flex items-center justify-center gap-2">
         @if($fuelLogsPaged->onFirstPage())
-            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">← Prev</span>
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">{{ __('app.pagination_prev') }}</span>
         @else
-            <a href="{{ $fuelLogsPaged->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">← Prev</a>
+            <a href="{{ $fuelLogsPaged->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">{{ __('app.pagination_prev') }}</a>
         @endif
         <span class="mono text-xs" style="color:#64748b;">{{ $fuelLogsPaged->currentPage() }} / {{ $fuelLogsPaged->lastPage() }}</span>
         @if($fuelLogsPaged->hasMorePages())
-            <a href="{{ $fuelLogsPaged->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">Next →</a>
+            <a href="{{ $fuelLogsPaged->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg text-xs transition-all" style="background:rgba(0,245,255,0.06);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);">{{ __('app.pagination_next') }}</a>
         @else
-            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">Next →</span>
+            <span class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);color:#334155;border:1px solid rgba(255,255,255,0.06);">{{ __('app.pagination_next') }}</span>
         @endif
     </div>
     @endif

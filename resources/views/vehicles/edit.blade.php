@@ -32,13 +32,13 @@
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_make') }}</label>
-                    <input type="text" name="make" value="{{ old('make', $vehicle->make) }}" required placeholder="Toyota"
+                    <input type="text" name="make" value="{{ old('make', $vehicle->make) }}" required placeholder="{{ __('app.ph_make') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none transition-all"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_model') }}</label>
-                    <input type="text" name="model" value="{{ old('model', $vehicle->model) }}" required placeholder="Premio"
+                    <input type="text" name="model" value="{{ old('model', $vehicle->model) }}" required placeholder="{{ __('app.ph_model') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none transition-all"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
@@ -64,13 +64,13 @@
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_license') }}</label>
-                    <input type="text" name="license_plate" value="{{ old('license_plate', $vehicle->license_plate) }}" placeholder="CAY-8485"
+                    <input type="text" name="license_plate" value="{{ old('license_plate', $vehicle->license_plate) }}" placeholder="{{ __('app.ph_license_plate') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_colour') }}</label>
-                    <input type="text" name="color" value="{{ old('color', $vehicle->color) }}" placeholder="Silver"
+                    <input type="text" name="color" value="{{ old('color', $vehicle->color) }}" placeholder="{{ __('app.ph_color') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
@@ -79,7 +79,7 @@
             {{-- VIN --}}
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_vin') }}</label>
-                <input type="text" name="vin" value="{{ old('vin', $vehicle->vin) }}" placeholder="JT2BF22K1W0123456"
+                <input type="text" name="vin" value="{{ old('vin', $vehicle->vin) }}" placeholder="{{ __('app.ph_vin') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>

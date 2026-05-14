@@ -31,12 +31,12 @@
             @csrf
 
             {{-- Part Info section --}}
-            <p class="section-label mb-3">// PART INFO</p>
+            <p class="section-label mb-3">{{ __('app.part_info_section') }}</p>
 
             <div class="mb-4">
                 <label class="section-label mb-2 block">{{ __('app.field_part_name') }}</label>
                 <input type="text" name="part_name" value="{{ old('part_name') }}" required
-                       placeholder="e.g. Oil Filter"
+                       placeholder="{{ __('app.ph_part_name') }}"
                        class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
             </div>
@@ -45,14 +45,14 @@
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_part_category') }}</label>
                     <input type="text" name="part_category" value="{{ old('part_category') }}" required
-                           placeholder="e.g. Filters"
+                           placeholder="{{ __('app.ph_part_category') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_brand') }}</label>
                     <input type="text" name="brand" value="{{ old('brand') }}"
-                           placeholder="e.g. Bosch"
+                           placeholder="{{ __('app.ph_brand_eg') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
@@ -62,14 +62,14 @@
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_oem_number') }}</label>
                     <input type="text" name="oem_part_number" value="{{ old('oem_part_number') }}" required
-                           placeholder="e.g. 90915-YZZD4"
+                           placeholder="{{ __('app.ph_oem_number_eg') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_alt_number') }}</label>
                     <input type="text" name="alternative_part_number" value="{{ old('alternative_part_number') }}"
-                           placeholder="e.g. 90915-YZZJ3"
+                           placeholder="{{ __('app.ph_alt_number_eg') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none mono"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
                 </div>
@@ -78,26 +78,26 @@
             <div class="mb-5">
                 <label class="section-label mb-2 block">{{ __('app.field_description_p') }}</label>
                 <textarea name="description" rows="2"
-                          placeholder="Brief notes about this part..."
+                          placeholder="{{ __('app.ph_part_notes') }}"
                           class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none resize-none"
                           style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">{{ old('description') }}</textarea>
             </div>
 
             {{-- Vehicle Compatibility section --}}
-            <p class="section-label mb-3">// VEHICLE COMPATIBILITY</p>
+            <p class="section-label mb-3">{{ __('app.vehicle_compat_section') }}</p>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_veh_make') }}</label>
                     <input type="text" name="vehicle_make" value="{{ old('vehicle_make') }}" required
-                           placeholder="Toyota"
+                           placeholder="{{ __('app.ph_make') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>
                 <div>
                     <label class="section-label mb-2 block">{{ __('app.field_veh_model') }}</label>
                     <input type="text" name="vehicle_model" value="{{ old('vehicle_model') }}" required
-                           placeholder="Premio"
+                           placeholder="{{ __('app.ph_model') }}"
                            class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-600 outline-none"
                            style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,245,255,0.15);">
                 </div>

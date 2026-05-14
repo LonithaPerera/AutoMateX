@@ -231,7 +231,7 @@
             <div class="rounded-xl p-3 border" style="background:rgba(255,107,0,0.05);border-color:rgba(255,107,0,0.15);">
                 <p class="text-xs mb-1" style="color:rgba(255,107,0,0.6);">{{ __('app.avg_invoice_label') }}</p>
                 <p class="heading text-lg font-bold" style="color:#ff6b00;">LKR {{ number_format($avgInvoice) }}</p>
-                <p class="text-xs mt-1" style="color:#64748b;">per completed job</p>
+                <p class="text-xs mt-1" style="color:#64748b;">{{ __('app.per_completed_job') }}</p>
             </div>
             <div class="rounded-xl p-3 border" style="background:rgba(168,85,247,0.05);border-color:rgba(168,85,247,0.15);">
                 <p class="text-xs mb-1" style="color:rgba(168,85,247,0.6);">{{ __('app.most_booked_label') }}</p>
@@ -239,7 +239,7 @@
                 <p class="heading text-sm font-bold leading-tight" style="color:#c084fc;">
                     {{ Str::limit($mostBookedService->service_type, 22) }}
                 </p>
-                <p class="text-xs mt-1" style="color:#64748b;">{{ $mostBookedService->cnt }}× booked</p>
+                <p class="text-xs mt-1" style="color:#64748b;">{{ __('app.times_booked', ['count' => $mostBookedService->cnt]) }}</p>
                 @else
                 <p class="text-sm" style="color:#64748b;">—</p>
                 @endif
