@@ -40,7 +40,7 @@ on any device.
 | 🧠 Suggestion Engine | Rule-based engine predicts next service due by mileage |
 | 📄 Document Expiry Tracker | Alerts for insurance, registration and emission test expiry at 30/14/7/1/0 days |
 | 📱 QR Code Generation | Unique QR per vehicle — scan to view service history publicly |
-| 🔩 Parts Verification DB | OEM part numbers for 5 vehicle models to fight counterfeits |
+| 🔩 Parts Verification DB | OEM part numbers for 8 vehicle models to fight counterfeits |
 | 🏪 Garage Booking | Browse garages, book appointments, receive invoices, leave ratings |
 | 🔔 In-App Notifications | Real-time bell counter with notification history and mark-all-read |
 | 👨‍💼 Admin Dashboard | System-wide stats, user management, and activity log |
@@ -223,15 +223,18 @@ Tests: 74 passed (145 assertions)
 
 ## 🔩 Parts Verification Database
 
-Covers **5 vehicle models** with OEM part numbers:
+Covers **8 vehicle models** with OEM part numbers:
 
 | Make | Model | Parts Covered |
 |---|---|---|
-| Toyota | Vitz | Oil Filter, Air Filter, Spark Plug, Brake Pads, Drive Belt |
-| Toyota | Premio | Oil Filter, Air Filter, Spark Plug, Brake Pads, Cabin Filter |
 | Toyota | Aqua | Oil Filter, Air Filter, Spark Plug, Brake Pads |
-| Suzuki | Alto | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+| Honda | Vezel | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+| Toyota | Prius | Oil Filter, Air Filter, Spark Plug, Brake Pads, Cabin Filter |
+| Mazda | Demio | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+| Suzuki | Swift | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+| Nissan | Leaf | Oil Filter, Air Filter, Brake Pads, Cabin Filter |
 | Honda | Fit | Oil Filter, Air Filter, Spark Plug, Brake Pads |
+| Toyota | Vitz | Oil Filter, Air Filter, Spark Plug, Brake Pads, Drive Belt |
 
 ---
 
