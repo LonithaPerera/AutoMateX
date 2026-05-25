@@ -17,6 +17,6 @@ class LocaleController extends Controller
             }
         }
 
-        return redirect()->back()->fallback(url('/'));
+        return redirect(url()->previous(url('/')));
     }
 }
