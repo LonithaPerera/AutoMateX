@@ -2,306 +2,373 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Service History — {{ $vehicle->make }} {{ $vehicle->model }}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ $vehicle->make }} {{ $vehicle->model }} — Service History Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700;800&family=Share+Tech+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --orange : #f97316;
+        --navy   : #0b1120;
+        --navy2  : #0f172a;
+        --cyan   : #00f5ff;
+        --blue   : #0066ff;
+        --slate  : #64748b;
+        --border : #e2e8f0;
+        --bg     : #f8fafc;
+    }
+
     body {
-        font-family: DejaVu Sans, sans-serif;
-        font-size: 11px;
-        color: #1e293b;
-        background: #ffffff;
-        padding: 32px 36px;
+        background: #e8edf5;
+        font-family: 'Inter', Arial, sans-serif;
+        color: var(--navy2);
+        min-height: 100vh;
+        padding: 28px 16px 60px;
+        font-size: 14px;
+        line-height: 1.5;
     }
 
-    /* ── Header ── */
-    .header {
-        display: table;
-        width: 100%;
-        margin-bottom: 28px;
-        border-bottom: 2px solid #0066ff;
-        padding-bottom: 16px;
+    .action-bar {
+        max-width: 780px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
     }
-    .header-left  { display: table-cell; vertical-align: middle; width: 70%; }
-    .header-right { display: table-cell; vertical-align: middle; text-align: right; width: 30%; }
-
-    .brand {
-        font-size: 22px;
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 18px;
+        border-radius: 10px;
+        font-size: 12px;
         font-weight: 700;
-        color: #0066ff;
-        letter-spacing: 1px;
+        font-family: 'Share Tech Mono', monospace;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        border: 1px solid transparent;
+        text-decoration: none;
+        transition: all 0.18s;
+        white-space: nowrap;
     }
-    .brand span { color: #00c8d4; }
-    .report-title {
-        font-size: 11px;
-        color: #64748b;
-        margin-top: 2px;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-    }
-    .generated {
-        font-size: 9px;
-        color: #94a3b8;
+    .btn:hover { transform: translateY(-1px); }
+    .btn-back  { background:#fff; color:#475569; border-color:var(--border); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+    .btn-print { background:var(--orange); color:#fff; border-color:var(--orange); box-shadow:0 4px 12px rgba(249,115,22,0.35); }
+    .btn-print:hover { box-shadow:0 6px 18px rgba(249,115,22,0.45); }
+
+    .report {
+        max-width: 780px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+        overflow: hidden;
     }
 
-    /* ── Vehicle info card ── */
-    .vehicle-card {
+    .rpt-header {
+        background: var(--navy);
+        padding: 28px 40px 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .rpt-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 60% 80% at 5% 50%, rgba(249,115,22,0.07) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 60% at 90% 20%, rgba(0,245,255,0.08) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .header-inner { display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 1; }
+    .brand-lockup { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .brand-lockup img { height: 56px; width: auto; flex-shrink: 0; }
+    .brand-text { font-family: 'Rajdhani', 'Inter', sans-serif; font-size: 34px; font-weight: 800; letter-spacing: 0.5px; line-height: 1; }
+    .bt-auto { color: #ffffff; }
+    .bt-mate { color: #00f5ff; }
+    .bt-x    { color: #ff6b00; font-size: 1.2em; line-height: 1; }
+    .header-tagline { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #3a5070; letter-spacing: 0.12em; }
+    .header-title { text-align: right; }
+    .header-title .rpt-word { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: 0.06em; line-height: 1; }
+    .header-title .rpt-word span { color: var(--cyan); }
+    .header-title .rpt-sub { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #94a3b8; margin-top: 8px; }
+    .header-title .rpt-meta { font-size: 11px; color: #64748b; margin-top: 4px; }
+    .header-accent { height: 3px; background: linear-gradient(90deg, var(--orange), #fb923c, #fbbf24); }
+
+    .summary-strip {
         background: #f0f9ff;
-        border: 1px solid #bae6fd;
-        border-radius: 8px;
-        padding: 14px 16px;
-        margin-bottom: 22px;
-        display: table;
-        width: 100%;
+        border-bottom: 1px solid #bae6fd;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
     }
-    .vehicle-card-left  { display: table-cell; width: 65%; vertical-align: top; }
-    .vehicle-card-right { display: table-cell; width: 35%; vertical-align: top; text-align: right; }
+    .sum-cell { padding: 14px 20px; border-right: 1px solid #bae6fd; }
+    .sum-cell:last-child { border-right: none; }
+    .sum-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: #64748b; margin-bottom: 4px; }
+    .sum-val { font-family: 'Share Tech Mono', monospace; font-size: 18px; font-weight: 700; color: #0284c7; line-height: 1; }
 
-    .vehicle-name {
-        font-size: 18px;
+    .rpt-body { padding: 32px 40px; }
+
+    .section-hd {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
         font-weight: 700;
-        color: #0f172a;
+        letter-spacing: 0.14em;
+        color: var(--slate);
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 28px;
     }
-    .vehicle-sub {
-        font-size: 10px;
-        color: #475569;
-        margin-top: 3px;
-    }
-    .vehicle-meta {
-        font-size: 10px;
-        color: #334155;
-        margin-top: 8px;
-        line-height: 1.7;
-    }
-    .vehicle-meta strong { color: #0f172a; }
+    .section-hd:first-child { margin-top: 0; }
+    .section-hd::before { content: ''; display: block; width: 3px; height: 14px; background: var(--orange); border-radius: 2px; flex-shrink: 0; }
 
-    /* ── Summary stats ── */
-    .stats-row {
-        display: table;
-        width: 100%;
-        margin-bottom: 22px;
-        border-collapse: separate;
-        border-spacing: 8px 0;
-    }
-    .stat-cell {
-        display: table-cell;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
+    .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 4px; }
+    .spec-cell { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .spec-lbl { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .spec-val { font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 700; color: var(--navy2); }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    table.data-table thead tr { background: var(--navy); }
+    table.data-table thead th {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: #94a3b8;
         padding: 10px 14px;
-        text-align: center;
-        width: 25%;
-    }
-    .stat-value {
-        font-size: 18px;
-        font-weight: 700;
-        color: #0066ff;
-    }
-    .stat-label {
-        font-size: 9px;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-top: 2px;
-    }
-
-    /* ── Section heading ── */
-    .section-heading {
-        font-size: 9px;
-        font-weight: 700;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 8px;
-        padding-bottom: 4px;
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    /* ── Table ── */
-    table.records {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 24px;
-    }
-    table.records thead tr {
-        background: #0066ff;
-        color: #ffffff;
-    }
-    table.records thead th {
-        padding: 8px 10px;
         text-align: left;
+        border: none;
+    }
+    table.data-table thead th:first-child { border-radius: 8px 0 0 8px; }
+    table.data-table thead th:last-child  { border-radius: 0 8px 8px 0; }
+    table.data-table tbody tr { border-bottom: 1px solid var(--bg); }
+    table.data-table tbody td { padding: 11px 14px; color: #334155; border: none; vertical-align: middle; }
+    table.data-table tbody tr:nth-child(even) td { background: var(--bg); }
+
+    .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: 'Share Tech Mono', monospace;
         font-size: 9px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.06em;
     }
-    table.records tbody tr {
-        border-bottom: 1px solid #f1f5f9;
-    }
-    table.records tbody tr:nth-child(even) {
-        background: #f8fafc;
-    }
-    table.records tbody td {
-        padding: 9px 10px;
-        font-size: 10px;
-        color: #334155;
-        vertical-align: top;
-    }
-    .badge {
-        display: inline-block;
-        padding: 2px 7px;
-        border-radius: 20px;
-        font-size: 8px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-    }
-    .badge-maintenance { background: #dbeafe; color: #1d4ed8; }
-    .badge-repair      { background: #fce7f3; color: #be185d; }
-    .badge-inspection  { background: #dcfce7; color: #15803d; }
+    .tag-maintenance { background: #dbeafe; color: #1d4ed8; }
+    .tag-repair      { background: #fee2e2; color: #dc2626; }
+    .tag-inspection  { background: #d1fae5; color: #065f46; }
 
-    /* ── Cost row ── */
-    .total-row {
-        display: table;
-        width: 100%;
-        margin-top: 4px;
-    }
-    .total-cell {
-        display: table-cell;
-        text-align: right;
-        padding: 10px 10px;
+    .empty-row td { padding: 20px 14px; color: #94a3b8; font-family: 'Share Tech Mono', monospace; font-size: 11px; text-align: center; }
+
+    .total-bar {
         background: #f0f9ff;
         border: 1px solid #bae6fd;
-        border-radius: 6px;
-        width: 100%;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 32px;
     }
-    .total-label { font-size: 10px; color: #475569; }
-    .total-amount { font-size: 16px; font-weight: 700; color: #0066ff; margin-top: 2px; }
+    .total-item { text-align: right; }
+    .total-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: #64748b; letter-spacing: 0.08em; margin-bottom: 2px; }
+    .total-val { font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: 700; color: #0284c7; }
 
-    /* ── Footer ── */
-    .footer {
-        margin-top: 32px;
-        padding-top: 10px;
-        border-top: 1px solid #e2e8f0;
-        text-align: center;
-        font-size: 8px;
-        color: #94a3b8;
+    .rpt-footer {
+        background: var(--bg);
+        border-top: 1px solid var(--border);
+        border-radius: 0 0 16px 16px;
+        padding: 14px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .footer-left .fl-brand { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: #94a3b8; letter-spacing: 0.05em; }
+    .footer-left .fl-note  { font-size: 10px; color: #cbd5e1; margin-top: 2px; font-style: italic; }
+    .footer-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        color: #0284c7;
+        border-radius: 20px;
+        padding: 5px 14px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+    }
+    .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: #0284c7; display: inline-block; }
+
+    @media print {
+        @page { size: A4; margin: 10mm; }
+        body { background: #fff; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .action-bar { display: none !important; }
+        .report { box-shadow: none; border-radius: 0; max-width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+        .rpt-header { padding: 22px 24px 20px; }
+        .rpt-body   { padding: 24px; }
+        .rpt-footer { padding: 14px 24px; }
+        .summary-strip { grid-template-columns: repeat(2,1fr); }
+        .specs-grid    { grid-template-columns: repeat(2,1fr); }
+        .header-title .rpt-word { font-size: 18px; }
+        .total-bar { flex-direction: column; gap: 10px; }
     }
 </style>
 </head>
 <body>
 
-    {{-- Header --}}
-    <div class="header">
-        <div class="header-left">
-            <div class="brand">Auto<span>MateX</span></div>
-            <div class="report-title">Service History Report</div>
-        </div>
-        <div class="header-right">
-            <div class="generated">Generated: {{ \Carbon\Carbon::now()->format('d M Y, h:i A') }}</div>
-        </div>
-    </div>
+<div class="action-bar">
+    <a href="{{ route('service.index', $vehicle) }}" class="btn btn-back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        BACK TO SERVICE LOG
+    </a>
+    <button onclick="window.print()" class="btn btn-print">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        SAVE AS PDF
+    </button>
+</div>
 
-    {{-- Vehicle info --}}
-    <div class="vehicle-card">
-        <div class="vehicle-card-left">
-            <div class="vehicle-name">{{ $vehicle->make }} {{ $vehicle->model }}</div>
-            <div class="vehicle-sub">{{ $vehicle->year }} &nbsp;·&nbsp; {{ strtoupper(__('app.fuel_' . $vehicle->fuel_type)) }}</div>
-            <div class="vehicle-meta">
-                @if($vehicle->license_plate)
-                    <strong>Plate:</strong> {{ $vehicle->license_plate }}<br>
-                @endif
-                @if($vehicle->vin)
-                    <strong>VIN:</strong> {{ $vehicle->vin }}<br>
-                @endif
-                <strong>Mileage:</strong> {{ number_format($vehicle->mileage) }} km
+@php
+    $totalCost   = $serviceLogs->sum('cost');
+    $maintenance = $serviceLogs->where('type','maintenance')->count();
+    $repairs     = $serviceLogs->where('type','repair')->count();
+    $inspections = $serviceLogs->where('type','inspection')->count();
+@endphp
+
+<div class="report">
+
+    <div class="rpt-header">
+        <div class="header-inner">
+            <div>
+                <div class="brand-lockup">
+                    <img src="/images/logo.png" alt="AutoMateX">
+                    <span class="brand-text">
+                        <span class="bt-auto">Auto</span><span class="bt-mate">Mate</span><span class="bt-x">X</span>
+                    </span>
+                </div>
+                <div class="header-tagline">// VEHICLE MANAGEMENT SYSTEM</div>
+            </div>
+            <div class="header-title">
+                <div class="rpt-word">SERVICE&nbsp;<span>HISTORY</span></div>
+                <div class="rpt-sub">{{ $vehicle->make }} {{ $vehicle->model }}</div>
+                <div class="rpt-meta">Generated: {{ now()->format('d M Y, h:i A') }}</div>
             </div>
         </div>
-        <div class="vehicle-card-right">
-            <div class="vehicle-meta" style="text-align:right;">
-                <strong>Owner:</strong> {{ $vehicle->user->name }}<br>
-                <strong>Records:</strong> {{ $serviceLogs->count() }}<br>
-                <strong>Total Spent:</strong> LKR {{ number_format($serviceLogs->sum('cost')) }}
-            </div>
+    </div>
+    <div class="header-accent"></div>
+
+    <div class="summary-strip">
+        <div class="sum-cell">
+            <div class="sum-lbl">Total Records</div>
+            <div class="sum-val">{{ $serviceLogs->count() }}</div>
+        </div>
+        <div class="sum-cell">
+            <div class="sum-lbl">Maintenance</div>
+            <div class="sum-val">{{ $maintenance }}</div>
+        </div>
+        <div class="sum-cell">
+            <div class="sum-lbl">Repairs</div>
+            <div class="sum-val">{{ $repairs }}</div>
+        </div>
+        <div class="sum-cell">
+            <div class="sum-lbl">Total Spent</div>
+            <div class="sum-val" style="font-size:13px;">LKR {{ number_format($totalCost) }}</div>
         </div>
     </div>
 
-    {{-- Summary stats --}}
-    @php
-        $maintenance = $serviceLogs->where('type','maintenance')->count();
-        $repairs     = $serviceLogs->where('type','repair')->count();
-        $inspections = $serviceLogs->where('type','inspection')->count();
-        $avgCost     = $serviceLogs->count() > 0 ? $serviceLogs->avg('cost') : 0;
-    @endphp
-    <div class="stats-row">
-        <div class="stat-cell">
-            <div class="stat-value">{{ $serviceLogs->count() }}</div>
-            <div class="stat-label">Total Records</div>
-        </div>
-        <div class="stat-cell">
-            <div class="stat-value">{{ $maintenance }}</div>
-            <div class="stat-label">Maintenance</div>
-        </div>
-        <div class="stat-cell">
-            <div class="stat-value">{{ $repairs }}</div>
-            <div class="stat-label">Repairs</div>
-        </div>
-        <div class="stat-cell">
-            <div class="stat-value">{{ number_format($avgCost) }}</div>
-            <div class="stat-label">Avg Cost (LKR)</div>
-        </div>
-    </div>
+    <div class="rpt-body">
 
-    {{-- Service log table --}}
-    <div class="section-heading">// Service Records</div>
+        <p class="section-hd">VEHICLE DETAILS</p>
+        <div class="specs-grid">
+            <div class="spec-cell"><div class="spec-lbl">Make</div><div class="spec-val">{{ $vehicle->make }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Model</div><div class="spec-val">{{ $vehicle->model }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Year</div><div class="spec-val">{{ $vehicle->year }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Odometer</div><div class="spec-val">{{ number_format($vehicle->mileage) }} km</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Fuel Type</div><div class="spec-val">{{ ucfirst($vehicle->fuel_type) }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Colour</div><div class="spec-val">{{ $vehicle->color ?? '—' }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">License Plate</div><div class="spec-val">{{ $vehicle->license_plate ?? '—' }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Owner</div><div class="spec-val" style="font-size:11px;">{{ $vehicle->user->name }}</div></div>
+        </div>
 
-    @if($serviceLogs->isEmpty())
-        <p style="color:#64748b;font-size:11px;padding:12px 0;">No service records found for this vehicle.</p>
-    @else
-        <table class="records">
+        <p class="section-hd" style="margin-top:28px;">
+            SERVICE RECORDS
+            <span style="color:#94a3b8;font-weight:400;">{{ $serviceLogs->count() }} records · LKR {{ number_format($totalCost) }}</span>
+        </p>
+
+        @if($serviceLogs->isEmpty())
+        <table class="data-table"><tbody><tr class="empty-row"><td colspan="7">No service records found for this vehicle.</td></tr></tbody></table>
+        @else
+        <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width:12%;">Date</th>
-                    <th style="width:28%;">Service</th>
-                    <th style="width:12%;">Mileage</th>
-                    <th style="width:14%;">Cost (LKR)</th>
-                    <th style="width:8%;">Type</th>
-                    <th style="width:16%;">Garage</th>
-                    <th style="width:10%;">Notes</th>
+                    <th>Date</th>
+                    <th>Service Type</th>
+                    <th>Category</th>
+                    <th>Mileage</th>
+                    <th>Cost (LKR)</th>
+                    <th>Garage</th>
+                    <th>Notes</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($serviceLogs as $log)
                 <tr>
                     <td>{{ $log->service_date->format('d M Y') }}</td>
-                    <td style="font-weight:600;color:#0f172a;">{{ $log->service_type }}</td>
-                    <td>{{ number_format($log->mileage_at_service) }} km</td>
-                    <td style="font-weight:600;color:#0066ff;">{{ number_format($log->cost) }}</td>
-                    <td>
-                        <span class="badge badge-{{ $log->type }}">{{ $log->type }}</span>
-                    </td>
+                    <td style="font-weight:600;color:var(--navy2);">{{ $log->service_type }}</td>
+                    <td><span class="tag tag-{{ $log->type }}">{{ $log->type }}</span></td>
+                    <td style="font-family:'Share Tech Mono',monospace;">{{ number_format($log->mileage_at_service) }} km</td>
+                    <td style="font-family:'Share Tech Mono',monospace;font-weight:700;color:#0284c7;">{{ number_format($log->cost) }}</td>
                     <td>{{ $log->garage_name ?? '—' }}</td>
-                    <td style="color:#64748b;font-size:9px;">{{ $log->notes ? \Illuminate\Support\Str::limit($log->notes, 40) : '—' }}</td>
+                    <td style="color:#94a3b8;font-size:10px;">{{ $log->notes ? \Illuminate\Support\Str::limit($log->notes, 40) : '—' }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-
-        {{-- Total --}}
-        <div class="total-row">
-            <div class="total-cell">
-                <div class="total-label">Total Maintenance Spend</div>
-                <div class="total-amount">LKR {{ number_format($serviceLogs->sum('cost')) }}</div>
+        <div class="total-bar">
+            <div class="total-item">
+                <div class="total-lbl">TOTAL MAINTENANCE SPEND</div>
+                <div class="total-val">LKR {{ number_format($totalCost) }}</div>
             </div>
         </div>
-    @endif
+        @endif
 
-    {{-- Footer --}}
-    <div class="footer">
-        AutoMateX — Smart Vehicle Management System &nbsp;·&nbsp;
-        {{ $vehicle->make }} {{ $vehicle->model }} ({{ $vehicle->year }}) &nbsp;·&nbsp;
-        Report generated {{ \Carbon\Carbon::now()->format('d M Y') }}
     </div>
 
+    <div class="rpt-footer">
+        <div class="footer-left">
+            <div class="fl-brand">AutoMateX · Service History Report · © {{ date('Y') }}</div>
+            <div class="fl-note">This is a computer-generated report. All figures are based on user-entered data.</div>
+        </div>
+        <div class="footer-badge">
+            <span class="footer-dot"></span>
+            {{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->license_plate ?? $vehicle->vin ?? 'N/A' }}
+        </div>
+    </div>
+
+</div>
+
+<script>
+window.addEventListener('load', function () {
+    setTimeout(function () { window.print(); }, 500);
+});
+</script>
 </body>
 </html>

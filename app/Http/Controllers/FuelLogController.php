@@ -153,11 +153,6 @@ class FuelLogController extends Controller
         $totalLiters   = $fuelLogs->sum('liters');
         $avgKmPerLiter = $fuelLogs->whereNotNull('km_per_liter')->avg('km_per_liter');
 
-        $pdf = Pdf::loadView('fuel.pdf', compact('vehicle', 'fuelLogs', 'totalCost', 'totalLiters', 'avgKmPerLiter'))
-                  ->setPaper('a4', 'portrait');
-
-        $filename = 'fuel-history-' . strtolower($vehicle->make) . '-' . strtolower($vehicle->model) . '-' . $vehicle->year . '.pdf';
-
-        return $pdf->download($filename);
+        return view('fuel.pdf', compact('vehicle', 'fuelLogs', 'totalCost', 'totalLiters', 'avgKmPerLiter'));
     }
 }

@@ -116,11 +116,6 @@ class ServiceLogController extends Controller
                                ->orderBy('service_date', 'desc')
                                ->get();
 
-        $pdf = Pdf::loadView('service.pdf', compact('vehicle', 'serviceLogs'))
-                  ->setPaper('a4', 'portrait');
-
-        $filename = 'service-history-' . strtolower($vehicle->make) . '-' . strtolower($vehicle->model) . '-' . $vehicle->year . '.pdf';
-
-        return $pdf->download($filename);
+        return view('service.pdf', compact('vehicle', 'serviceLogs'));
     }
 }

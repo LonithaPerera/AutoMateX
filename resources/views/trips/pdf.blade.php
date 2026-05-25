@@ -2,219 +2,372 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Trip Log — {{ $vehicle->make }} {{ $vehicle->model }}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ $vehicle->make }} {{ $vehicle->model }} — Trip Log Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700;800&family=Share+Tech+Mono&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --orange : #f97316;
+        --navy   : #0b1120;
+        --navy2  : #0f172a;
+        --cyan   : #00f5ff;
+        --blue   : #0066ff;
+        --slate  : #64748b;
+        --border : #e2e8f0;
+        --bg     : #f8fafc;
+    }
+
     body {
-        font-family: DejaVu Sans, sans-serif;
-        font-size: 11px;
-        color: #1e293b;
-        background: #ffffff;
-        padding: 32px 36px;
+        background: #e8edf5;
+        font-family: 'Inter', Arial, sans-serif;
+        color: var(--navy2);
+        min-height: 100vh;
+        padding: 28px 16px 60px;
+        font-size: 14px;
+        line-height: 1.5;
     }
-    .header {
-        display: table;
-        width: 100%;
-        margin-bottom: 28px;
-        border-bottom: 2px solid #0066ff;
-        padding-bottom: 16px;
-    }
-    .header-left  { display: table-cell; vertical-align: middle; width: 70%; }
-    .header-right { display: table-cell; vertical-align: middle; text-align: right; width: 30%; }
-    .brand { font-size: 22px; font-weight: 700; color: #0066ff; letter-spacing: 1px; }
-    .brand span { color: #00c8d4; }
-    .report-title { font-size: 11px; color: #64748b; margin-top: 2px; letter-spacing: 0.5px; text-transform: uppercase; }
-    .generated { font-size: 9px; color: #94a3b8; }
 
-    .vehicle-card {
-        background: #f5f3ff;
-        border: 1px solid #ddd6fe;
-        border-radius: 8px;
-        padding: 14px 16px;
-        margin-bottom: 22px;
-        display: table;
-        width: 100%;
+    .action-bar {
+        max-width: 780px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
     }
-    .vehicle-card-left  { display: table-cell; width: 65%; vertical-align: top; }
-    .vehicle-card-right { display: table-cell; width: 35%; vertical-align: top; text-align: right; }
-    .vehicle-name { font-size: 18px; font-weight: 700; color: #0f172a; }
-    .vehicle-sub  { font-size: 10px; color: #475569; margin-top: 3px; }
-    .vehicle-meta { font-size: 10px; color: #334155; margin-top: 8px; line-height: 1.7; }
-    .vehicle-meta strong { color: #0f172a; }
-
-    .stats-row { display: table; width: 100%; margin-bottom: 22px; border-spacing: 8px; }
-    .stat-cell {
-        display: table-cell;
-        width: 25%;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        padding: 10px 12px;
-        text-align: center;
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 18px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: 'Share Tech Mono', monospace;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        border: 1px solid transparent;
+        text-decoration: none;
+        transition: all 0.18s;
+        white-space: nowrap;
     }
-    .stat-val { font-size: 16px; font-weight: 700; color: #7c3aed; }
-    .stat-lbl { font-size: 8px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-back  { background:#fff; color:#475569; border-color:var(--border); box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+    .btn-print { background:var(--orange); color:#fff; border-color:var(--orange); box-shadow:0 4px 12px rgba(249,115,22,0.35); }
+    .btn-print:hover { box-shadow:0 6px 18px rgba(249,115,22,0.45); }
 
-    .section-title {
+    .report {
+        max-width: 780px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+        overflow: hidden;
+    }
+
+    .rpt-header {
+        background: var(--navy);
+        padding: 28px 40px 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .rpt-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 60% 80% at 5% 50%, rgba(249,115,22,0.07) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 60% at 90% 20%, rgba(0,245,255,0.08) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .header-inner { display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 1; }
+    .brand-lockup { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .brand-lockup img { height: 56px; width: auto; flex-shrink: 0; }
+    .brand-text { font-family: 'Rajdhani', 'Inter', sans-serif; font-size: 34px; font-weight: 800; letter-spacing: 0.5px; line-height: 1; }
+    .bt-auto { color: #ffffff; }
+    .bt-mate { color: #00f5ff; }
+    .bt-x    { color: #ff6b00; font-size: 1.2em; line-height: 1; }
+    .header-tagline { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #3a5070; letter-spacing: 0.12em; }
+    .header-title { text-align: right; }
+    .header-title .rpt-word { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: 0.06em; line-height: 1; }
+    .header-title .rpt-word span { color: var(--cyan); }
+    .header-title .rpt-sub { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #94a3b8; margin-top: 8px; }
+    .header-title .rpt-meta { font-size: 11px; color: #64748b; margin-top: 4px; }
+    .header-accent { height: 3px; background: linear-gradient(90deg, var(--orange), #fb923c, #fbbf24); }
+
+    .summary-strip {
+        background: #f0f9ff;
+        border-bottom: 1px solid #bae6fd;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .sum-cell { padding: 14px 20px; border-right: 1px solid #bae6fd; }
+    .sum-cell:last-child { border-right: none; }
+    .sum-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: #64748b; margin-bottom: 4px; }
+    .sum-val { font-family: 'Share Tech Mono', monospace; font-size: 18px; font-weight: 700; color: #0284c7; line-height: 1; }
+
+    .rpt-body { padding: 32px 40px; }
+
+    .section-hd {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: var(--slate);
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 28px;
+    }
+    .section-hd:first-child { margin-top: 0; }
+    .section-hd::before { content: ''; display: block; width: 3px; height: 14px; background: var(--orange); border-radius: 2px; flex-shrink: 0; }
+
+    .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 4px; }
+    .spec-cell { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .spec-lbl { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .spec-val { font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 700; color: var(--navy2); }
+
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    table.data-table thead tr { background: var(--navy); }
+    table.data-table thead th {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: #94a3b8;
+        padding: 10px 14px;
+        text-align: left;
+        border: none;
+    }
+    table.data-table thead th:first-child { border-radius: 8px 0 0 8px; }
+    table.data-table thead th:last-child  { border-radius: 0 8px 8px 0; }
+    table.data-table tbody tr { border-bottom: 1px solid var(--bg); }
+    table.data-table tbody td { padding: 11px 14px; color: #334155; border: none; vertical-align: middle; }
+    table.data-table tbody tr:nth-child(even) td { background: var(--bg); }
+
+    .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: 'Share Tech Mono', monospace;
         font-size: 9px;
         font-weight: 700;
-        color: #64748b;
-        letter-spacing: 1px;
         text-transform: uppercase;
-        margin-bottom: 8px;
-        padding-bottom: 4px;
-        border-bottom: 1px solid #e2e8f0;
+        letter-spacing: 0.06em;
     }
+    .tag-business { background: #dbeafe; color: #1d4ed8; }
+    .tag-personal { background: #d1fae5; color: #065f46; }
+    .tag-other    { background: #f3f4f6; color: #6b7280; }
 
-    table { width: 100%; border-collapse: collapse; }
-    th {
-        background: #7c3aed;
-        color: #ffffff;
-        font-size: 8px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        padding: 7px 8px;
-        text-align: left;
+    .empty-row td { padding: 20px 14px; color: #94a3b8; font-family: 'Share Tech Mono', monospace; font-size: 11px; text-align: center; }
+
+    .total-bar {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 32px;
     }
-    td {
-        padding: 7px 8px;
+    .total-item { text-align: right; }
+    .total-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: #64748b; letter-spacing: 0.08em; margin-bottom: 2px; }
+    .total-val { font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: 700; color: #0284c7; }
+
+    .rpt-footer {
+        background: var(--bg);
+        border-top: 1px solid var(--border);
+        border-radius: 0 0 16px 16px;
+        padding: 14px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .footer-left .fl-brand { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: #94a3b8; letter-spacing: 0.05em; }
+    .footer-left .fl-note  { font-size: 10px; color: #cbd5e1; margin-top: 2px; font-style: italic; }
+    .footer-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        color: #0284c7;
+        border-radius: 20px;
+        padding: 5px 14px;
+        font-family: 'Share Tech Mono', monospace;
         font-size: 10px;
-        color: #334155;
-        border-bottom: 1px solid #f1f5f9;
-        vertical-align: top;
-    }
-    tr:nth-child(even) td { background: #faf5ff; }
-    .mono { font-family: DejaVu Sans Mono, monospace; }
-    .purple { color: #7c3aed; font-weight: 700; }
-    .green  { color: #16a34a; }
-    .badge {
-        display: inline-block;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 8px;
         font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.08em;
     }
-    .badge-business { background: #dbeafe; color: #1d4ed8; }
-    .badge-personal { background: #dcfce7; color: #15803d; }
-    .badge-other    { background: #f3f4f6; color: #6b7280; }
-    .total-row td { background: #f5f3ff; font-weight: 700; border-top: 2px solid #7c3aed; color: #0f172a; }
+    .footer-dot { width: 6px; height: 6px; border-radius: 50%; background: #0284c7; display: inline-block; }
 
-    .footer {
-        margin-top: 28px;
-        padding-top: 12px;
-        border-top: 1px solid #e2e8f0;
-        display: table;
-        width: 100%;
+    @media print {
+        @page { size: A4; margin: 10mm; }
+        body { background: #fff; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .action-bar { display: none !important; }
+        .report { box-shadow: none; border-radius: 0; max-width: 100%; }
     }
-    .footer-left  { display: table-cell; font-size: 9px; color: #94a3b8; }
-    .footer-right { display: table-cell; text-align: right; font-size: 9px; color: #94a3b8; }
+
+    @media (max-width: 640px) {
+        .rpt-header { padding: 22px 24px 20px; }
+        .rpt-body   { padding: 24px; }
+        .rpt-footer { padding: 14px 24px; }
+        .summary-strip { grid-template-columns: repeat(2,1fr); }
+        .specs-grid    { grid-template-columns: repeat(2,1fr); }
+        .header-title .rpt-word { font-size: 18px; }
+        .total-bar { flex-direction: column; gap: 10px; }
+    }
 </style>
 </head>
 <body>
 
-{{-- Header --}}
-<div class="header">
-    <div class="header-left">
-        <div class="brand">Auto<span>MateX</span></div>
-        <div class="report-title">Trip Log Report</div>
-    </div>
-    <div class="header-right">
-        <div class="generated">Generated {{ now()->format('d M Y') }}</div>
-    </div>
+<div class="action-bar">
+    <a href="{{ route('trips.index', $vehicle) }}" class="btn btn-back">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        BACK TO TRIP LOG
+    </a>
+    <button onclick="window.print()" class="btn btn-print">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        SAVE AS PDF
+    </button>
 </div>
 
-{{-- Vehicle info --}}
-<div class="vehicle-card">
-    <div class="vehicle-card-left">
-        <div class="vehicle-name">{{ $vehicle->make }} {{ $vehicle->model }}</div>
-        <div class="vehicle-sub">{{ $vehicle->year }} &nbsp;·&nbsp; {{ strtoupper(__('app.fuel_' . $vehicle->fuel_type)) }}</div>
-        <div class="vehicle-meta">
-            @if($vehicle->license_plate)
-                <strong>Plate:</strong> {{ $vehicle->license_plate }}<br>
-            @endif
-            <strong>Current Mileage:</strong> {{ number_format($vehicle->mileage) }} km
+<div class="report">
+
+    <div class="rpt-header">
+        <div class="header-inner">
+            <div>
+                <div class="brand-lockup">
+                    <img src="/images/logo.png" alt="AutoMateX">
+                    <span class="brand-text">
+                        <span class="bt-auto">Auto</span><span class="bt-mate">Mate</span><span class="bt-x">X</span>
+                    </span>
+                </div>
+                <div class="header-tagline">// VEHICLE MANAGEMENT SYSTEM</div>
+            </div>
+            <div class="header-title">
+                <div class="rpt-word">TRIP&nbsp;<span>LOG</span></div>
+                <div class="rpt-sub">{{ $vehicle->make }} {{ $vehicle->model }}</div>
+                <div class="rpt-meta">Generated: {{ now()->format('d M Y, h:i A') }}</div>
+            </div>
         </div>
     </div>
-    <div class="vehicle-card-right">
-        <div class="vehicle-meta" style="text-align:right;">
-            <strong>Owner:</strong><br>
-            {{ $vehicle->user->name }}<br>
-            <span style="color:#94a3b8;">{{ $vehicle->user->email }}</span>
+    <div class="header-accent"></div>
+
+    <div class="summary-strip">
+        <div class="sum-cell">
+            <div class="sum-lbl">Total Trips</div>
+            <div class="sum-val">{{ $tripLogs->count() }}</div>
+        </div>
+        <div class="sum-cell">
+            <div class="sum-lbl">Total Distance</div>
+            <div class="sum-val">{{ number_format($totalKm) }} km</div>
+        </div>
+        <div class="sum-cell">
+            <div class="sum-lbl">Business km</div>
+            <div class="sum-val">{{ number_format($businessKm) }} km</div>
+        </div>
+        <div class="sum-cell">
+            <div class="sum-lbl">Personal km</div>
+            <div class="sum-val">{{ number_format($personalKm) }} km</div>
         </div>
     </div>
+
+    <div class="rpt-body">
+
+        <p class="section-hd">VEHICLE DETAILS</p>
+        <div class="specs-grid">
+            <div class="spec-cell"><div class="spec-lbl">Make</div><div class="spec-val">{{ $vehicle->make }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Model</div><div class="spec-val">{{ $vehicle->model }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Year</div><div class="spec-val">{{ $vehicle->year }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Odometer</div><div class="spec-val">{{ number_format($vehicle->mileage) }} km</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Fuel Type</div><div class="spec-val">{{ ucfirst($vehicle->fuel_type) }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Colour</div><div class="spec-val">{{ $vehicle->color ?? '—' }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">License Plate</div><div class="spec-val">{{ $vehicle->license_plate ?? '—' }}</div></div>
+            <div class="spec-cell"><div class="spec-lbl">Owner</div><div class="spec-val" style="font-size:11px;">{{ $vehicle->user->name }}</div></div>
+        </div>
+
+        <p class="section-hd" style="margin-top:28px;">
+            TRIP RECORDS
+            <span style="color:#94a3b8;font-weight:400;">{{ $tripLogs->count() }} trips · {{ number_format($totalKm) }} km total</span>
+        </p>
+
+        @if($tripLogs->isEmpty())
+        <table class="data-table"><tbody><tr class="empty-row"><td colspan="6">No trip records found for this vehicle.</td></tr></tbody></table>
+        @else
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start km</th>
+                    <th>End km</th>
+                    <th>Distance</th>
+                    <th>Purpose</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($tripLogs as $trip)
+                <tr>
+                    <td>{{ $trip->trip_date->format('d M Y') }}</td>
+                    <td style="font-family:'Share Tech Mono',monospace;">{{ number_format($trip->start_km) }} km</td>
+                    <td style="font-family:'Share Tech Mono',monospace;">{{ number_format($trip->end_km) }} km</td>
+                    <td style="font-family:'Share Tech Mono',monospace;font-weight:700;color:#0284c7;">{{ number_format($trip->distance) }} km</td>
+                    <td><span class="tag tag-{{ $trip->purpose }}">{{ ucfirst($trip->purpose) }}</span></td>
+                    <td style="color:#94a3b8;font-size:10px;">{{ $trip->notes ? \Illuminate\Support\Str::limit($trip->notes, 50) : '—' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="total-bar">
+            <div class="total-item">
+                <div class="total-lbl">PERSONAL KM</div>
+                <div class="total-val">{{ number_format($personalKm) }} km</div>
+            </div>
+            <div class="total-item">
+                <div class="total-lbl">BUSINESS KM</div>
+                <div class="total-val">{{ number_format($businessKm) }} km</div>
+            </div>
+            <div class="total-item">
+                <div class="total-lbl">TOTAL DISTANCE</div>
+                <div class="total-val">{{ number_format($totalKm) }} km</div>
+            </div>
+        </div>
+        @endif
+
+    </div>
+
+    <div class="rpt-footer">
+        <div class="footer-left">
+            <div class="fl-brand">AutoMateX · Trip Log Report · © {{ date('Y') }}</div>
+            <div class="fl-note">This is a computer-generated report. All figures are based on user-entered data.</div>
+        </div>
+        <div class="footer-badge">
+            <span class="footer-dot"></span>
+            {{ $vehicle->make }} {{ $vehicle->model }} · {{ $vehicle->license_plate ?? $vehicle->vin ?? 'N/A' }}
+        </div>
+    </div>
+
 </div>
 
-{{-- Summary stats --}}
-<div class="stats-row">
-    <div class="stat-cell">
-        <div class="stat-val">{{ $tripLogs->count() }}</div>
-        <div class="stat-lbl">Trips</div>
-    </div>
-    <div class="stat-cell">
-        <div class="stat-val">{{ number_format($totalKm) }} km</div>
-        <div class="stat-lbl">Total Distance</div>
-    </div>
-    <div class="stat-cell">
-        <div class="stat-val" style="color:#1d4ed8;">{{ number_format($businessKm) }} km</div>
-        <div class="stat-lbl">Business km</div>
-    </div>
-    <div class="stat-cell">
-        <div class="stat-val" style="color:#15803d;">{{ number_format($personalKm) }} km</div>
-        <div class="stat-lbl">Personal km</div>
-    </div>
-</div>
-
-{{-- Trip table --}}
-<div class="section-title">// TRIP RECORDS</div>
-
-@if($tripLogs->isEmpty())
-    <p style="color:#94a3b8;font-size:10px;text-align:center;padding:16px 0;">No trip records found.</p>
-@else
-<table>
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Start km</th>
-            <th>End km</th>
-            <th>Distance</th>
-            <th>Purpose</th>
-            <th>Notes</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($tripLogs as $trip)
-        <tr>
-            <td class="mono">{{ $trip->trip_date->format('d M Y') }}</td>
-            <td class="mono">{{ number_format($trip->start_km) }}</td>
-            <td class="mono">{{ number_format($trip->end_km) }}</td>
-            <td class="mono purple">{{ number_format($trip->distance) }} km</td>
-            <td>
-                @php $p = $trip->purpose; @endphp
-                <span class="badge badge-{{ $p }}">{{ ucfirst($p) }}</span>
-            </td>
-            <td style="color:#94a3b8;">{{ $trip->notes ?? '—' }}</td>
-        </tr>
-        @endforeach
-        <tr class="total-row">
-            <td colspan="3">Total</td>
-            <td class="mono" style="color:#7c3aed;">{{ number_format($totalKm) }} km</td>
-            <td colspan="2" style="color:#64748b;font-weight:400;">
-                Business: {{ number_format($businessKm) }} km &nbsp;·&nbsp; Personal: {{ number_format($personalKm) }} km
-            </td>
-        </tr>
-    </tbody>
-</table>
-@endif
-
-{{-- Footer --}}
-<div class="footer">
-    <div class="footer-left">{{ $vehicle->make }} {{ $vehicle->model }} {{ $vehicle->year }} · Trip Log</div>
-    <div class="footer-right">VERIFIED BY AUTOMATEX · {{ now()->format('d M Y') }}</div>
-</div>
-
+<script>
+window.addEventListener('load', function () {
+    setTimeout(function () { window.print(); }, 500);
+});
+</script>
 </body>
 </html>

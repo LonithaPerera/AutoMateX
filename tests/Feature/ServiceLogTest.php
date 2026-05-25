@@ -66,6 +66,6 @@ class ServiceLogTest extends TestCase
 
         $response = $this->actingAs($user)->get("/vehicles/{$vehicle->id}/service/pdf");
         $response->assertStatus(200);
-        $response->assertHeader('Content-Type', 'application/pdf');
+        $response->assertHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }

@@ -90,6 +90,6 @@ class TripLogTest extends TestCase
 
         $response = $this->actingAs($user)->get("/vehicles/{$vehicle->id}/trips/pdf");
         $response->assertStatus(200);
-        $response->assertHeader('Content-Type', 'application/pdf');
+        $response->assertHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }

@@ -101,11 +101,6 @@ class TripLogController extends Controller
         $businessKm = $tripLogs->where('purpose', 'business')->sum(fn($t) => $t->distance);
         $personalKm = $tripLogs->where('purpose', 'personal')->sum(fn($t) => $t->distance);
 
-        $pdf = Pdf::loadView('trips.pdf', compact('vehicle', 'tripLogs', 'totalKm', 'businessKm', 'personalKm'))
-                  ->setPaper('a4', 'portrait');
-
-        $filename = 'trip-log-' . strtolower($vehicle->make) . '-' . strtolower($vehicle->model) . '-' . $vehicle->year . '.pdf';
-
-        return $pdf->download($filename);
+        return view('trips.pdf', compact('vehicle', 'tripLogs', 'totalKm', 'businessKm', 'personalKm'));
     }
 }
