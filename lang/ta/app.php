@@ -805,6 +805,19 @@ return [
     'replace_doc_btn'   => 'கோப்பை மாற்று',
     'view_doc_btn'      => 'கோப்பை காண்க',
 
+    // ─── Missing keys (added for completeness) ───────────────────────────────
+    'booking_no_hours_notice'  => 'Working hours not set for this garage. Please confirm your preferred time directly.',
+    'search_fuel_logs_ph'      => 'நிலையம், தேதி அல்லது km மூலம் தேடுக...',
+    'search_service_logs_ph'   => 'சேவை வகை, கேரேஜ் அல்லது தேதி மூலம் தேடுக...',
+    'garage_profile_label'     => '// கேரேஜ் சுயவிவரம்',
+    'all_reviews_label'        => '// அனைத்து மதிப்புரைகள்',
+    'view_garage_profile_btn'  => 'சுயவிவரம் காண்க',
+    'booking_reminder_title'   => 'சந்திப்பு நினைவூட்டல்',
+    'booking_reminder_message' => 'நாளை உங்களுக்கு முன்பதிவு உள்ளது: :garage இல் :service, :time க்கு.',
+    'no_reviews_yet'           => 'இந்த கேரேஜுக்கு இன்னும் மதிப்புரைகள் இல்லை.',
+    'garage_completed_jobs'    => 'முடிக்கப்பட்ட பணிகள்',
+    'garage_avg_rating'        => 'சராசரி மதிப்பீடு',
+
     // ─── Booking time slot picker ─────────────────────────────────────────────
     'slot_closed_day'   => 'கேரேஜ் அன்று மூடியிருக்கும். வேறு தேதி தேர்ந்தெடுக்கவும்.',
     'slot_no_hours'     => 'இந்த தேதிக்கு நேர இடங்கள் இல்லை.',

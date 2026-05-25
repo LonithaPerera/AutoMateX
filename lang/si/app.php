@@ -805,6 +805,19 @@ return [
     'replace_doc_btn'   => 'ගොනුව ප්‍රතිස්ථාපනය කරන්න',
     'view_doc_btn'      => 'ගොනුව බලන්න',
 
+    // ─── Missing keys (added for completeness) ───────────────────────────────
+    'booking_no_hours_notice'  => 'Working hours not set for this garage. Please confirm your preferred time directly.',
+    'search_fuel_logs_ph'      => 'ස්ථානය, දිනය හෝ km අනුව සොයන්න...',
+    'search_service_logs_ph'   => 'සේවා වර්ගය, ගරාජ් හෝ දිනය අනුව සොයන්න...',
+    'garage_profile_label'     => '// ගරාජ් පැතිකඩ',
+    'all_reviews_label'        => '// සියලු සමාලෝචන',
+    'view_garage_profile_btn'  => 'පැතිකඩ බලන්න',
+    'booking_reminder_title'   => 'හමුවීම් සිහිකැඳවීම',
+    'booking_reminder_message' => 'ඔබට හෙට bookingයක් ඇත: :garage හි :service, :time ට.',
+    'no_reviews_yet'           => 'මෙම ගරාජ් සඳහා තවම සමාලෝචන නොමැත.',
+    'garage_completed_jobs'    => 'සම්පූර්ණ කළ කාර්යයන්',
+    'garage_avg_rating'        => 'සාමාන්‍ය ශ්‍රේණිගත කිරීම',
+
     // ─── Booking time slot picker ─────────────────────────────────────────────
     'slot_closed_day'   => 'ගරාජ් එදින වසා ඇත. වෙනත් දිනයක් තෝරන්න.',
     'slot_no_hours'     => 'මෙම දිනය සඳහා කාල සිදුරු නොමැත.',
