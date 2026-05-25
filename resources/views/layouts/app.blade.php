@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'AutoMateX') }}</title>
+    <link rel="icon" type="image/png" href="/images/logo.png">
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
